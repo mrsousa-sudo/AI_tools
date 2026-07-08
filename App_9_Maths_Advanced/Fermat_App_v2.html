@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fermat's Last Theorem Simulator</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --card-bg: #ffffff;
+            --border: #ddd;
+        }
+        [data-theme="dark"] {
+            --bg-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --primary: #16213e;
+            --secondary: #0f3460;
+            --card-bg: #1f2a40;
+            --border: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        button, select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover, select:hover {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background-color: var(--card-bg);
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            font-weight: bold;
+        }
+        .tab-btn.active {
+            background-color: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        .container {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: inline-block; width: 50px; font-weight: bold; }
+        .input-group input { padding: 5px; width: 100px; border: 1px solid var(--border); border-radius: 3px; background-color: var(--bg-color); color: var(--text-color); }
+        
+        #result-box { margin-top: 20px; padding: 15px; border-left: 4px solid var(--secondary); background-color: var(--bg-color); }
+        
+        canvas { background-color: #fff; border: 1px solid #ccc; max-width: 100%; border-radius: 4px; }
+        [data-theme="dark"] canvas { filter: invert(0.9); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1 id="title">Fermat's Last Theorem</h1>
+        <div class="controls">
+            <select id="lang-select" onchange="changeLanguage()">
+                <option value="en">🇬🇧 English</option>
+                <option value="pt">🇵🇹 Português</option>
+                <option value="es">🇪🇸 Castellano</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="ja">🇯🇵 Japanese</option>
+            </select>
+            <button id="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-num" onclick="switchTab('num')">Number Version</button>
+        <button class="tab-btn" id="tab-graph" onclick="switchTab('graph')">Graphical Analysis</button>
+    </div>
+
+    <div class="container">
+        <!-- Number Simulation Panel -->
+        <div id="panel-num" class="panel active">
+            <h3 id="sim-title">Test the Equation: a^n + b^n = c^n</h3>
+            <div class="input-group">
+                <label>a = </label><input type="number" id="val-a" value="3">
+            </div>
+            <div class="input-group">
+                <label>b = </label><input type="number" id="val-b" value="4">
+            </div>
+            <div class="input-group">
+                <label>c = </label><input type="number" id="val-c" value="5">
+            </div>
+            <div class="input-group">
+                <label>n = </label><input type="number" id="val-n" value="2">
+            </div>
+            <button id="btn-check" onclick="checkEquation()">Check</button>
+            <div id="result-box"></div>
+        </div>
+
+        <!-- Graphical Panel -->
+        <div id="panel-graph" class="panel">
+            <h3 id="graph-title">Fermat Curve: x^n + y^n = 1</h3>
+            <p id="graph-desc">The graph shows solutions for continuous numbers. As n increases, the curve approaches a square shape, highlighting the lack of integer intersections.</p>
+            <div class="input-group">
+                <label>n = </label>
+                <input type="range" id="graph-n" min="1" max="10" value="2" oninput="updateGraph(); document.getElementById('graph-n-val').innerText = this.value;">
+                <span id="graph-n-val" style="font-weight:bold; margin-left:10px;">2</span>
+            </div>
+            <canvas id="fermatCanvas" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const i18n = {
+            en: {
+                title: "Fermat's Last Theorem",
+                themeDark: "Dark Mode",
+                themeLight: "Light Mode",
+                tabNum: "Number Version",
+                tabGraph: "Graphical Analysis",
+                simTitle: "Test the Equation: aⁿ + bⁿ = cⁿ",
+                btnCheck: "Check",
+                graphTitle: "Fermat Curve: xⁿ + yⁿ = 1",
+                graphDesc: "The graph shows solutions for continuous numbers. As n increases, the curve approaches a square shape, highlighting the lack of integer intersections.",
+                resEq: "Result: They are EQUAL! (Valid Pythagorean Triple)",
+                resNeq: "Result: NOT equal.",
+                calcTx: "Calculations"
+            },
+            pt: {
+                title: "Último Teorema de Fermat",
+                themeDark: "Modo Escuro",
+                themeLight: "Modo Claro",
+                tabNum: "Versão Numérica",
+                tabGraph: "Análise Gráfica",
+                simTitle: "Teste a Equação: aⁿ + bⁿ = cⁿ",
+                btnCheck: "Verificar",
+                graphTitle: "Curva de Fermat: xⁿ + yⁿ = 1",
+                graphDesc: "O gráfico mostra soluções para números contínuos. À medida que n aumenta, a curva aproxima-se de um quadrado.",
+                resEq: "Resultado: São IGUAIS! (Triplo Pitagórico Válido)",
+                resNeq: "Resultado: NÃO são iguais.",
+                calcTx: "Cálculos"
+            },
+            es: {
+                title: "Último Teorema de Fermat",
+                themeDark: "Modo Oscuro",
+                themeLight: "Modo Claro",
+                tabNum: "Versión Numérica",
+                tabGraph: "Análisis Gráfico",
+                simTitle: "Prueba la Ecuación: aⁿ + bⁿ = cⁿ",
+                btnCheck: "Comprobar",
+                graphTitle: "Curva de Fermat: xⁿ + yⁿ = 1",
+                graphDesc: "El gráfico muestra soluciones para números continuos. A medida que n aumenta, la curva se acerca a un cuadrado.",
+                resEq: "Resultado: ¡Son IGUALES! (Triple Pitagórico Válido)",
+                resNeq: "Resultado: NO son iguales.",
+                calcTx: "Cálculos"
+            },
+            fr: {
+                title: "Dernier Théorème de Fermat",
+                themeDark: "Mode Sombre",
+                themeLight: "Mode Clair",
+                tabNum: "Version Numérique",
+                tabGraph: "Analyse Graphique",
+                simTitle: "Testez l'Équation: aⁿ + bⁿ = cⁿ",
+                btnCheck: "Vérifier",
+                graphTitle: "Courbe de Fermat: xⁿ + yⁿ = 1",
+                graphDesc: "Le graphique montre des solutions pour des nombres continus. Plus n augmente, plus la courbe s'approche d'un carré.",
+                resEq: "Résultat : Ils sont ÉGAUX ! (Triplet Pythagoricien Valide)",
+                resNeq: "Résultat : NON égaux.",
+                calcTx: "Calculs"
+            },
+            it: {
+                title: "Ultimo Teorema di Fermat",
+                themeDark: "Modalità Scura",
+                themeLight: "Modalità Chiara",
+                tabNum: "Versione Numerica",
+                tabGraph: "Analisi Grafica",
+                simTitle: "Testa l'Equazione: aⁿ + bⁿ = cⁿ",
+                btnCheck: "Verifica",
+                graphTitle: "Curva di Fermat: xⁿ + yⁿ = 1",
+                graphDesc: "Il grafico mostra soluzioni per numeri continui. All'aumentare di n, la curva si avvicina a un quadrato.",
+                resEq: "Risultato: Sono UGUALI! (Terna Pitagorica Valida)",
+                resNeq: "Risultato: NON uguali.",
+                calcTx: "Calcoli"
+            },
+            ja: {
+                title: "フェルマーの最終定理",
+                themeDark: "ダークモード",
+                themeLight: "ライトモード",
+                tabNum: "数値バージョン",
+                tabGraph: "グラフィカル分析",
+                simTitle: "方程式をテスト: aⁿ + bⁿ = cⁿ",
+                btnCheck: "チェック",
+                graphTitle: "フェルマー曲線: xⁿ + yⁿ = 1",
+                graphDesc: "グラフは連続数の解を示しています。nが大きくなると、曲線は正方形に近づき、整数の交点がないことが強調されます。",
+                resEq: "結果：等しいです！(有効なピタゴラス数)",
+                resNeq: "結果：等しくありません。",
+                calcTx: "計算"
+            }
+        };
+
+        function updateThemeButtonText() {
+            const html = document.documentElement;
+            const btn = document.getElementById('theme-toggle');
+            const lang = document.getElementById('lang-select').value;
+            const t = i18n[lang];
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                btn.innerText = '☀️ ' + t.themeLight;
+            } else {
+                btn.innerText = '🌙 ' + t.themeDark;
+            }
+        }
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            const t = i18n[lang];
+            
+            document.getElementById('title').innerText = t.title;
+            document.getElementById('tab-num').innerText = t.tabNum;
+            document.getElementById('tab-graph').innerText = t.tabGraph;
+            document.getElementById('sim-title').innerText = t.simTitle;
+            document.getElementById('btn-check').innerText = t.btnCheck;
+            document.getElementById('graph-title').innerText = t.graphTitle;
+            document.getElementById('graph-desc').innerText = t.graphDesc;
+            
+            updateThemeButtonText();
+            document.getElementById('result-box').innerHTML = ""; // Clear results to prevent mismatched languages
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+            }
+            updateThemeButtonText();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('panel-' + tabId).classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            if(tabId === 'graph') updateGraph();
+        }
+
+        function checkEquation() {
+            const a = parseFloat(document.getElementById('val-a').value);
+            const b = parseFloat(document.getElementById('val-b').value);
+            const c = parseFloat(document.getElementById('val-c').value);
+            const n = parseFloat(document.getElementById('val-n').value);
+            const lang = document.getElementById('lang-select').value;
+
+            const left = Math.pow(a, n) + Math.pow(b, n);
+            const right = Math.pow(c, n);
+
+            const isEq = Math.abs(left - right) < 1e-9;
+            const resText = isEq ? i18n[lang].resEq : i18n[lang].resNeq;
+            const color = isEq ? "green" : "red";
+
+            document.getElementById('result-box').innerHTML = `
+                <strong>${i18n[lang].calcTx}:</strong><br>
+                aⁿ + bⁿ = ${a}^${n} + ${b}^${n} = ${left.toFixed(2)}<br>
+                cⁿ = ${c}^${n} = ${right.toFixed(2)}<br><br>
+                <strong style="color:${color}">${resText}</strong>
+            `;
+        }
+
+        function updateGraph() {
+            const canvas = document.getElementById('fermatCanvas');
+            const ctx = canvas.getContext('2d');
+            const n = parseInt(document.getElementById('graph-n').value);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid and axes
+            ctx.strokeStyle = '#eee';
+            ctx.lineWidth = 1;
+            for(let i=0; i<400; i+=40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 400); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(400, i); ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(40, 0); ctx.lineTo(40, 360); ctx.stroke(); // Y axis
+            ctx.beginPath(); ctx.moveTo(40, 360); ctx.lineTo(400, 360); ctx.stroke(); // X axis
+
+            // Labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText("0", 25, 375);
+            ctx.fillText("1", 335, 375); // scale 300px = 1 unit
+            ctx.fillText("1", 25, 65);
+
+            // Draw Curve x^n + y^n = 1
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            for (let x = 0; x <= 1; x += 0.01) {
+                let y = Math.pow(1 - Math.pow(x, n), 1/n);
+                let plotX = 40 + (x * 300);
+                let plotY = 360 - (y * 300);
+                
+                if (x === 0) ctx.moveTo(plotX, plotY);
+                else ctx.lineTo(plotX, plotY);
+            }
+            ctx.stroke();
+        }
+
+        // Init
+        updateGraph();
+        updateThemeButtonText();
+    </script>
+</body>
+</html>

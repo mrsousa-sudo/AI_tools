@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>The Liberator's Dilemma</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:wght@300;400;600&display=swap');
+
+  :root {
+    --navy:   #0A1446;
+    --gold:   #C4A000;
+    --red:    #A02828;
+    --cream:  #F9F5EC;
+    --grey:   #6B6B6B;
+    --lnavy:  #E8ECF5;
+    --lgold:  #FDF6DC;
+    --lred:   #FAE8E8;
+    --card-r: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 2px solid rgba(196,160,0,0.2);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 2px solid rgba(196,160,0,0.12);
+  }
+  .hero-inner {
+    padding: 40px 22px 32px;
+    position: relative; z-index: 1;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(196,160,0,0.18);
+    color: var(--gold);
+    font-family: 'Source Serif 4', serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(196,160,0,0.3);
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero-sub {
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    line-height: 1.55;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .hero-author {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  .gold-rule {
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-top: 28px;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-wrap {
+    background: var(--navy);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gold);
+  }
+  .nav-tabs {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 4px;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: none;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.55);
+    font-family: 'Source Serif 4', serif;
+    font-size: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    transition: color 0.2s;
+  }
+  .tab-btn.active {
+    color: var(--gold);
+  }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 12px; right: 12px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 20px 16px 80px; }
+  .panel.active { display: block; }
+
+  /* ── TYPOGRAPHY ── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: var(--gold);
+    margin-top: 8px;
+    border-radius: 2px;
+  }
+  .sub-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--red);
+    margin: 18px 0 8px;
+  }
+  p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #2a2a2a;
+    margin-bottom: 12px;
+  }
+  .pull-quote {
+    background: var(--lnavy);
+    border-left: 4px solid var(--navy);
+    padding: 14px 16px;
+    border-radius: 0 var(--card-r) var(--card-r) 0;
+    margin: 16px 0;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #fff;
+    border-radius: var(--card-r);
+    box-shadow: 0 2px 12px rgba(10,20,70,0.08);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 16px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    user-select: none;
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--navy);
+    line-height: 1.3;
+    flex: 1;
+  }
+  .card-year {
+    font-size: 11px;
+    color: var(--grey);
+    margin-top: 2px;
+    font-style: italic;
+  }
+  .chevron {
+    font-size: 11px;
+    color: var(--grey);
+    transition: transform 0.25s;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .card.open .chevron { transform: rotate(180deg); }
+  .card-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .card.open .card-body { display: block; padding-top: 14px; }
+  .game-tag {
+    display: inline-block;
+    background: var(--lgold);
+    color: var(--red);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(196,160,0,0.35);
+  }
+  .insight-box {
+    background: var(--lnavy);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--navy);
+    line-height: 1.55;
+  }
+  .insight-box strong { color: var(--red); }
+
+  /* ── MAP ── */
+  .map-svg-wrap {
+    background: #fff;
+    border-radius: var(--card-r);
+    padding: 16px 10px;
+    box-shadow: 0 2px 12px rgba(10,20,70,0.08);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .map-svg-wrap svg { width: 100%; height: auto; display: block; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 28px; margin: 16px 0; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gold), var(--red));
+    border-radius: 2px;
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .tl-dot {
+    position: absolute;
+    left: -24px; top: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tl-dot::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .tl-year {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .tl-event {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    font-family: 'Playfair Display', serif;
+  }
+  .tl-desc { font-size: 13px; color: var(--grey); margin-top: 2px; line-height: 1.5; }
+
+  /* ── NOVELS GRID ── */
+  .novel-card {
+    background: #fff;
+    border-radius: var(--card-r);
+    padding: 14px;
+    box-shadow: 0 2px 10px rgba(10,20,70,0.07);
+    margin-bottom: 12px;
+    border-left: 4px solid var(--gold);
+  }
+  .novel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--navy);
+    font-style: italic;
+    margin-bottom: 3px;
+  }
+  .novel-year { font-size: 11px; color: var(--gold); margin-bottom: 6px; font-weight: 600; }
+  .novel-theme { font-size: 13px; color: var(--grey); line-height: 1.5; }
+
+  /* ── GLOSSARY ── */
+  .term-card {
+    background: #fff;
+    border-radius: var(--card-r);
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(10,20,70,0.07);
+    margin-bottom: 12px;
+    border-top: 3px solid var(--navy);
+  }
+  .term-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .term-def { font-size: 13px; color: #333; line-height: 1.6; }
+  .term-example {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--red);
+    font-style: italic;
+  }
+
+  /* ── ABOUT ── */
+  .about-card {
+    background: var(--navy);
+    border-radius: var(--card-r);
+    padding: 24px 20px;
+    color: #fff;
+    margin-bottom: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    border: 2px solid rgba(196,160,0,0.2);
+  }
+  .about-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .about-uni { font-size: 13px; color: var(--gold); margin-bottom: 4px; }
+  .about-email { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .ref-card {
+    background: #fff;
+    border-radius: var(--card-r);
+    padding: 14px 16px;
+    box-shadow: 0 2px 10px rgba(10,20,70,0.07);
+    margin-bottom: 10px;
+  }
+  .ref-authors { font-size: 11px; color: var(--red); font-weight: 600; margin-bottom: 2px; }
+  .ref-title { font-size: 13px; color: var(--navy); font-style: italic; margin-bottom: 2px; font-family: 'Playfair Display', serif; }
+  .ref-pub { font-size: 11px; color: var(--grey); }
+
+  /* ── BOTTOM SAFE AREA ── */
+  .safe-bottom { height: env(safe-area-inset-bottom, 20px); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Academic Paper — Plain-Language App</div>
+    <h1>The <span>Liberator's</span> Dilemma</h1>
+    <p class="hero-sub">Game theory, power &amp; the independence of Latin America — from Simón Bolívar to García Márquez</p>
+    <p class="hero-author">Miguel Rocha de Sousa · Universidade de Évora</p>
+  </div>
+  <div class="gold-rule"></div>
+</div>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="nav-tabs" id="navTabs">
+    <button class="tab-btn active" data-panel="intro">Overview</button>
+    <button class="tab-btn" data-panel="map">Campaigns</button>
+    <button class="tab-btn" data-panel="games">9 Games</button>
+    <button class="tab-btn" data-panel="novels">Márquez</button>
+    <button class="tab-btn" data-panel="glossary">Glossary</button>
+    <button class="tab-btn" data-panel="about">About</button>
+  </div>
+</div>
+
+<!-- ── PANEL: OVERVIEW ── -->
+<div class="panel active" id="panel-intro">
+  <div class="section-title">What is this paper?</div>
+  <p style="margin-top:14px">Imagine playing chess — but the pieces are armies, colonial governors, creole landowners, and millions of people across an entire continent. The moves are battles, alliances, promises, and betrayals. The stakes are the freedom of six nations.</p>
+  <p>This paper takes Simón Bolívar's liberation of South America (1810–1826) and analyses it using <strong>game theory</strong> — the mathematical science of strategic decision-making.</p>
+
+  <div class="pull-quote">"Bolívar solved the military game of liberation — and lost the political game of institution-building."</div>
+
+  <div class="sub-title">Two main inspirations</div>
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon" style="background:#FDF6DC">📖</div>
+      <div>
+        <div class="card-title">El general en su laberinto</div>
+        <div class="card-year">García Márquez, 1989</div>
+      </div>
+      <div class="chevron">▾</div>
+    </div>
+    <div class="card-body">
+      <p>García Márquez's Nobel-winning novel follows Bolívar's final journey down the Magdalena River in 1830 — terminally ill, politically defeated, watching his republic crumble. The paper reads this as a game-theoretic tragedy: a man who understood the strategic landscape perfectly but lacked the institutional tools to change the equilibrium.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon" style="background:#E8ECF5">📐</div>
+      <div>
+        <div class="card-title">Economic Origins of Dictatorship & Democracy</div>
+        <div class="card-year">Acemoglu & Robinson, 2005</div>
+      </div>
+      <div class="chevron">▾</div>
+    </div>
+    <div class="card-body">
+      <p>This landmark book asks: why do some countries become democracies and others dictatorships? Their answer: it comes down to strategic power games between elites (who benefit from the current system) and citizens (who might demand change). Democratisation happens when elites cannot credibly promise to maintain privileges without actually sharing power.</p>
+      <div class="insight-box"><strong>Key formula:</strong> Citizens revolt when expected payoff from revolution exceeds the status quo. Elites repress when the cost of granting power exceeds the threat. Everything else follows.</div>
+    </div>
+  </div>
+
+  <div class="sub-title">The big conclusions</div>
+  <div style="margin-top:4px">
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">1</div>
+      <p style="margin:0;padding-top:4px">Colonial regimes collapse when their <em>commitment technology</em> is destroyed. Napoleon's occupation was that shock.</p>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">2</div>
+      <p style="margin:0;padding-top:4px">Costly signals — not words — build coalitions. Bolívar won the llaneros through expensive, concrete commitments.</p>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">3</div>
+      <p style="margin:0;padding-top:4px">Post-independence failure was built-in. When the elites who made independence happen control the new states, extractive institutions persist.</p>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">4</div>
+      <p style="margin:0;padding-top:4px">Gran Colombia's collapse was mathematically inevitable. A political coalition with an <em>empty core</em> always breaks apart.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── PANEL: MAP / CAMPAIGNS ── -->
+<div class="panel" id="panel-map">
+  <div class="section-title">Bolívar's Campaigns</div>
+  <p style="margin-top:14px;margin-bottom:16px">Bolívar did not liberate one country. He liberated <strong>six</strong>: Venezuela, Colombia, Ecuador, Peru, Bolivia, and Panama — marching across the Andes in winter and through fever-ridden jungles for sixteen years.</p>
+
+  <!-- Schematic SVG map -->
+  <div class="map-svg-wrap">
+    <svg viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg" aria-label="Map of Bolivar campaigns">
+      <!-- Ocean -->
+      <rect width="320" height="400" fill="#dbeafe" rx="8"/>
+      <!-- Continent silhouette -->
+      <path d="M60,380 L50,340 L40,300 L45,260 L38,220 L50,190 L60,170 L55,150 L65,130 L75,110 L80,90 L90,70 L105,55 L120,45 L140,42 L160,44 L180,50 L200,60 L215,75 L225,95 L230,120 L235,145 L228,170 L220,195 L215,220 L210,250 L205,280 L195,310 L180,335 L165,355 L148,368 L130,375 L110,378 Z" fill="#e8dcc8" stroke="#c4a87a" stroke-width="1"/>
+      <!-- Andes (simplified) -->
+      <path d="M68,160 L75,140 L72,120 L78,100 L76,80 L82,65" stroke="#9ca3af" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.6"/>
+      <path d="M70,160 L77,140 L74,120 L80,100 L78,80 L84,65" stroke="#d1d5db" stroke-width="2" fill="none" opacity="0.8"/>
+      <text x="63" y="122" font-size="8" fill="#6b7280" transform="rotate(-70,63,122)" font-family="serif" font-style="italic">Andes</text>
+
+      <!-- Campaign routes -->
+      <!-- Admirable 1813: Cartagena→Caracas (dashed red) -->
+      <path d="M88,85 L140,78 L188,72" stroke="#A02828" stroke-width="2" stroke-dasharray="5,3" fill="none" marker-end="url(#arr-red)"/>
+      <!-- Andes Crossing 1819: Angostura→Boyacá→Bogotá (blue) -->
+      <path d="M205,130 L170,125 L148,128 L125,132" stroke="#0A1446" stroke-width="2.5" fill="none" marker-end="url(#arr-navy)"/>
+      <!-- Carabobo 1821 (green) -->
+      <path d="M125,132 L155,108 L188,88 L188,72" stroke="#166534" stroke-width="2" fill="none" marker-end="url(#arr-green)"/>
+      <!-- Ecuador 1822 (gold) -->
+      <path d="M125,132 L105,158 L90,185" stroke="#B48C00" stroke-width="2" fill="none" marker-end="url(#arr-gold)"/>
+      <!-- Peru 1824 (orange-red) -->
+      <path d="M90,185 L82,220 L78,260 L88,240 L95,270" stroke="#c2410c" stroke-width="2" fill="none" marker-end="url(#arr-orange)"/>
+      <!-- Sucre 1825 (dotted gold) -->
+      <path d="M95,270 L108,300 L120,315" stroke="#B48C00" stroke-width="1.5" stroke-dasharray="3,3" fill="none" marker-end="url(#arr-gold2)"/>
+
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arr-red"    markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#A02828"/></marker>
+        <marker id="arr-navy"   markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0A1446"/></marker>
+        <marker id="arr-green"  markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#166534"/></marker>
+        <marker id="arr-gold"   markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#B48C00"/></marker>
+        <marker id="arr-gold2"  markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#B48C00"/></marker>
+        <marker id="arr-orange" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#c2410c"/></marker>
+      </defs>
+
+      <!-- Battle sites -->
+      <circle cx="148" cy="128" r="7" fill="#dc2626" stroke="#fff" stroke-width="1.5" opacity="0.9"/>
+      <circle cx="188" cy="88"  r="6" fill="#dc2626" stroke="#fff" stroke-width="1.5" opacity="0.9"/>
+      <circle cx="90"  cy="185" r="6" fill="#dc2626" stroke="#fff" stroke-width="1.5" opacity="0.9"/>
+      <circle cx="88"  cy="240" r="6" fill="#dc2626" stroke="#fff" stroke-width="1.5" opacity="0.9"/>
+      <circle cx="95"  cy="270" r="6" fill="#dc2626" stroke="#fff" stroke-width="1.5" opacity="0.9"/>
+
+      <!-- Cities -->
+      <circle cx="188" cy="72" r="5" fill="#0A1446" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="125" cy="132" r="5" fill="#0A1446" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="78"  cy="260" r="4" fill="#6b21a8" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="120" cy="315" r="4" fill="#B48C00" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="205" cy="130" r="4" fill="#B48C00" stroke="#fff" stroke-width="1.5"/>
+      <circle cx="88"  cy="85" r="4" fill="#166534" stroke="#fff" stroke-width="1.5"/>
+
+      <!-- Labels -->
+      <text x="192" y="70" font-size="9" fill="#0A1446" font-family="serif" font-weight="bold">Caracas</text>
+      <text x="128" y="130" font-size="9" fill="#0A1446" font-family="serif" font-weight="bold">Bogotá</text>
+      <text x="60"  y="183" font-size="8" fill="#0A1446" font-family="serif">Quito</text>
+      <text x="54"  y="258" font-size="8" fill="#0A1446" font-family="serif">Lima</text>
+      <text x="124" y="313" font-size="8" fill="#B48C00" font-family="serif">Potosí</text>
+      <text x="207" y="128" font-size="8" fill="#B48C00" font-family="serif">Angostura</text>
+      <text x="70"  y="82"  font-size="8" fill="#166534" font-family="serif">Cartagena</text>
+      <text x="150" y="143" font-size="7.5" fill="#dc2626" font-family="serif" font-style="italic">Boyacá</text>
+      <text x="190" y="102" font-size="7.5" fill="#dc2626" font-family="serif" font-style="italic">Carabobo</text>
+      <text x="65"  y="197" font-size="7.5" fill="#dc2626" font-family="serif" font-style="italic">Pichincha</text>
+      <text x="97"  y="250" font-size="7.5" fill="#dc2626" font-family="serif" font-style="italic">Junín</text>
+      <text x="97"  y="278" font-size="7.5" fill="#dc2626" font-family="serif" font-style="italic">Ayacucho</text>
+
+      <!-- Legend box -->
+      <rect x="190" y="280" width="124" height="116" rx="6" fill="white" opacity="0.92" stroke="#e5e7eb"/>
+      <text x="196" y="294" font-size="8" fill="#0A1446" font-family="serif" font-weight="bold">Campaigns</text>
+      <line x1="196" y1="300" x2="216" y2="300" stroke="#A02828" stroke-width="2" stroke-dasharray="4,2"/>
+      <text x="220" y="303" font-size="7.5" fill="#374151" font-family="serif">Admirable 1813</text>
+      <line x1="196" y1="313" x2="216" y2="313" stroke="#0A1446" stroke-width="2"/>
+      <text x="220" y="316" font-size="7.5" fill="#374151" font-family="serif">Andes 1819</text>
+      <line x1="196" y1="326" x2="216" y2="326" stroke="#166534" stroke-width="2"/>
+      <text x="220" y="329" font-size="7.5" fill="#374151" font-family="serif">Carabobo 1821</text>
+      <line x1="196" y1="339" x2="216" y2="339" stroke="#B48C00" stroke-width="2"/>
+      <text x="220" y="342" font-size="7.5" fill="#374151" font-family="serif">Ecuador 1822</text>
+      <line x1="196" y1="352" x2="216" y2="352" stroke="#c2410c" stroke-width="2"/>
+      <text x="220" y="355" font-size="7.5" fill="#374151" font-family="serif">Peru 1824</text>
+      <circle cx="204" cy="365" r="4" fill="#dc2626" stroke="#fff" stroke-width="1"/>
+      <text x="220" y="368" font-size="7.5" fill="#374151" font-family="serif">Major Battle</text>
+      <text x="196" y="392" font-size="7" fill="#6b7280" font-family="serif" font-style="italic">Schematic — not to scale</text>
+    </svg>
+  </div>
+
+  <div class="sub-title">Campaign Timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1810</div>
+      <div class="tl-event">Caracas Junta</div>
+      <div class="tl-desc">Napoleon's occupation of Spain destroys royal legitimacy. Creoles seize the moment.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1811–1812</div>
+      <div class="tl-event">First Republic — and its Collapse</div>
+      <div class="tl-desc">Patriots fail to coordinate. Regional rivalries select the inefficient equilibrium.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1813</div>
+      <div class="tl-event">Admirable Campaign</div>
+      <div class="tl-desc">Bolívar marches from Cartagena to Caracas in a stunning military campaign.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1817–1818</div>
+      <div class="tl-event">Recruiting the Llaneros</div>
+      <div class="tl-desc">Costly land grants and military promotions convert former enemies into the core of Bolívar's army.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1819</div>
+      <div class="tl-event">Andes Crossing & Boyacá</div>
+      <div class="tl-desc">An irreversible winter crossing makes retreat impossible. Colombia is liberated.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1821</div>
+      <div class="tl-event">Carabobo — Venezuela Free</div>
+      <div class="tl-desc">The decisive battle secures Venezuelan independence permanently.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1822</div>
+      <div class="tl-event">Guayaquil Meeting</div>
+      <div class="tl-desc">Bolívar and San Martín meet secretly. San Martín withdraws. A Nash bargain resolves the command question.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1824</div>
+      <div class="tl-event">Junín & Ayacucho</div>
+      <div class="tl-desc">Spain's last armies surrender. The liberation game reaches its terminal node.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1826–1830</div>
+      <div class="tl-event">Gran Colombia Collapses</div>
+      <div class="tl-desc">The coalition's core is empty. Venezuela and Ecuador split. Bolívar descends the Magdalena River, dying.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PANEL: 9 GAMES ── -->
+<div class="panel" id="panel-games">
+  <div class="section-title">The Nine Games</div>
+  <p style="margin-top:14px;margin-bottom:16px">Each historical moment is modelled as a formal strategic game. Tap each card to explore what happened and why the math predicts it.</p>
+
+  <div id="gamesContainer"></div>
+</div>
+
+<!-- ── PANEL: MÁRQUEZ ── -->
+<div class="panel" id="panel-novels">
+  <div class="section-title">García Márquez</div>
+  <p style="margin-top:14px;margin-bottom:4px">The paper argues that great literature often captures the same truths as formal economic models — expressed in human rather than mathematical language. Eight novels by García Márquez are woven into the analysis.</p>
+  <div class="pull-quote">"García Márquez called this condition <em>soledad</em> — solitude. The isolation of societies unable to coordinate on the efficient equilibrium of inclusive institutions."</div>
+  <div id="novelsContainer"></div>
+</div>
+
+<!-- ── PANEL: GLOSSARY ── -->
+<div class="panel" id="panel-glossary">
+  <div class="section-title">Key Concepts</div>
+  <p style="margin-top:14px;margin-bottom:16px">Game theory has its own vocabulary. Here are the essential terms used in the paper, explained without jargon.</p>
+  <div id="glossaryContainer"></div>
+</div>
+
+<!-- ── PANEL: ABOUT ── -->
+<div class="panel" id="panel-about">
+  <div class="section-title">About</div>
+  <div style="margin-top:16px">
+    <div class="about-card">
+      <div class="about-name">Miguel Rocha de Sousa</div>
+      <div class="about-uni">Universidade de Évora</div>
+      <div class="about-uni">Department of Economics · Portugal</div>
+      <div class="about-email">mrsousa@uevora.pt</div>
+    </div>
+
+    <div class="sub-title">The Academic Paper</div>
+    <p>The full paper — <em>The Liberator's Dilemma: Game Theory, Power, and the Independence of Latin America</em> — models nine historical games using the framework of Acemoglu &amp; Robinson (2005), includes a TikZ cartographic map of Bolívar's campaigns, game-theoretic diagrams and pgfplots figures, and a full BibTeX bibliography.</p>
+    <p>Produced as a LaTeX academic working paper for the Department of Economics, Universidade de Évora.</p>
+
+    <div class="sub-title">Key References</div>
+    <div class="ref-card">
+      <div class="ref-authors">Acemoglu, D. & Robinson, J.A.</div>
+      <div class="ref-title">Economic Origins of Dictatorship and Democracy</div>
+      <div class="ref-pub">Cambridge University Press, 2005</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-authors">García Márquez, G.</div>
+      <div class="ref-title">El general en su laberinto</div>
+      <div class="ref-pub">Oveja Negra, Bogotá, 1989</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-authors">Lynch, J.</div>
+      <div class="ref-title">Simón Bolívar: A Life</div>
+      <div class="ref-pub">Yale University Press, 2006</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-authors">Osborne, M.J. & Rubinstein, A.</div>
+      <div class="ref-title">A Course in Game Theory</div>
+      <div class="ref-pub">MIT Press, 1994 (free online)</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-authors">Skyrms, B.</div>
+      <div class="ref-title">The Stag Hunt</div>
+      <div class="ref-pub">Proceedings of the APA, 75(2), 2001</div>
+    </div>
+  </div>
+</div>
+
+<div class="safe-bottom"></div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────
+const games = [
+  { icon:"🏛️", bg:"#E8ECF5", title:"Caracas Junta", year:"1810", type:"Sequential Game",
+    expl:"When Napoleon occupied Spain, the Spanish Crown lost its authority. The creole elite in Caracas faced a choice: obey a phantom king, or seize the moment. The crisis made repression too costly. Forming a junta became the rational outcome.",
+    insight:"External shocks can suddenly change which strategy is rational. A regime that seemed unshakeable can collapse overnight when its legitimacy source disappears." },
+  { icon:"♟️", bg:"#FAE8E8", title:"First Republic — Coordination Failure", year:"1811–1812", type:"Stag Hunt",
+    expl:"The First Venezuelan Republic collapsed not because of Spanish military strength, but because patriots failed to coordinate. Caracas, Valencia, and Maracaibo each preferred to dominate rather than unite. In game theory this is a Stag Hunt: cooperation pays off, but only if everyone cooperates. Everyone defected.",
+    insight:"Good intentions are not enough. Coordination failures can destroy successful movements even without external enemies. Someone must enforce the cooperative equilibrium." },
+  { icon:"🤝", bg:"#FDF6DC", title:"Llanero Recruitment", year:"1817–1818", type:"Signalling Game",
+    expl:"The llaneros — fierce plainsmen, initially royalist under Boves — were the finest fighters in Venezuela. Bolívar needed them. But words are cheap. He used costly signals: land grants, military promotions, the guerra a muerte decree. Only a leader who truly meant to deliver could afford these commitments.",
+    insight:"Expensive actions communicate sincere intentions when words alone cannot. A signal is credible only if it costs too much for someone who doesn't mean it to fake it." },
+  { icon:"📜", bg:"#E8ECF5", title:"Angostura Congress", year:"1819", type:"Extensive Form Game",
+    expl:"Convening a constitutional congress with royalist armies still in the field, Bolívar found that the external military threat raised the cost of congress rejecting his proposals. Without him, there was no republic to debate the constitution of. The threat tilted the equilibrium toward acceptance.",
+    insight:"External threats can make internal compromise rational even between rivals. The identity of the 'outside option' shapes every internal negotiation." },
+  { icon:"⛰️", bg:"#FDF6DC", title:"Boyacá — The Point of No Return", year:"1819", type:"Irreversible Commitment",
+    expl:"Crossing the Andes in winter with 2,000 soldiers was not just a military manoeuvre — it was a commitment device. Once crossed, retreat was impossible. Bolívar had no choice but to fight. When retreat is impossible, the enemy's best response is often surrender rather than a costly battle.",
+    insight:"Destroying your own option to retreat can make you strategically stronger. Commitment changes what the other player believes you will do." },
+  { icon:"🤫", bg:"#FAE8E8", title:"Guayaquil — The Secret Meeting", year:"1822", type:"Nash Bargaining",
+    expl:"No one knows exactly what Bolívar and San Martín said when they met secretly in July 1822. We know San Martín left, resigned his command, and sailed into exile. The paper models this as a Nash Bargaining Solution: given Bolívar's greater resources and political capital, the mathematically fair split required San Martín to cede command. He did.",
+    insight:"Power asymmetry produces predictable bargaining outcomes even in secret meetings. The Nash Bargaining Solution doesn't require us to know what was said — only who held more cards." },
+  { icon:"⚖️", bg:"#E8ECF5", title:"Peru — When Elites Switch Sides", year:"1823–1824", type:"Redistribution Game",
+    expl:"Peru's creole elite feared social revolution more than Spanish rule. The paper shows that as Spanish authority collapsed, its loyalty offer became worthless. At a critical tipping point — visualised in a graph in the paper — siding with Bolívar became more profitable. Elites defected. The royalists fell.",
+    insight:"Elites do not switch sides for ideology. They switch when the payoff calculation changes. Predicting defection requires knowing the critical threshold, not the rhetoric." },
+  { icon:"🏳️", bg:"#FDF6DC", title:"Ayacucho — End of the Game", year:"December 9, 1824", type:"Terminal Node / SPNE",
+    expl:"By Ayacucho, the game was structurally over. Spain had lost its commitment technology, its elite allies, and its credibility. Viceroy La Serna faced a dominant strategy: negotiated surrender. The paper calls this the terminal node of the entire liberation game tree.",
+    insight:"Some games end not with dramatic last stands but with a cold calculation. When every branch of the game tree has already been resolved, the final outcome is foregone." },
+  { icon:"💔", bg:"#FAE8E8", title:"Gran Colombia — The Empty Core", year:"1826–1830", type:"Cooperative Game",
+    expl:"Bolívar's dream of Gran Colombia — uniting Venezuela, Colombia, and Ecuador — lasted less than a decade. Each member state calculated that going it alone was more profitable than federation. The 'core' of the cooperative game was empty. Regional strongmen (Páez in Venezuela, Flores in Ecuador) had dominant strategies of defection.",
+    insight:"Political unions collapse when individual members gain more outside than inside. An empty core is not a political failure — it is a mathematical prediction. Bolívar understood the game and couldn't change the payoffs." },
+];
+
+const novels = [
+  { title:"One Hundred Years of Solitude", year:"1967",
+    theme:"Extractive institutions repeating across generations. Each Buendía repeats the same strategic errors. Collective action against the status quo remains perpetually too costly." },
+  { title:"The Autumn of the Patriarch", year:"1975",
+    theme:"The extractive equilibrium personified: a dictator who rules for perhaps two centuries because no faction can coordinate to overthrow him. De facto power outlasts all formal political changes." },
+  { title:"Love in the Time of Cholera", year:"1985",
+    theme:"Social immobility as a Nash Equilibrium. Marriage markets that sort by class produce stable but inefficient outcomes. No individual can break the pattern alone." },
+  { title:"The General in His Labyrinth", year:"1989",
+    theme:"The literary core of the paper. Bolívar's final river journey as a meditation on coalition collapse and the empty core of Gran Colombia. The labyrinth is the game tree." },
+  { title:"No One Writes to the Colonel", year:"1961",
+    theme:"The state's broken promise as a one-sided game the citizen always loses. A pension deferred forever is a credible commitment problem, shown through a single ageing man's quiet dignity." },
+  { title:"In Evil Hour", year:"1962",
+    theme:"Local caudillismo and the economics of information and repression. Who controls the pamphlets controls the town's knowledge of what is possible." },
+  { title:"Of Love and Other Demons", year:"1994",
+    theme:"Church versus civil society as competing institutional powers playing a long-run game for control of norms, beliefs, and legitimate authority." },
+  { title:"Memories of My Melancholy Whores", year:"2004",
+    theme:"Time preference and the long-run cost of deferring life's choices. A meditation on hyperbolic discounting across a human lifetime." },
+];
+
+const glossary = [
+  { term:"Game Theory",
+    def:"The mathematical study of strategic decision-making: situations where the outcome for each person depends on what others decide. Developed in the 20th century by John von Neumann and John Nash.",
+    ex:"Every time Bolívar decided whether to cross the Andes, he was implicitly solving a game-theory problem: what will the royalists do if I attack vs. if I don't?" },
+  { term:"Nash Equilibrium",
+    def:"A stable situation where no player can improve their outcome by unilaterally changing their strategy. Like a resting point that self-reinforces: everyone is playing their best response to everyone else.",
+    ex:"The Stag Hunt coordination failure of 1812 was a Nash Equilibrium: once everyone was defecting, no individual patriot could improve by switching to cooperation alone." },
+  { term:"Subgame-Perfect Nash Equilibrium (SPNE)",
+    def:"The best possible decision at every single stage of a sequential game — not just at the start, but at each branch. It eliminates non-credible threats by requiring that every planned action must be rational when the moment actually arrives.",
+    ex:"Bolívar's Andes crossing was SPNE: by making retreat impossible, he ensured his army would fight rationally even when the royalists threatened to resist." },
+  { term:"Credible Commitment",
+    def:"A promise that is believable because breaking it would be too costly. Mere words are never credible in game theory — only actions that change incentives create genuine commitments.",
+    ex:"Land grants to the llaneros were credible commitments. Bolívar couldn't take land back without losing his entire army — so the promise was structurally enforced." },
+  { term:"Stag Hunt",
+    def:"A coordination game with two Nash Equilibria: one efficient (everyone cooperates) and one inefficient (everyone defects). The problem is that the efficient equilibrium requires trust — and if any one player expects others to defect, defecting becomes individually rational.",
+    ex:"The First Venezuelan Republic (1811–1812) was a Stag Hunt. Regional factions could have built a stable republic together, but none trusted the others to commit — so all defected." },
+  { term:"Signalling Game",
+    def:"A game of incomplete information where one player (the sender) has private information and takes an action (the signal) to convey it. Signals are credible only if they are too costly for uninformed types to fake.",
+    ex:"Bolívar's guerra a muerte decree was a costly signal: a half-hearted leader could not afford to make total war his declared policy, so the declaration credibly revealed genuine commitment." },
+  { term:"Nash Bargaining Solution (NBS)",
+    def:"The mathematically 'fair' outcome of a two-player negotiation, defined as the split that maximises the product of both players' gains above their disagreement payoffs. It depends critically on each player's outside option.",
+    ex:"At Guayaquil, Bolívar's greater political resources gave him a better outside option. The NBS required San Martín to cede command — which he did." },
+  { term:"Empty Core",
+    def:"In cooperative game theory, a coalition's 'core' is the set of outcomes no subgroup would want to block. If the core is empty, no stable outcome exists — the coalition will always break apart.",
+    ex:"Gran Colombia had an empty core: Venezuela and Ecuador could both do better by leaving than by staying. The dissolution of 1830 was mathematically predicted by this property." },
+  { term:"Extractive Institutions",
+    def:"Political and economic institutions designed to extract wealth from the many to benefit the few, rather than to create broadly shared prosperity. They tend to persist because those who benefit can use that wealth to maintain political control.",
+    ex:"Every Latin American republic created after independence inherited extractive colonial institutions. The creole elites who made independence happen had little incentive to dismantle a system that now benefited them." },
+  { term:"De Facto vs. De Jure Power",
+    def:"De jure power is the formal, legal authority (who the constitution says is in charge). De facto power is who actually controls outcomes. They can diverge dramatically, especially after revolutions.",
+    ex:"After independence, constitutions granted de jure democracy, but creole landowners retained de facto power through control of land, credit, and armies." },
+];
+
+// ── RENDER GAMES ─────────────────────────────────────────────
+const gc = document.getElementById('gamesContainer');
+games.forEach((g, i) => {
+  gc.innerHTML += `
+  <div class="card" id="g${i}">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-icon" style="background:${g.bg}">${g.icon}</div>
+      <div style="flex:1">
+        <div class="card-title">${g.title}</div>
+        <div class="card-year">${g.year}</div>
+      </div>
+      <div class="chevron">▾</div>
+    </div>
+    <div class="card-body">
+      <div class="game-tag">${g.type}</div>
+      <p>${g.expl}</p>
+      <div class="insight-box"><strong>Key Insight:</strong> ${g.insight}</div>
+    </div>
+  </div>`;
+});
+
+// ── RENDER NOVELS ─────────────────────────────────────────────
+const nc = document.getElementById('novelsContainer');
+novels.forEach(n => {
+  nc.innerHTML += `
+  <div class="novel-card">
+    <div class="novel-title">${n.title}</div>
+    <div class="novel-year">${n.year}</div>
+    <div class="novel-theme">${n.theme}</div>
+  </div>`;
+});
+
+// ── RENDER GLOSSARY ───────────────────────────────────────────
+const glc = document.getElementById('glossaryContainer');
+glossary.forEach(g => {
+  glc.innerHTML += `
+  <div class="term-card">
+    <div class="term-word">${g.term}</div>
+    <div class="term-def">${g.def}</div>
+    <div class="term-example">📌 ${g.ex}</div>
+  </div>`;
+});
+
+// ── NAVIGATION ────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// ── CARD TOGGLE ───────────────────────────────────────────────
+function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+</script>
+</body>
+</html>

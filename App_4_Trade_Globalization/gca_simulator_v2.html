@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCA Simulator — Geostrategic Comparative Advantage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Source+Sans+3:wght@300;400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<style>
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  background: #f7f9fc;
+  color: #1a2744;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Colour tokens ───────────────────────────────────────────────────────── */
+:root {
+  --navy:  #1a2744;
+  --steel: #2e5090;
+  --gold:  #c8a84b;
+  --smoke: #f0f4fa;
+  --lgray: #e8edf6;
+  --mgray: #9aa5bb;
+  --red:   #b03030;
+  --green: #2a7a3a;
+  --teal:  #1e7a7a;
+  --white: #ffffff;
+  --shadow: 0 2px 8px rgba(26,39,68,.09);
+  --radius: 8px;
+}
+
+/* ── Top header ──────────────────────────────────────────────────────────── */
+#header {
+  background: var(--navy);
+  padding: 0 32px;
+  position: sticky; top: 0; z-index: 200;
+  border-bottom: 3px solid var(--gold);
+}
+.header-inner {
+  max-width: 1180px; margin: 0 auto;
+  display: flex; align-items: stretch; gap: 0; min-height: 56px;
+}
+.brand {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 10px 28px 10px 0;
+  border-right: 1px solid rgba(255,255,255,.12);
+  margin-right: 24px;
+}
+.brand-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 3px;
+}
+.brand-title {
+  font-family: 'Crimson Text', serif;
+  font-size: 18px; color: #fff; font-style: italic; white-space: nowrap;
+}
+.nav-tabs {
+  display: flex; align-items: center; gap: 2px; flex: 1; overflow-x: auto;
+  padding: 8px 0; scrollbar-width: none;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 7px 16px; border: none; background: transparent;
+  color: rgba(255,255,255,.55);
+  font-family: 'Source Sans 3', sans-serif; font-size: 13px;
+  cursor: pointer; border-radius: 6px; transition: all .18s;
+  white-space: nowrap; letter-spacing: .2px;
+}
+.tab-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+.tab-btn.active {
+  color: var(--gold); background: rgba(200,168,75,.14);
+  font-weight: 600;
+}
+.header-meta {
+  display: flex; flex-direction: column; justify-content: center;
+  border-left: 1px solid rgba(255,255,255,.12);
+  padding-left: 24px; margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: rgba(255,255,255,.38);
+  line-height: 1.9; white-space: nowrap;
+}
+.header-meta b { color: rgba(255,255,255,.55); }
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+#hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #243660 100%);
+  padding: 48px 32px 40px;
+  border-bottom: 1px solid var(--lgray);
+}
+.hero-inner { max-width: 1180px; margin: 0 auto; }
+.hero-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--gold); background: rgba(200,168,75,.12);
+  border: 1px solid rgba(200,168,75,.3);
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+}
+.hero-title {
+  font-family: 'Crimson Text', serif;
+  font-size: clamp(26px,3.5vw,42px); color: #fff;
+  line-height: 1.18; margin-bottom: 10px;
+}
+.hero-title em { color: var(--gold); font-style: italic; }
+.hero-sub {
+  font-size: 15px; color: rgba(255,255,255,.55);
+  font-style: italic; margin-bottom: 26px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 4px; padding: 5px 12px;
+  font-size: 12px; color: rgba(255,255,255,.65);
+  display: flex; gap: 6px; align-items: center;
+}
+.chip-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--gold);
+}
+
+/* ── Main wrapper ────────────────────────────────────────────────────────── */
+#main { max-width: 1180px; margin: 0 auto; padding: 32px 32px 80px; }
+
+/* ── Tab panes ───────────────────────────────────────────────────────────── */
+.pane { display: none; }
+.pane.active { display: block; animation: fadeUp .22s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* ── Section headings ────────────────────────────────────────────────────── */
+.sec-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--mgray); margin-bottom: 4px;
+}
+.sec-title {
+  font-family: 'Crimson Text', serif;
+  font-size: 24px; color: var(--navy); margin-bottom: 6px;
+}
+.sec-desc { font-size: 13.5px; color: var(--mgray); margin-bottom: 26px; max-width: 680px; }
+
+/* ── Grid helpers ────────────────────────────────────────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.sidebar { display: grid; grid-template-columns: 290px 1fr; gap: 18px; }
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--white); border: 1px solid var(--lgray);
+  border-radius: var(--radius); padding: 22px;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  font-family: 'Crimson Text', serif; font-size: 15px;
+  color: var(--navy); font-weight: 600; margin-bottom: 16px;
+}
+.card-title-sm {
+  font-size: 13px; color: var(--navy); font-weight: 600; margin-bottom: 12px;
+}
+
+/* ── Stat cards ──────────────────────────────────────────────────────────── */
+.stat {
+  background: var(--smoke);
+  border-radius: var(--radius); padding: 14px 18px;
+  border-left: 4px solid var(--navy);
+}
+.stat.red   { border-left-color: var(--red);   }
+.stat.steel { border-left-color: var(--steel);  }
+.stat.teal  { border-left-color: var(--teal);   }
+.stat.green { border-left-color: var(--green);  }
+.stat.gold  { border-left-color: var(--gold);   }
+.stat-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--mgray); margin-bottom: 5px;
+}
+.stat-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px; font-weight: 600;
+  color: var(--navy); line-height: 1;
+}
+.stat-sub { font-size: 11px; color: var(--mgray); margin-top: 4px; font-style: italic; }
+
+/* ── Sliders ─────────────────────────────────────────────────────────────── */
+.param { margin-bottom: 15px; }
+.param-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.param-name { font-family: 'Crimson Text', serif; font-size: 13px; color: var(--navy); }
+.param-val  { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }
+.param-val.navy  { color: var(--navy);  }
+.param-val.gold  { color: var(--gold);  }
+.param-val.red   { color: var(--red);   }
+.param-val.teal  { color: var(--teal);  }
+.param-val.steel { color: var(--steel); }
+.param-val.green { color: var(--green); }
+input[type=range] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  background: var(--lgray); border-radius: 2px; cursor: pointer; outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 15px; height: 15px;
+  border-radius: 50%; border: 2px solid white;
+  background: var(--steel); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2); transition: transform .12s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type=range].gold-t::-webkit-slider-thumb  { background: var(--gold);  }
+input[type=range].red-t::-webkit-slider-thumb   { background: var(--red);   }
+input[type=range].teal-t::-webkit-slider-thumb  { background: var(--teal);  }
+input[type=range].green-t::-webkit-slider-thumb { background: var(--green); }
+
+/* ── Chart containers — CRITICAL: explicit height ────────────────────────── */
+.chart-box {
+  background: var(--white); border: 1px solid var(--lgray);
+  border-radius: var(--radius); padding: 18px 18px 14px;
+  box-shadow: var(--shadow);
+}
+.chart-label {
+  font-size: 13px; color: var(--navy); font-weight: 600; margin-bottom: 12px;
+}
+.chart-wrap { position: relative; width: 100%; }
+.chart-wrap.h200 { height: 200px; }
+.chart-wrap.h230 { height: 230px; }
+.chart-wrap.h250 { height: 250px; }
+.chart-wrap.h270 { height: 270px; }
+.chart-wrap canvas { display: block; }
+
+/* ── Result banner ───────────────────────────────────────────────────────── */
+.banner {
+  display: flex; align-items: center; gap: 16px;
+  border-radius: var(--radius); padding: 16px 22px;
+  margin-bottom: 18px; transition: background .3s, border-color .3s;
+}
+.banner.green-b { background: rgba(42,122,58,.09); border: 1px solid rgba(42,122,58,.3); }
+.banner.red-b   { background: rgba(176,48,48,.09); border: 1px solid rgba(176,48,48,.3); }
+.banner-icon { font-size: 30px; line-height: 1; }
+.banner-title { font-family: 'Crimson Text', serif; font-size: 18px; color: var(--navy); font-weight: 600; }
+.banner-sub   { font-size: 12.5px; color: var(--mgray); margin-top: 2px; }
+
+/* ── Equation / code display ─────────────────────────────────────────────── */
+.eq-block {
+  background: var(--smoke); border: 1px solid var(--lgray);
+  border-radius: 6px; padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  line-height: 1.9; color: var(--navy); overflow-x: auto;
+  white-space: pre;
+}
+
+/* ── Theorem boxes ───────────────────────────────────────────────────────── */
+.thm {
+  background: rgba(46,80,144,.06);
+  border: 1px solid rgba(46,80,144,.25);
+  border-left: 4px solid var(--steel);
+  border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px;
+}
+.thm.gold-thm { border-left-color: var(--gold); background: rgba(200,168,75,.06); }
+.thm-name { font-family: 'Crimson Text', serif; font-size: 14px; color: var(--steel); font-weight: 600; margin-bottom: 6px; }
+.thm.gold-thm .thm-name { color: #8b6e1a; }
+.thm-body { font-size: 13px; color: #333; line-height: 1.7; }
+.thm-eq {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+  background: rgba(0,0,0,.04); border: 1px solid var(--lgray);
+  border-radius: 4px; padding: 8px 12px; margin: 8px 0;
+  color: var(--navy); overflow-x: auto;
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th {
+  background: var(--navy); color: #fff; padding: 10px 14px;
+  text-align: left; font-size: 11px; letter-spacing: .5px;
+  font-family: 'Source Sans 3', sans-serif; font-weight: 600;
+}
+.tbl td { padding: 8px 14px; border-bottom: 1px solid var(--lgray); color: #444; }
+.tbl tr:nth-child(even) td { background: var(--smoke); }
+.tbl tr:hover td { background: rgba(200,168,75,.06); }
+.tbl td.hl { color: var(--navy); font-weight: 600; }
+
+/* ── Button ──────────────────────────────────────────────────────────────── */
+.btn {
+  padding: 9px 24px; border: none; border-radius: 6px;
+  font-family: 'Source Sans 3', sans-serif; font-size: 14px;
+  font-weight: 600; cursor: pointer; transition: all .18s;
+  background: var(--navy); color: white;
+}
+.btn:hover { background: var(--steel); transform: translateY(-1px); }
+.btn:disabled { background: var(--mgray); cursor: default; transform: none; }
+
+select {
+  padding: 7px 12px; border: 1px solid var(--lgray);
+  border-radius: 6px; font-size: 13px;
+  background: var(--smoke); color: var(--navy);
+  font-family: 'Source Sans 3', sans-serif; cursor: pointer;
+}
+select:focus { outline: none; border-color: var(--steel); }
+
+/* ── Progress ────────────────────────────────────────────────────────────── */
+.progress { height: 3px; background: var(--lgray); border-radius: 2px; overflow: hidden; margin-top: 12px; }
+.progress-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width .4s ease; width: 0%; }
+
+/* ── Intro cards ─────────────────────────────────────────────────────────── */
+.intro-card {
+  background: white; border: 1px solid var(--lgray);
+  border-radius: var(--radius); padding: 20px;
+  border-top: 3px solid var(--steel); box-shadow: var(--shadow);
+  transition: transform .2s, box-shadow .2s;
+}
+.intro-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+.intro-card.gold-c  { border-top-color: var(--gold);  }
+.intro-card.red-c   { border-top-color: var(--red);   }
+.intro-card.green-c { border-top-color: var(--green); }
+.intro-card h3 { font-family: 'Crimson Text', serif; font-size: 16px; color: var(--navy); margin-bottom: 8px; }
+.intro-card p  { font-size: 13.5px; color: #555; line-height: 1.65; }
+
+/* ── Dividers ────────────────────────────────────────────────────────────── */
+.divider { border: none; border-top: 1px solid var(--lgray); margin: 18px 0; }
+.gold-divider { border: none; border-top: 2px solid var(--gold); margin: 28px 0; }
+
+/* ── Live values panel ───────────────────────────────────────────────────── */
+.live-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 0; border-bottom: 1px solid var(--lgray); font-size: 13px;
+}
+.live-row:last-child { border-bottom: none; }
+.live-key { color: var(--mgray); }
+.live-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13px; }
+
+/* ── Legend for scatter ──────────────────────────────────────────────────── */
+.legend { display: flex; gap: 18px; justify-content: center; margin-top: 8px; font-size: 12px; }
+.legend span { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* ── Interpretation box ──────────────────────────────────────────────────── */
+.interp {
+  background: var(--smoke); border-radius: var(--radius);
+  padding: 18px 20px; border-left: 4px solid var(--gold); margin-top: 4px;
+}
+.interp-title { font-family: 'Crimson Text', serif; font-size: 15px; color: var(--navy); font-weight: 600; margin-bottom: 8px; }
+.interp-body  { font-size: 13.5px; color: #444; line-height: 1.75; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media(max-width:820px) {
+  .sidebar, .g2, .g4 { grid-template-columns: 1fr; }
+  #main, #header, #hero { padding-left: 16px; padding-right: 16px; }
+  .header-meta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ HEADER ═══ -->
+<header id="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-eyebrow">Interactive Research Tool</div>
+      <div class="brand-title">GCA Simulator</div>
+    </div>
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="showPane('intro')">① Introduction</button>
+      <button class="tab-btn" onclick="showPane('ssi')">② SSI Explorer</button>
+      <button class="tab-btn" onclick="showPane('gca')">③ GCA Calculator</button>
+      <button class="tab-btn" onclick="showPane('policy')">④ Policy Instruments</button>
+      <button class="tab-btn" onclick="showPane('mc')">⑤ Monte Carlo</button>
+    </nav>
+    <div class="header-meta">
+      <div><b>Journal</b> Int'l Economics</div>
+      <div><b>JEL</b> F10 F11 F12 F52 H56</div>
+      <div><b>Year</b> 2026</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ HERO ════ -->
+<div id="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Working Paper — April 2026</div>
+    <h1 class="hero-title">A New Paradigm for <em>Comparative Advantage</em></h1>
+    <p class="hero-sub">Beyond Heckscher–Ohlin–Samuelson — Coping It with Geostrategic Values</p>
+    <div class="chips">
+      <div class="chip"><span class="chip-lbl">Author</span> Miguel Rocha de Sousa</div>
+      <div class="chip"><span class="chip-lbl">Institution</span> Universidade de Évora</div>
+      <div class="chip"><span class="chip-lbl">Framework</span> Geostrategic Comparative Advantage (GCA)</div>
+      <div class="chip"><span class="chip-lbl">Contact</span> mrsousa@uevora.pt</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ MAIN ════ -->
+<main id="main">
+
+<!-- ══════════════════════ ① INTRODUCTION ══════════════════════ -->
+<div id="pane-intro" class="pane active">
+  <div class="sec-lbl">Section 01</div>
+  <h2 class="sec-title">Introduction &amp; Framework</h2>
+  <p class="sec-desc">Interactive simulations for the GCA framework, which extends classical HOS and Krugman trade theory with national security externalities.</p>
+
+  <div class="g2" style="margin-bottom:18px">
+    <div class="intro-card">
+      <h3>Classical HOS Theory</h3>
+      <p>Comparative advantage determined by factor endowments. Countries export goods intensive in their abundant factor. Four core theorems: Heckscher–Ohlin, Stolper–Samuelson, Rybczynski, Factor Price Equalisation.</p>
+    </div>
+    <div class="intro-card gold-c">
+      <h3>Krugman (1980) — New Trade Theory</h3>
+      <p>Intra-industry trade driven by economies of scale and product differentiation under monopolistic competition. Trade generates variety gains even without comparative advantage. Import protection can promote exports.</p>
+    </div>
+    <div class="intro-card red-c">
+      <h3>Geostrategic Concern</h3>
+      <p>Weaponised interdependence (Farrell &amp; Newman 2019). Supply-chain fragility exposed by COVID-19 and Ukraine war. Baldwin's 'second unbundling' severs firm–worker interests. GATT Article XXI inadequate for modern security needs.</p>
+    </div>
+    <div class="intro-card green-c">
+      <h3>GCA Framework (This Paper)</h3>
+      <p>Sovereign Security Index (SSI) augments welfare. Modified Rybczynski, Stolper–Samuelson, and gains-from-trade theorems. Optimal defence tariff, subsidy, and offset instruments. Security premium can reverse classical trade patterns.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Core Equations</div>
+    <div class="g2">
+      <div>
+        <div class="thm">
+          <div class="thm-name">Definition — Sovereign Security Index (SSI)</div>
+          <div class="thm-body">Good k is strategic if domestic production below threshold q̄ₖ creates a security externality.</div>
+          <div class="thm-eq">Σᵢₖ = 1 − αₖ(1 − xᵢₖ/q̄ₖ)^βₖ  for xᵢₖ &lt; q̄ₖ
+Σᵢₖ = 1                        for xᵢₖ ≥ q̄ₖ</div>
+          <div class="thm-body">αₖ ∈ (0,1] = strategic severity &nbsp;·&nbsp; βₖ > 0 = convexity of penalty</div>
+        </div>
+        <div class="thm gold-thm">
+          <div class="thm-name">Theorem 1 — Geostrategic Comparative Advantage</div>
+          <div class="thm-body">Country H has GCA in good 1 (non-strategic) if and only if:</div>
+          <div class="thm-eq">a₁ᴴ/a₂ᴴ &lt; (a₁ᶠ/a₂ᶠ) · (1 + μ₂ᶠ) / (1 + μ₂ᴴ)</div>
+          <div class="thm-body">μ₂ᴴ = λ₂ᴴ · α₂ · β₂ / q̄₂ is the security premium. A large μ₂ᴴ can reverse classical trade patterns.</div>
+        </div>
+      </div>
+      <div>
+        <div class="thm">
+          <div class="thm-name">Theorem 4 — Optimal Defence Trade Policy</div>
+          <div class="thm-body">The socially optimal DSTP instruments are:</div>
+          <div class="thm-eq">s*ₖ = λᵢₖ · αₖβₖ · (q̄ₖ − xᵢₖ)^(βₖ−1) · q̄ₖ^(−βₖ)
+τ*ₖ = s*ₖ + t^ToT
+δ*ₖ = s*ₖ · γᵢₖ</div>
+          <div class="thm-body">All three converge to zero as xᵢₖ → q̄ₖ — built-in sunset provision.</div>
+        </div>
+        <div class="thm gold-thm">
+          <div class="thm-name">Proposition 1 — Variety–Security Trade-off</div>
+          <div class="thm-body">Optimal domestic variety count in the strategic sector:</div>
+          <div class="thm-eq">n*₂ᵢ = (Lᵢ / f₂σ) · (1 + μ₂ᵢ/σ)</div>
+          <div class="thm-body">Security premium μ₂ᵢ justifies a variety-expansion subsidy beyond infant-industry arguments.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ ② SSI EXPLORER ══════════════════════ -->
+<div id="pane-ssi" class="pane">
+  <div class="sec-lbl">Section 02</div>
+  <h2 class="sec-title">Sovereign Security Index Explorer</h2>
+  <p class="sec-desc">Explore how the SSI shape and optimal defence subsidy depend on security parameters α, β, and shadow value λ.</p>
+
+  <div class="sidebar">
+    <!-- left: controls -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="card-title">SSI Parameters</div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">Strategic severity α</span><span class="param-val red" id="ssi-alpha-disp">0.70</span></div>
+          <input type="range" class="red-t" id="ssi-alpha" min="0.05" max="0.99" step="0.01" value="0.70" oninput="onSSI()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">Convexity β</span><span class="param-val steel" id="ssi-beta-disp">1.50</span></div>
+          <input type="range" id="ssi-beta" min="0.1" max="5" step="0.05" value="1.50" oninput="onSSI()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">Shadow value λ</span><span class="param-val gold" id="ssi-lambda-disp">0.80</span></div>
+          <input type="range" class="gold-t" id="ssi-lambda" min="0.01" max="3" step="0.01" value="0.80" oninput="onSSI()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">Domestic output x₂ᴴ</span><span class="param-val teal" id="ssi-x-disp">0.40</span></div>
+          <input type="range" class="teal-t" id="ssi-x" min="0" max="1.3" step="0.01" value="0.40" oninput="onSSI()">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Live Results</div>
+        <div class="live-row"><span class="live-key">SSI Σ₂ᴴ</span><span class="live-val" id="ssi-live-ssi" style="color:var(--red)">—</span></div>
+        <div class="live-row"><span class="live-key">Security premium μᴴ</span><span class="live-val" id="ssi-live-mu" style="color:var(--navy)">—</span></div>
+        <div class="live-row"><span class="live-key">Optimal subsidy s*</span><span class="live-val" id="ssi-live-sub" style="color:var(--steel)">—</span></div>
+      </div>
+    </div>
+
+    <!-- right: charts -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="chart-box">
+        <div class="chart-label">Sovereign Security Index — shape with current x₂ᴴ marker (▲)</div>
+        <div class="chart-wrap h230"><canvas id="chart-ssi-curve"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Optimal Defence Subsidy s*(x₂ᴴ) — subsidy as function of domestic output</div>
+        <div class="chart-wrap h200"><canvas id="chart-sub-curve"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ ③ GCA CALCULATOR ════════════════════ -->
+<div id="pane-gca" class="pane">
+  <div class="sec-lbl">Section 03</div>
+  <h2 class="sec-title">GCA Calculator — Theorem 1</h2>
+  <p class="sec-desc">Adjust unit labour requirements and security parameters to test whether the GCA condition reverses the classical Ricardian trade pattern.</p>
+
+  <div id="gca-banner" class="banner green-b" style="margin-bottom:18px">
+    <div class="banner-icon" id="gca-icon">✓</div>
+    <div>
+      <div class="banner-title" id="gca-title">No Reversal — Classical &amp; GCA Agree</div>
+      <div class="banner-sub"  id="gca-sub">Both frameworks: H specialises in Good 1</div>
+    </div>
+  </div>
+
+  <div class="g4" style="margin-bottom:18px">
+    <div class="stat steel"><div class="stat-lbl">Home ratio a₁ᴴ/a₂ᴴ</div><div class="stat-val" id="gca-ratio-h">—</div><div class="stat-sub">LHS of Theorem 1</div></div>
+    <div class="stat gold"><div class="stat-lbl">GCA threshold RHS</div><div class="stat-val" id="gca-rhs">—</div><div class="stat-sub">(a₁ᶠ/a₂ᶠ)·(1+μᶠ)/(1+μᴴ)</div></div>
+    <div class="stat red"><div class="stat-lbl">Security premium μᴴ</div><div class="stat-val" id="gca-mu-val">—</div><div class="stat-sub">λ · α · β</div></div>
+    <div class="stat teal"><div class="stat-lbl">Classical CA — Good</div><div class="stat-val" id="gca-classic">—</div><div class="stat-sub">classical specialisation</div></div>
+  </div>
+
+  <div class="sidebar">
+    <!-- left -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card">
+        <div class="card-title">Unit Labour Requirements</div>
+        <div style="font-size:11px;color:var(--mgray);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-family:'JetBrains Mono',monospace">Country H (Home)</div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">a₁ᴴ — Good 1</span><span class="param-val steel" id="gca-a1h-d">0.80</span></div>
+          <input type="range" id="gca-a1h" min="0.1" max="3" step="0.01" value="0.80" oninput="onGCA()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">a₂ᴴ — Good 2</span><span class="param-val steel" id="gca-a2h-d">1.20</span></div>
+          <input type="range" id="gca-a2h" min="0.1" max="3" step="0.01" value="1.20" oninput="onGCA()">
+        </div>
+        <div style="font-size:11px;color:var(--mgray);text-transform:uppercase;letter-spacing:1px;margin:12px 0 10px;font-family:'JetBrains Mono',monospace">Country F (Foreign)</div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">a₁ᶠ — Good 1</span><span class="param-val teal" id="gca-a1f-d">1.10</span></div>
+          <input type="range" class="teal-t" id="gca-a1f" min="0.1" max="3" step="0.01" value="1.10" oninput="onGCA()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">a₂ᶠ — Good 2</span><span class="param-val teal" id="gca-a2f-d">0.90</span></div>
+          <input type="range" class="teal-t" id="gca-a2f" min="0.1" max="3" step="0.01" value="0.90" oninput="onGCA()">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Security Parameters</div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">α (strategic severity)</span><span class="param-val red" id="gca-alpha-d">0.60</span></div>
+          <input type="range" class="red-t" id="gca-alpha" min="0.05" max="0.99" step="0.01" value="0.60" oninput="onGCA()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">β (convexity)</span><span class="param-val red" id="gca-beta-d">1.50</span></div>
+          <input type="range" class="red-t" id="gca-beta" min="0.1" max="5" step="0.05" value="1.50" oninput="onGCA()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">λ (shadow value)</span><span class="param-val red" id="gca-lambda-d">0.80</span></div>
+          <input type="range" class="red-t" id="gca-lambda" min="0.01" max="3" step="0.01" value="0.80" oninput="onGCA()">
+        </div>
+        <div class="param">
+          <div class="param-row"><span class="param-name">μᶠ (foreign premium)</span><span class="param-val teal" id="gca-muf-d">0.00</span></div>
+          <input type="range" class="teal-t" id="gca-muf" min="0" max="3" step="0.01" value="0.00" oninput="onGCA()">
+        </div>
+      </div>
+    </div>
+
+    <!-- right -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="chart-box">
+        <div class="chart-label">GCA Specialisation Boundary — dashed red = current μᴴ</div>
+        <div class="chart-wrap h270"><canvas id="chart-gca-boundary"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title-sm" style="font-family:'JetBrains Mono',monospace;font-size:12px">Theorem 1 — Step-by-Step Check</div>
+        <div class="eq-block" id="gca-check">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ ④ POLICY INSTRUMENTS ════════════════ -->
+<div id="pane-policy" class="pane">
+  <div class="sec-lbl">Section 04</div>
+  <h2 class="sec-title">Strategic Trade Policy</h2>
+  <p class="sec-desc">Compare HOS, Krugman, and GCA-optimal policy instruments. Adjust parameters to see live Theorem 4 calculations.</p>
+
+  <div class="g4" style="margin-bottom:18px">
+    <div class="stat"><div class="stat-lbl">Optimal subsidy s*</div><div class="stat-val" id="pol-sub-val">—</div><div class="stat-sub">Theorem 4, DSTP</div></div>
+    <div class="stat red"><div class="stat-lbl">Security premium μᴴ</div><div class="stat-val" id="pol-mu-val">—</div><div class="stat-sub">λ · α · β</div></div>
+    <div class="stat teal"><div class="stat-lbl">SSI Σ₂ᴴ</div><div class="stat-val" id="pol-ssi-val">—</div><div class="stat-sub">attainment level</div></div>
+    <div class="stat green"><div class="stat-lbl">Sunset at q̄</div><div class="stat-val">1.00</div><div class="stat-sub">s* → 0 as x → q̄</div></div>
+  </div>
+
+  <div class="sidebar" style="margin-bottom:20px">
+    <!-- left -->
+    <div class="card">
+      <div class="card-title">Policy Parameters</div>
+      <div class="param">
+        <div class="param-row"><span class="param-name">α (strategic severity)</span><span class="param-val red" id="pol-alpha-d">0.60</span></div>
+        <input type="range" class="red-t" id="pol-alpha" min="0.05" max="0.99" step="0.01" value="0.60" oninput="onPolicy()">
+      </div>
+      <div class="param">
+        <div class="param-row"><span class="param-name">β (convexity)</span><span class="param-val red" id="pol-beta-d">1.50</span></div>
+        <input type="range" class="red-t" id="pol-beta" min="0.1" max="5" step="0.05" value="1.50" oninput="onPolicy()">
+      </div>
+      <div class="param">
+        <div class="param-row"><span class="param-name">λ (shadow value)</span><span class="param-val gold" id="pol-lambda-d">0.80</span></div>
+        <input type="range" class="gold-t" id="pol-lambda" min="0.01" max="3" step="0.01" value="0.80" oninput="onPolicy()">
+      </div>
+      <div class="param">
+        <div class="param-row"><span class="param-name">Current output x₂ᴴ</span><span class="param-val teal" id="pol-x-d">0.40</span></div>
+        <input type="range" class="teal-t" id="pol-x" min="0" max="1.3" step="0.01" value="0.40" oninput="onPolicy()">
+      </div>
+      <hr class="divider">
+      <div style="font-size:11px;color:var(--mgray);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-family:'JetBrains Mono',monospace">Theorem 4 — Live Values</div>
+      <div class="eq-block" id="pol-eq" style="font-size:11.5px">—</div>
+    </div>
+    <!-- right -->
+    <div class="chart-box">
+      <div class="chart-label">Optimal Defence Subsidy s* vs μᴴ — three values of β (dashed = current μᴴ)</div>
+      <div class="chart-wrap h270"><canvas id="chart-pol-mu"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Policy Comparison: HOS vs Krugman vs GCA</div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead>
+          <tr><th>Instrument</th><th>HOS</th><th>Krugman (1980)</th><th>GCA — This Paper (live)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Optimal tariff</td><td>ToT only</td><td>ToT + scale</td><td class="hl">ToT + scale + security</td></tr>
+          <tr><td>Export subsidy</td><td>Zero</td><td>Rent-shifting</td><td class="hl">Rent + security externality</td></tr>
+          <tr><td>Domestic subsidy</td><td>Distortionary</td><td>IRS justified</td><td class="hl" id="pol-tbl-sub">—</td></tr>
+          <tr><td>Import quota</td><td>≡ Tariff</td><td>Non-equivalent</td><td class="hl">Non-equiv. + SSI penalty</td></tr>
+          <tr><td>Defence offset</td><td>Not modelled</td><td>Not modelled</td><td class="hl" id="pol-tbl-offset">—</td></tr>
+          <tr><td>Alliance discount</td><td>Not modelled</td><td>Not modelled</td><td class="hl">SSI bilateral adjustment</td></tr>
+          <tr><td>Sunset clause</td><td>None</td><td>None</td><td class="hl">s* → 0 as x → q̄ (automatic)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ ⑤ MONTE CARLO ════════════════════════ -->
+<div id="pane-mc" class="pane">
+  <div class="sec-lbl">Section 05</div>
+  <h2 class="sec-title">Monte Carlo Simulation</h2>
+  <p class="sec-desc">Run large-scale simulations over random economy draws to estimate the GCA reversal rate and the distribution of optimal defence subsidies.</p>
+
+  <!-- controls -->
+  <div class="card" style="margin-bottom:18px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:11px;color:var(--mgray);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace">Simulations M</div>
+      <select id="mc-M">
+        <option value="1000">1,000</option>
+        <option value="2000">2,000</option>
+        <option value="4000" selected>4,000</option>
+        <option value="8000">8,000</option>
+        <option value="15000">15,000</option>
+      </select>
+    </div>
+    <button class="btn" id="mc-btn" onclick="runMC()">▶ Run Simulation</button>
+    <div style="font-size:12px;color:var(--mgray);font-style:italic;max-width:400px">
+      Draws: a₁,a₂ ~ U(0.5,2) · α ~ U(0.1,0.9) · β ~ U(0.5,3) · λ ~ LogN(0,0.5) · x₂ ~ U(0,1)
+    </div>
+    <div class="progress" style="width:100%;margin-top:0;flex-basis:100%">
+      <div class="progress-fill" id="mc-prog"></div>
+    </div>
+  </div>
+
+  <!-- stats -->
+  <div class="g4" style="margin-bottom:18px">
+    <div class="stat red"><div class="stat-lbl">GCA Reversal Rate</div><div class="stat-val" id="mc-reversal">—</div><div class="stat-sub">% of economies</div></div>
+    <div class="stat"><div class="stat-lbl">Mean Subsidy E[s*]</div><div class="stat-val" id="mc-mean">—</div><div class="stat-sub">average optimal subsidy</div></div>
+    <div class="stat steel"><div class="stat-lbl">Median Subsidy</div><div class="stat-val" id="mc-median">—</div><div class="stat-sub">50th percentile</div></div>
+    <div class="stat teal"><div class="stat-lbl">Economies Simulated</div><div class="stat-val" id="mc-n">0</div><div class="stat-sub">Monte Carlo draws</div></div>
+  </div>
+
+  <!-- charts row 1 -->
+  <div class="g2" style="margin-bottom:16px">
+    <div class="chart-box">
+      <div class="chart-label">GCA Reversal Rate by Security Premium μᴴ</div>
+      <div class="chart-wrap h250"><canvas id="chart-mc-reversal"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-label">Distribution of Optimal Defence Subsidy s*</div>
+      <div class="chart-wrap h250"><canvas id="chart-mc-hist"></canvas></div>
+    </div>
+  </div>
+
+  <!-- scatter -->
+  <div class="chart-box" style="margin-bottom:16px">
+    <div class="chart-label">Reversal vs Security Premium μᴴ — sample of 600 draws</div>
+    <div class="chart-wrap h250"><canvas id="chart-mc-scatter"></canvas></div>
+    <div class="legend">
+      <span><span class="legend-dot" style="background:rgba(176,48,48,.55)"></span>GCA Reversal</span>
+      <span><span class="legend-dot" style="background:rgba(42,122,58,.55)"></span>No Reversal</span>
+    </div>
+  </div>
+
+  <!-- interpretation -->
+  <div class="interp">
+    <div class="interp-title">Monte Carlo Interpretation</div>
+    <div class="interp-body" id="mc-interp">Run the simulation above to see results and interpretation.</div>
+  </div>
+</div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════ FOOTER ═══ -->
+<footer style="background:var(--navy);padding:28px 32px;margin-top:60px;border-top:3px solid var(--gold)">
+  <div style="max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+    <div style="font-family:'Crimson Text',serif;font-style:italic;color:rgba(255,255,255,.5);font-size:14px">
+      Rocha de Sousa (2026) — Geostrategic Comparative Advantage<br>
+      <span style="font-size:12px">Department of Economics · Universidade de Évora · mrsousa@uevora.pt</span>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1px">
+      JEL: F10 · F11 · F12 · F52 · H56 · D74<br>
+      Journal of International Economics — Working Paper
+    </div>
+  </div>
+</footer>
+
+<!-- ═════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── Colour constants (matching JSX) ─────────────────────────────── */
+const NAVY  = '#1a2744', STEEL = '#2e5090', GOLD  = '#c8a84b';
+const SMOKE = '#f0f4fa', LGRAY = '#e8edf6', MGRAY = '#9aa5bb';
+const RED   = '#b03030', GREEN = '#2a7a3a', TEAL  = '#1e7a7a';
+
+/* ── Math helpers ────────────────────────────────────────────────── */
+const randn    = () => { let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
+const lognorm  = (mu,s) => Math.exp(mu+s*randn());
+const unif     = (a,b)  => a+Math.random()*(b-a);
+const clamp    = (x,a,b)=> Math.max(a,Math.min(b,x));
+const ssiF     = (x,qb,a,b) => x>=qb ? 1 : 1-a*Math.pow(1-x/qb,b);
+const optSubF  = (lam,a,b,qb,x) => x<qb ? lam*a*b*Math.pow(qb-x,b-1)/Math.pow(qb,b) : 0;
+const classCA  = (a1H,a2H,a1F,a2F) => (a1H/a2H)<(a1F/a2F);
+const gcaCA    = (a1H,a2H,a1F,a2F,muH,muF=0) => (a1H/a2H)<(a1F/a2F)*(1+muF)/(1+muH);
+
+/* ── Chart.js global defaults (matching Recharts look) ───────────── */
+Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+Chart.defaults.font.size   = 11;
+Chart.defaults.color       = MGRAY;
+
+const gridCfg = { color: LGRAY, lineWidth: 0.8 };
+const tickCfg = { color: MGRAY };
+
+/* ── Chart registry — destroy before recreate ────────────────────── */
+const CHARTS = {};
+function getOrCreate(id, type, data, options) {
+  if (CHARTS[id]) { CHARTS[id].destroy(); }
+  const ctx = document.getElementById(id).getContext('2d');
+  CHARTS[id] = new Chart(ctx, { type, data, options });
+  return CHARTS[id];
+}
+
+/* ── Common axis options ─────────────────────────────────────────── */
+const axisBase = (title='') => ({
+  grid: gridCfg, ticks: tickCfg,
+  ...(title ? { title: { display:true, text:title, color:MGRAY, font:{size:11} } } : {}),
+});
+
+/* ── Tab switching ───────────────────────────────────────────────── */
+function showPane(id) {
+  document.querySelectorAll('.pane').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  const map = {intro:0, ssi:1, gca:2, policy:3, mc:4};
+  document.querySelectorAll('.tab-btn')[map[id]].classList.add('active');
+  // redraw active tab charts (RAF so DOM is visible first)
+  requestAnimationFrame(() => {
+    if (id==='ssi')    onSSI();
+    if (id==='gca')    onGCA();
+    if (id==='policy') onPolicy();
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ② SSI EXPLORER
+══════════════════════════════════════════════════════════════════ */
+function onSSI() {
+  const alpha  = +document.getElementById('ssi-alpha').value;
+  const beta   = +document.getElementById('ssi-beta').value;
+  const lambda = +document.getElementById('ssi-lambda').value;
+  const x      = +document.getElementById('ssi-x').value;
+  const qb     = 1;
+
+  document.getElementById('ssi-alpha-disp').textContent  = alpha.toFixed(2);
+  document.getElementById('ssi-beta-disp').textContent   = beta.toFixed(2);
+  document.getElementById('ssi-lambda-disp').textContent = lambda.toFixed(2);
+  document.getElementById('ssi-x-disp').textContent      = x.toFixed(2);
+
+  const ssiVal = ssiF(x,qb,alpha,beta);
+  const muH    = lambda*alpha*beta;
+  const sub    = clamp(optSubF(lambda,alpha,beta,qb,x),0,50);
+
+  document.getElementById('ssi-live-ssi').textContent = ssiVal.toFixed(4);
+  document.getElementById('ssi-live-mu').textContent  = muH.toFixed(4);
+  document.getElementById('ssi-live-sub').textContent = sub.toFixed(4);
+
+  /* ── Chart 1: SSI curve ────────────────────── */
+  const xPts = Array.from({length:100},(_,i)=>(i/99*1.3));
+  const ySSI = xPts.map(xi => ssiF(xi,qb,alpha,beta));
+
+  // Find index closest to current x for point annotation
+  const closestIdx = xPts.reduce((bi,xi,i)=>Math.abs(xi-x)<Math.abs(xPts[bi]-x)?i:bi,0);
+  const pointData = ySSI.map((v,i)=> i===closestIdx ? v : null);
+
+  getOrCreate('chart-ssi-curve','line',{
+    labels: xPts.map(v=>v.toFixed(2)),
+    datasets:[
+      {
+        label:'SSI Σᵢₖ',
+        data: ySSI,
+        borderColor: STEEL, borderWidth:2.5,
+        backgroundColor:'rgba(46,80,144,.1)',
+        fill:true, tension:0.4, pointRadius:0,
+      },
+      {
+        label:`x₂ᴴ = ${x.toFixed(2)}`,
+        data: pointData,
+        borderColor:'rgba(0,0,0,0)',
+        backgroundColor: RED,
+        pointRadius: xPts.map((_,i)=> i===closestIdx?7:0),
+        pointStyle:'triangle',
+        pointHoverRadius:8,
+        showLine:false,
+      },
+    ]
+  },{
+    maintainAspectRatio:false,
+    animation:{duration:120},
+    plugins:{
+      legend:{position:'top', labels:{boxWidth:14, color:NAVY}},
+      tooltip:{mode:'index', intersect:false,
+        callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(4)}`}
+      },
+    },
+    scales:{
+      x:{ ...axisBase('x₂ᴴ (domestic output)'),
+          ticks:{...tickCfg, maxTicksLimit:8, callback:(_,i)=>xPts[i]?.toFixed(1)??''},
+      },
+      y:{ ...axisBase('SSI'), min:0, max:1.05 },
+    },
+  });
+
+  /* ── Chart 2: Subsidy curve ────────────────── */
+  const xSub  = Array.from({length:100},(_,i)=>i/99*0.999);
+  const ySub  = xSub.map(xi=>clamp(optSubF(lambda,alpha,beta,qb,xi),0,30));
+  const ciSub = xSub.reduce((bi,xi,i)=>Math.abs(xi-x)<Math.abs(xSub[bi]-x)?i:bi,0);
+  const subPt = ySub.map((v,i)=>i===ciSub?v:null);
+
+  getOrCreate('chart-sub-curve','line',{
+    labels: xSub.map(v=>v.toFixed(2)),
+    datasets:[
+      {
+        label:'s*(x₂ᴴ)',
+        data:ySub,
+        borderColor:GOLD, borderWidth:2.5,
+        backgroundColor:'rgba(200,168,75,.12)',
+        fill:true, tension:0.4, pointRadius:0,
+      },
+      {
+        label:`current x₂ᴴ`,
+        data:subPt,
+        backgroundColor:RED,
+        pointRadius:xSub.map((_,i)=>i===ciSub?7:0),
+        pointStyle:'triangle',
+        showLine:false,
+        borderColor:'rgba(0,0,0,0)',
+      },
+    ]
+  },{
+    maintainAspectRatio:false,
+    animation:{duration:120},
+    plugins:{
+      legend:{position:'top',labels:{boxWidth:14,color:NAVY}},
+      tooltip:{mode:'index',intersect:false,
+        callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(4)??''}`}
+      },
+    },
+    scales:{
+      x:{...axisBase('x₂ᴴ (domestic output)'),
+         ticks:{...tickCfg, maxTicksLimit:8, callback:(_,i)=>xSub[i]?.toFixed(1)??''}},
+      y:{...axisBase('Optimal subsidy s*'), min:0},
+    },
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ③ GCA CALCULATOR
+══════════════════════════════════════════════════════════════════ */
+function onGCA() {
+  const a1H    = +document.getElementById('gca-a1h').value;
+  const a2H    = +document.getElementById('gca-a2h').value;
+  const a1F    = +document.getElementById('gca-a1f').value;
+  const a2F    = +document.getElementById('gca-a2f').value;
+  const alpha  = +document.getElementById('gca-alpha').value;
+  const beta   = +document.getElementById('gca-beta').value;
+  const lambda = +document.getElementById('gca-lambda').value;
+  const muF    = +document.getElementById('gca-muf').value;
+
+  // update displays
+  const disp = {a1h:a1H,a2h:a2H,a1f:a1F,a2f:a2F,alpha,beta,lambda,muf:muF};
+  Object.entries(disp).forEach(([k,v])=>{
+    document.getElementById(`gca-${k}-d`).textContent=v.toFixed(2);
+  });
+
+  const muH    = lambda*alpha*beta;
+  const ratioH = a1H/a2H;
+  const ratioF = a1F/a2F;
+  const rhs    = ratioF*(1+muF)/(1+muH);
+  const cc     = classCA(a1H,a2H,a1F,a2F);
+  const gc     = gcaCA(a1H,a2H,a1F,a2F,muH,muF);
+  const rev    = cc!==gc;
+
+  document.getElementById('gca-ratio-h').textContent = ratioH.toFixed(4);
+  document.getElementById('gca-rhs').textContent     = rhs.toFixed(4);
+  document.getElementById('gca-mu-val').textContent  = muH.toFixed(4);
+  document.getElementById('gca-classic').textContent = `Good ${cc?1:2}`;
+
+  const banner = document.getElementById('gca-banner');
+  banner.className = 'banner '+(rev?'red-b':'green-b');
+  document.getElementById('gca-icon').textContent  = rev?'⚡':'✓';
+  document.getElementById('gca-title').textContent = rev ? 'GCA Reversal Detected!' : 'No Reversal — Classical & GCA Agree';
+  document.getElementById('gca-sub').textContent   = rev
+    ? `Classical: Good ${cc?1:2}  →  GCA: Good ${gc?1:2}`
+    : `Both frameworks: H specialises in Good ${gc?1:2}`;
+
+  document.getElementById('gca-check').textContent =
+    `// Theorem 1 — GCA Condition\n`+
+    `a₁ᴴ / a₂ᴴ   = ${a1H.toFixed(4)} / ${a2H.toFixed(4)} = ${ratioH.toFixed(6)}\n`+
+    `a₁ᶠ / a₂ᶠ   = ${a1F.toFixed(4)} / ${a2F.toFixed(4)} = ${ratioF.toFixed(6)}\n`+
+    `μᴴ           = ${lambda.toFixed(3)} · ${alpha.toFixed(3)} · ${beta.toFixed(3)} = ${muH.toFixed(6)}\n`+
+    `RHS threshold = ${ratioF.toFixed(4)} · ${((1+muF)/(1+muH)).toFixed(4)} = ${rhs.toFixed(6)}\n\n`+
+    `LHS ${ratioH<rhs?'<':'≥'} RHS  →  H specialises in Good ${gc?1:2}`+
+    (rev?`\n⚡ REVERSAL: Classical says Good ${cc?1:2}, GCA says Good ${gc?1:2}`:`\n✓ No reversal — classical and GCA agree`);
+
+  /* ── Chart 3: GCA boundary ─────────────────── */
+  const muPts = Array.from({length:120},(_,i)=>i/119*4);
+  const threshold = muPts.map(mu => ratioF*(1+muF)/(1+mu));
+  const homeRatio = muPts.map(()=> ratioH);
+
+  // Find current μᴴ index for reference line approach:
+  // We add a vertical-line dataset spanning [min,max] at x=muH
+  const refIdx = muPts.reduce((bi,mu,i)=>Math.abs(mu-muH)<Math.abs(muPts[bi]-muH)?i:bi,0);
+
+  getOrCreate('chart-gca-boundary','line',{
+    labels: muPts.map(v=>v.toFixed(2)),
+    datasets:[
+      {
+        label:'GCA threshold (RHS)',
+        data:threshold,
+        borderColor:GOLD, borderWidth:2.5,
+        backgroundColor:'rgba(200,168,75,.1)',
+        fill:true, tension:0.3, pointRadius:0,
+      },
+      {
+        label:'Home ratio a₁ᴴ/a₂ᴴ',
+        data:homeRatio,
+        borderColor:STEEL, borderWidth:2,
+        borderDash:[8,4],
+        tension:0, pointRadius:0, fill:false,
+      },
+      {
+        label:`μᴴ = ${muH.toFixed(3)}`,
+        data: muPts.map((_,i)=> i===refIdx ? Math.max(...threshold.filter(isFinite))*1.1 : null),
+        borderColor:RED, borderWidth:1.5,
+        borderDash:[5,3],
+        pointRadius:0, fill:false, showLine:true,
+        spanGaps:false,
+      },
+    ]
+  },{
+    maintainAspectRatio:false,
+    animation:{duration:120},
+    plugins:{
+      legend:{position:'top',labels:{boxWidth:14,color:NAVY}},
+      tooltip:{mode:'index',intersect:false},
+    },
+    scales:{
+      x:{...axisBase('Security premium μᴴ'),
+         ticks:{...tickCfg,maxTicksLimit:9,callback:(_,i)=>muPts[i]?.toFixed(1)??''}},
+      y:{...axisBase('Ratio value'), min:0, max: Math.min(6, Math.max(ratioH,ratioF)*1.4)},
+    },
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ④ POLICY INSTRUMENTS
+══════════════════════════════════════════════════════════════════ */
+function onPolicy() {
+  const alpha  = +document.getElementById('pol-alpha').value;
+  const beta   = +document.getElementById('pol-beta').value;
+  const lambda = +document.getElementById('pol-lambda').value;
+  const x      = +document.getElementById('pol-x').value;
+  const qb     = 1;
+
+  document.getElementById('pol-alpha-d').textContent  = alpha.toFixed(2);
+  document.getElementById('pol-beta-d').textContent   = beta.toFixed(2);
+  document.getElementById('pol-lambda-d').textContent = lambda.toFixed(2);
+  document.getElementById('pol-x-d').textContent      = x.toFixed(2);
+
+  const muH = lambda*alpha*beta;
+  const ssi = ssiF(x,qb,alpha,beta);
+  const sub = clamp(optSubF(lambda,alpha,beta,qb,x),0,99);
+
+  document.getElementById('pol-sub-val').textContent = sub.toFixed(4);
+  document.getElementById('pol-mu-val').textContent  = muH.toFixed(4);
+  document.getElementById('pol-ssi-val').textContent = ssi.toFixed(4);
+  document.getElementById('pol-tbl-sub').textContent = `s* = ${sub.toFixed(4)} (Theorem 4, live)`;
+  document.getElementById('pol-tbl-offset').textContent = `δ* = ${sub.toFixed(4)} · γ`;
+  document.getElementById('pol-eq').textContent =
+    `s* = λ·α·β·(q̄−x)^(β−1)·q̄^(−β)\n`+
+    `   = ${lambda.toFixed(3)}·${alpha.toFixed(3)}·${beta.toFixed(3)}·${Math.max(0,qb-x).toFixed(3)}^${(beta-1).toFixed(2)}\n`+
+    `   = ${sub.toFixed(6)}\n`+
+    `τ* = s* + t^ToT = ${sub.toFixed(4)} + t^ToT\n`+
+    `δ* = s* · γ    = ${sub.toFixed(4)} · γ`;
+
+  /* ── Chart 4: subsidy vs μ, 3 betas ──────── */
+  const muPts4 = Array.from({length:100},(_,i)=>i/99*3);
+  const makeLine = (b) => muPts4.map(mu=>{
+    const lam_ = mu > 0 ? mu/(alpha*b) : 0;
+    return clamp(optSubF(lam_,alpha,b,qb,x),0,12);
+  });
+
+  const refIdx4 = muPts4.reduce((bi,mu,i)=>Math.abs(mu-muH)<Math.abs(muPts4[bi]-muH)?i:bi,0);
+
+  getOrCreate('chart-pol-mu','line',{
+    labels: muPts4.map(v=>v.toFixed(2)),
+    datasets:[
+      { label:'β = 0.5', data:makeLine(0.5), borderColor:TEAL,  borderWidth:2.2, tension:0.3, pointRadius:0, fill:false },
+      { label:'β = 1.0', data:makeLine(1.0), borderColor:STEEL, borderWidth:2.2, tension:0.3, pointRadius:0, fill:false },
+      { label:'β = 2.0', data:makeLine(2.0), borderColor:GOLD,  borderWidth:2.2, tension:0.3, pointRadius:0, fill:false },
+      {
+        label:`μᴴ = ${muH.toFixed(3)}`,
+        data: muPts4.map((_,i)=>i===refIdx4?12:null),
+        borderColor:RED, borderWidth:1.5, borderDash:[5,3],
+        pointRadius:0, fill:false, showLine:true, spanGaps:false,
+      },
+    ]
+  },{
+    maintainAspectRatio:false,
+    animation:{duration:120},
+    plugins:{legend:{position:'top',labels:{boxWidth:14,color:NAVY}},
+      tooltip:{mode:'index',intersect:false}},
+    scales:{
+      x:{...axisBase('Security premium μᴴ'),
+         ticks:{...tickCfg,maxTicksLimit:8,callback:(_,i)=>muPts4[i]?.toFixed(1)??''}},
+      y:{...axisBase('Optimal subsidy s*'),min:0},
+    },
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ⑤ MONTE CARLO
+══════════════════════════════════════════════════════════════════ */
+let mcRows = [];
+
+function setProgress(p) {
+  document.getElementById('mc-prog').style.width = p+'%';
+}
+
+function runMC() {
+  const M   = +document.getElementById('mc-M').value;
+  const btn = document.getElementById('mc-btn');
+  btn.disabled = true; btn.textContent = 'Running…';
+  setProgress(10);
+
+  // Chunk processing so UI stays live
+  const CHUNK = 1000;
+  const rows  = [];
+  let   done  = 0;
+
+  function processChunk() {
+    const end = Math.min(done+CHUNK, M);
+    for(let i=done; i<end; i++){
+      const a1H=unif(.5,2),a2H=unif(.5,2),a1F=unif(.5,2),a2F=unif(.5,2);
+      const a=unif(.1,.9),b=unif(.5,3),lam=lognorm(0,.5),x=unif(0,1);
+      const muH = lam*a*b;
+      const cc  = classCA(a1H,a2H,a1F,a2F);
+      const gc  = gcaCA(a1H,a2H,a1F,a2F,muH);
+      const sub = clamp(optSubF(lam,a,b,1,x),0,99);
+      rows.push({muH,sub,reversal:cc!==gc,cc,gc});
+    }
+    done = end;
+    setProgress(10 + 80*(done/M));
+    if(done < M) { setTimeout(processChunk, 0); }
+    else          { finishMC(rows, M, btn); }
+  }
+  setTimeout(processChunk, 20);
+}
+
+function finishMC(rows, M, btn) {
+  mcRows = rows;
+  setProgress(95);
+
+  const revRate = (rows.filter(r=>r.reversal).length/rows.length*100).toFixed(1);
+  const subs    = rows.map(r=>r.sub).filter(s=>s<10);
+  const mean_   = (subs.reduce((a,b)=>a+b,0)/subs.length).toFixed(4);
+  const med_    = [...subs].sort((a,b)=>a-b)[Math.floor(subs.length/2)].toFixed(4);
+
+  document.getElementById('mc-reversal').textContent = revRate+'%';
+  document.getElementById('mc-mean').textContent     = mean_;
+  document.getElementById('mc-median').textContent   = med_;
+  document.getElementById('mc-n').textContent        = M.toLocaleString();
+
+  /* ── Chart 5: Reversal rate area chart ─────── */
+  const maxMu  = Math.min(5, Math.max(...rows.map(r=>r.muH)));
+  const BINS   = 20;
+  const bstep  = maxMu/BINS;
+  const revBins = Array.from({length:BINS},(_,bi)=>{
+    const lo=bi*bstep, hi=(bi+1)*bstep;
+    const sub=rows.filter(r=>r.muH>=lo&&r.muH<hi);
+    return { mu:((lo+hi)/2).toFixed(2), val: sub.length ? sub.filter(r=>r.reversal).length/sub.length*100 : 0 };
+  });
+
+  getOrCreate('chart-mc-reversal','line',{
+    labels: revBins.map(d=>d.mu),
+    datasets:[{
+      label:'Reversal rate %',
+      data: revBins.map(d=>+d.val.toFixed(1)),
+      borderColor: RED, borderWidth:2.5,
+      backgroundColor:'rgba(176,48,48,.12)',
+      fill:true, tension:0.4, pointRadius:3,
+      pointBackgroundColor:RED,
+    }]
+  },{
+    maintainAspectRatio:false,
+    animation:{duration:300},
+    plugins:{legend:{position:'top',labels:{boxWidth:14,color:NAVY}},
+      tooltip:{callbacks:{label:ctx=>`Reversal: ${ctx.parsed.y.toFixed(1)}%`}}
+    },
+    scales:{
+      x:{...axisBase('μᴴ (security premium)'),ticks:{...tickCfg,maxTicksLimit:10}},
+      y:{...axisBase('Reversal rate (%)'), min:0, max:100,
+         ticks:{...tickCfg, callback:v=>v+'%'}},
+    },
+  });
+
+  /* ── Chart 6: Subsidy histogram ─────────────── */
+  const maxS   = Math.min(8, Math.max(...subs));
+  const HBINS  = 30;
+  const hstep  = maxS/HBINS;
+  const hist   = Array.from({length:HBINS},(_,bi)=>{
+    const lo=bi*hstep, hi=(bi+1)*hstep;
+    return { label:lo.toFixed(1), count:subs.filter(s=>s>=lo&&s<hi).length };
+  });
+  const barColors = hist.map((_,i)=>{
+    const t = i/HBINS;
+    if(t<0.33) return TEAL; if(t<0.66) return STEEL; return NAVY;
+  });
+
+  getOrCreate('chart-mc-hist','bar',{
+    labels: hist.map(d=>d.label),
+    datasets:[{
+      label:'Frequency',
+      data:  hist.map(d=>d.count),
+      backgroundColor: barColors,
+      borderRadius:3, borderSkipped:false,
+    }]
+  },{
+    maintainAspectRatio:false,
+    animation:{duration:300},
+    plugins:{legend:{position:'top',labels:{boxWidth:14,color:NAVY}}},
+    scales:{
+      x:{...axisBase('s* value'),ticks:{...tickCfg,maxTicksLimit:8}},
+      y:{...axisBase('Frequency'),min:0},
+    },
+  });
+
+  /* ── Chart 7: Scatter μᴴ vs reversal ─────────── */
+  const sample  = rows.slice(0,600);
+  const revPts  = sample.filter(r=>r.reversal ).map(r=>({x:Math.min(r.muH,4),y:1}));
+  const noRevPts= sample.filter(r=>!r.reversal).map(r=>({x:Math.min(r.muH,4),y:0}));
+
+  getOrCreate('chart-mc-scatter','scatter',{
+    datasets:[
+      { label:'GCA Reversal',  data:revPts,   backgroundColor:'rgba(176,48,48,.45)',
+        pointRadius:4, pointHoverRadius:6 },
+      { label:'No Reversal',   data:noRevPts, backgroundColor:'rgba(42,122,58,.4)',
+        pointRadius:4, pointHoverRadius:6 },
+    ]
+  },{
+    maintainAspectRatio:false,
+    animation:{duration:300},
+    plugins:{
+      legend:{position:'top',labels:{boxWidth:14,color:NAVY}},
+      tooltip:{callbacks:{
+        label:ctx=>`μᴴ=${ctx.parsed.x.toFixed(3)}  ${ctx.dataset.label}`
+      }},
+    },
+    scales:{
+      x:{...axisBase('μᴴ (security premium)'), min:0, max:4},
+      y:{...axisBase(''), min:-0.15, max:1.15,
+         ticks:{...tickCfg, callback:v=> v===1?'Reversal':v===0?'No reversal':''}},
+    },
+  });
+
+  document.getElementById('mc-interp').innerHTML =
+    `Simulation of <strong>${M.toLocaleString()} random economies</strong> confirms <em>Theorem 1</em>: as the security premium μᴴ rises, the probability that the GCA ranking diverges from the classical Ricardian ranking increases sharply. The overall reversal rate is <strong>${revRate}%</strong>. Subsidies s* are right-skewed — mean <strong>${mean_}</strong>, median <strong>${med_}</strong> — consistent with most economies near the security threshold and a few with extreme premia. This is empirically plausible for sectors such as semiconductors, critical minerals, and advanced aerospace.`;
+
+  setProgress(100);
+  btn.disabled = false; btn.textContent = '▶ Run Simulation';
+  setTimeout(()=>setProgress(0), 700);
+}
+
+/* ── Initialise on load ──────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  // Init SSI tab (it's not the active tab so we trigger manually)
+  // Active tab is intro — no charts there. Pre-warm others on first switch.
+  // Auto-run MC on load
+  runMC();
+});
+
+// Redraw on resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const active = document.querySelector('.pane.active')?.id?.replace('pane-','');
+    if(active==='ssi')    onSSI();
+    if(active==='gca')    onGCA();
+    if(active==='policy') onPolicy();
+  }, 200);
+});
+</script>
+</body>
+</html>

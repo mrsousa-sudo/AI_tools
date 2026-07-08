@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Home-Bias & Sustainable Trade — Global Dashboard | Rocha de Sousa (2026)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #0D1B2A;
+  --ink:    #162032;
+  --blue:   #1A6FA3;
+  --teal:   #0EA5A0;
+  --amber:  #E8A135;
+  --rose:   #C94F4F;
+  --green:  #2E9E6B;
+  --slate:  #2B3A4A;
+  --dim:    #3C4F62;
+  --mid:    #5E7080;
+  --muted:  #8EA0B0;
+  --line:   #1E2E3E;
+  --glass:  rgba(255,255,255,0.04);
+  --glassh: rgba(255,255,255,0.08);
+  --white:  #F0F4F8;
+  --ff-head: 'Playfair Display', Georgia, serif;
+  --ff-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --ff-mono: 'IBM Plex Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--navy);
+  color: var(--white);
+  font-family: var(--ff-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 3px; }
+
+/* ── HEADER ──────────────────────────────────────────────── */
+#header {
+  background: linear-gradient(135deg, #0D1B2A 0%, #0F2233 60%, #0D1B2A 100%);
+  border-bottom: 1px solid var(--line);
+  padding: 0 2rem;
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; gap: 1.5rem;
+  height: 58px;
+  backdrop-filter: blur(12px);
+}
+#header .logo { display: flex; align-items: center; gap: .6rem; }
+#header .logo-mark {
+  width: 32px; height: 32px; border-radius: 6px;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; font-family: var(--ff-head);
+  flex-shrink: 0;
+}
+#header .title-group h1 { font-family: var(--ff-head); font-size: 1rem; font-weight: 600; color: var(--white); }
+#header .title-group p  { font-size: .72rem; color: var(--muted); }
+#header .spacer { flex: 1; }
+.nav-tabs { display: flex; gap: .2rem; }
+.nav-tab {
+  padding: .35rem .9rem; border-radius: 5px; cursor: pointer; font-size: .8rem;
+  color: var(--muted); border: 1px solid transparent; transition: all .2s;
+  font-weight: 500; white-space: nowrap;
+}
+.nav-tab:hover { color: var(--white); background: var(--glass); }
+.nav-tab.active { color: var(--teal); border-color: var(--teal); background: rgba(14,165,160,.08); }
+
+/* ── LAYOUT ──────────────────────────────────────────────── */
+#app { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 58px); }
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+#sidebar {
+  background: var(--ink);
+  border-right: 1px solid var(--line);
+  overflow-y: auto; padding-bottom: 2rem;
+}
+.sidebar-section { padding: 1rem 1.2rem; border-bottom: 1px solid var(--line); }
+.sidebar-section h3 { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: .8rem; font-family: var(--ff-body); font-weight: 600; }
+
+/* Region buttons */
+.region-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+.region-btn {
+  padding: .4rem .5rem; border-radius: 4px; cursor: pointer; font-size: .75rem;
+  font-weight: 500; text-align: center; border: 1px solid var(--line);
+  color: var(--muted); background: var(--glass); transition: all .18s;
+}
+.region-btn:hover { color: var(--white); border-color: var(--dim); }
+.region-btn.active { color: var(--navy); font-weight: 600; }
+
+/* Search */
+.search-wrap { position: relative; margin-bottom: .6rem; }
+.search-wrap input {
+  width: 100%; padding: .45rem .5rem .45rem 2rem;
+  background: var(--glass); border: 1px solid var(--line);
+  border-radius: 5px; color: var(--white); font-size: .82rem;
+  font-family: var(--ff-body); outline: none; transition: border .18s;
+}
+.search-wrap input:focus { border-color: var(--teal); }
+.search-wrap .icon { position: absolute; left: .6rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .8rem; }
+.country-list { max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: .2rem; }
+.country-item {
+  padding: .38rem .5rem; border-radius: 4px; cursor: pointer; font-size: .8rem;
+  color: var(--muted); display: flex; justify-content: space-between; align-items: center;
+  transition: all .15s;
+}
+.country-item:hover { background: var(--glassh); color: var(--white); }
+.country-item.selected { background: rgba(14,165,160,.12); color: var(--teal); }
+.country-item .flag { font-size: .9rem; }
+.country-item .lambda { font-family: var(--ff-mono); font-size: .72rem; color: var(--dim); }
+.country-item.selected .lambda { color: var(--teal); opacity: .7; }
+
+/* Sliders */
+.slider-group { display: flex; flex-direction: column; gap: .8rem; }
+.slider-item label { display: flex; justify-content: space-between; align-items: center; margin-bottom: .3rem; }
+.slider-item label span:first-child { font-size: .78rem; color: var(--muted); font-family: var(--ff-mono); }
+.slider-item label .val { font-family: var(--ff-mono); font-size: .8rem; color: var(--teal); font-weight: 600; }
+.slider-item input[type=range] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  background: var(--dim); border-radius: 2px; outline: none;
+}
+.slider-item input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--teal); cursor: pointer; border: 2px solid var(--ink);
+}
+
+/* ── MAIN ────────────────────────────────────────────────── */
+#main { overflow-y: auto; background: var(--navy); }
+
+/* ── PANELS ──────────────────────────────────────────────── */
+.panel { display: none; padding: 1.5rem; }
+.panel.active { display: block; }
+
+/* ── HERO STATS ──────────────────────────────────────────── */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.kpi {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 8px; padding: 1rem 1.1rem;
+  position: relative; overflow: hidden;
+  transition: border-color .2s;
+}
+.kpi:hover { border-color: var(--dim); }
+.kpi::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent, var(--teal));
+}
+.kpi .label { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: .4rem; }
+.kpi .value { font-size: 1.8rem; font-family: var(--ff-head); font-weight: 700; color: var(--white); line-height: 1; }
+.kpi .value span { font-size: .9rem; color: var(--muted); font-family: var(--ff-body); font-weight: 400; }
+.kpi .sub { font-size: .72rem; color: var(--muted); margin-top: .3rem; }
+.kpi .delta { font-size: .75rem; font-weight: 600; margin-top: .3rem; }
+.delta.up { color: var(--green); } .delta.dn { color: var(--rose); }
+
+/* ── SECTION HEADER ──────────────────────────────────────── */
+.sec-hdr { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1rem; }
+.sec-hdr h2 { font-family: var(--ff-head); font-size: 1.1rem; font-weight: 600; }
+.sec-hdr p { font-size: .78rem; color: var(--muted); }
+.badge { background: var(--glass); border: 1px solid var(--line); border-radius: 3px; padding: .15rem .5rem; font-size: .68rem; color: var(--muted); font-family: var(--ff-mono); }
+
+/* ── CHART GRID ──────────────────────────────────────────── */
+.chart-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.chart-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.chart-card {
+  background: var(--glass); border: 1px solid var(--line);
+  border-radius: 8px; padding: 1rem;
+}
+.chart-card h4 { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .6rem; }
+.chart-card canvas { max-height: 200px; }
+
+/* ── TABLE ───────────────────────────────────────────────── */
+.data-table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+.data-table thead tr { border-bottom: 1px solid var(--line); }
+.data-table thead th { padding: .5rem .7rem; text-align: left; font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.data-table tbody tr { border-bottom: 1px solid rgba(255,255,255,.03); transition: background .12s; }
+.data-table tbody tr:hover { background: var(--glassh); }
+.data-table td { padding: .4rem .7rem; color: var(--muted); }
+.data-table td.strong { color: var(--white); font-weight: 500; }
+.data-table td.mono { font-family: var(--ff-mono); font-size: .75rem; }
+.data-table td.pos { color: var(--green); font-family: var(--ff-mono); }
+.data-table td.neg { color: var(--rose); font-family: var(--ff-mono); }
+.data-table td.teal { color: var(--teal); font-family: var(--ff-mono); }
+.rank-chip { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 4px; background: var(--glass); font-size: .7rem; font-family: var(--ff-mono); color: var(--muted); }
+
+/* ── BAR ─────────────────────────────────────────────────── */
+.mini-bar-wrap { display: flex; align-items: center; gap: .5rem; }
+.mini-bar { height: 6px; border-radius: 3px; min-width: 2px; }
+.mini-bar-lbl { font-family: var(--ff-mono); font-size: .72rem; color: var(--teal); }
+
+/* ── WORLD MAP SVG placeholder ───────────────────────────── */
+.map-placeholder {
+  background: var(--glass); border: 1px solid var(--line); border-radius: 8px;
+  padding: 1.5rem; text-align: center; margin-bottom: 1.5rem;
+}
+.map-legend { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: .8rem; }
+.map-legend-item { display: flex; align-items: center; gap: .4rem; font-size: .72rem; color: var(--muted); }
+.map-legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+/* ── POLICY SIM ──────────────────────────────────────────── */
+.policy-grid { display: grid; grid-template-columns: 350px 1fr; gap: 1.5rem; }
+.policy-controls { background: var(--glass); border: 1px solid var(--line); border-radius: 8px; padding: 1.2rem; }
+.policy-controls h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 1rem; }
+.policy-toggle { display: flex; align-items: center; justify-content: space-between; padding: .6rem 0; border-bottom: 1px solid var(--line); }
+.policy-toggle:last-of-type { border-bottom: none; }
+.policy-toggle label { font-size: .82rem; color: var(--white); cursor: pointer; }
+.policy-toggle .sub { font-size: .72rem; color: var(--muted); }
+.toggle { position: relative; width: 36px; height: 20px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle .track { position: absolute; inset: 0; border-radius: 10px; background: var(--dim); cursor: pointer; transition: .2s; }
+.toggle .track::after { content: ''; position: absolute; width: 14px; height: 14px; top: 3px; left: 3px; border-radius: 50%; background: white; transition: .2s; }
+.toggle input:checked + .track { background: var(--teal); }
+.toggle input:checked + .track::after { transform: translateX(16px); }
+.sim-result { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin-top: 1rem; }
+.sim-box { background: var(--glass); border: 1px solid var(--line); border-radius: 6px; padding: .8rem; text-align: center; }
+.sim-box .sim-val { font-size: 1.4rem; font-family: var(--ff-head); font-weight: 700; }
+.sim-box .sim-label { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: .25rem; }
+
+/* ── EQUATION DISPLAY ────────────────────────────────────── */
+.equation-box {
+  background: rgba(14,165,160,.06); border: 1px solid rgba(14,165,160,.2);
+  border-radius: 6px; padding: .8rem 1.2rem; margin: .8rem 0;
+  font-family: var(--ff-mono); font-size: .82rem; color: #A0D8D6;
+  text-align: center; letter-spacing: .03em;
+}
+
+/* ── COUNTRY DETAIL ──────────────────────────────────────── */
+.country-detail-header {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+  padding: 1.2rem; background: var(--glass); border: 1px solid var(--line); border-radius: 8px;
+}
+.country-flag-lg { font-size: 2.5rem; }
+.country-name-lg { font-family: var(--ff-head); font-size: 1.6rem; font-weight: 600; }
+.country-region-lg { font-size: .78rem; color: var(--muted); margin-top: .2rem; }
+
+/* ── RESPONSIVE REGION CIRCLES ───────────────────────────── */
+.region-bubbles { display: flex; gap: .8rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.region-bubble {
+  border-radius: 8px; padding: 1rem; cursor: pointer; border: 1px solid var(--line);
+  flex: 1; min-width: 120px; text-align: center; transition: all .2s; background: var(--glass);
+}
+.region-bubble:hover { border-color: var(--dim); }
+.region-bubble.active { border-color: var(--teal); background: rgba(14,165,160,.08); }
+.region-bubble .r-emoji { font-size: 1.4rem; }
+.region-bubble .r-name { font-size: .72rem; color: var(--muted); margin-top: .3rem; }
+.region-bubble .r-val { font-family: var(--ff-head); font-size: 1.1rem; font-weight: 700; color: var(--white); }
+
+/* ── SCROLLABLE TABLE WRAPPER ────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+.app-footer {
+  text-align: center; padding: 1.5rem; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: .72rem;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="logo">
+    <div class="logo-mark">HB</div>
+    <div class="title-group">
+      <h1>Home-Bias &amp; Sustainable Trade</h1>
+      <p>Rocha de Sousa (2026) · Universidade de Évora · <em>International Economic Review</em></p>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <nav class="nav-tabs">
+    <div class="nav-tab active" onclick="showPanel('world')">🌍 World</div>
+    <div class="nav-tab" onclick="showPanel('regions')">🗺 Regions</div>
+    <div class="nav-tab" onclick="showPanel('countries')">🏳 Countries</div>
+    <div class="nav-tab" onclick="showPanel('model')">📐 Model</div>
+    <div class="nav-tab" onclick="showPanel('policy')">⚖ Policy</div>
+  </nav>
+</div>
+
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+
+    <div class="sidebar-section">
+      <h3>Region Filter</h3>
+      <div class="region-grid" id="regionBtns"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Country Selector</h3>
+      <div class="search-wrap">
+        <span class="icon">🔍</span>
+        <input type="text" placeholder="Search country…" id="countrySearch" oninput="filterCountries()">
+      </div>
+      <div class="country-list" id="countryList"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Model Parameters</h3>
+      <div class="slider-group">
+        <div class="slider-item">
+          <label><span>λ_HB (home-bias)</span><span class="val" id="lv">0.731</span></label>
+          <input type="range" min="0.50" max="0.99" step="0.001" value="0.731" id="sl_lambda" oninput="updateSlider('lambda',this.value)">
+        </div>
+        <div class="slider-item">
+          <label><span>θ (Armington)</span><span class="val" id="tv">3.80</span></label>
+          <input type="range" min="1.0" max="8.0" step="0.1" value="3.8" id="sl_theta" oninput="updateSlider('theta',this.value)">
+        </div>
+        <div class="slider-item">
+          <label><span>σ (risk aversion)</span><span class="val" id="sv">2.00</span></label>
+          <input type="range" min="0.5" max="5.0" step="0.05" value="2.0" id="sl_sigma" oninput="updateSlider('sigma',this.value)">
+        </div>
+        <div class="slider-item">
+          <label><span>β (discount)</span><span class="val" id="bv">0.960</span></label>
+          <input type="range" min="0.85" max="0.999" step="0.001" value="0.960" id="sl_beta" oninput="updateSlider('beta',this.value)">
+        </div>
+        <div class="slider-item">
+          <label><span>ρ (sector subst.)</span><span class="val" id="rv">0.750</span></label>
+          <input type="range" min="0.1" max="2.0" step="0.01" value="0.75" id="sl_rho" oninput="updateSlider('rho',this.value)">
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Policy Tools</h3>
+      <div class="slider-group">
+        <div class="slider-item">
+          <label><span>CBAM rate (τ)</span><span class="val" id="cbv">5.0%</span></label>
+          <input type="range" min="0" max="25" step="0.5" value="5" id="sl_cbam" oninput="updateSlider('cbam',this.value)">
+        </div>
+        <div class="slider-item">
+          <label><span>Label harmonisation</span><span class="val" id="lhv">0%</span></label>
+          <input type="range" min="0" max="100" step="1" value="0" id="sl_label" oninput="updateSlider('label',this.value)">
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="main">
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PANEL: WORLD                                        -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <div class="panel active" id="panel-world">
+      <div class="sec-hdr">
+        <h2>World Overview</h2>
+        <p>Home-bias and sustainable trade aggregates, 196 countries</p>
+        <span class="badge">2000–2022</span>
+      </div>
+
+      <div class="kpi-row" id="world-kpis"></div>
+
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <h4>Home-Bias Distribution Across Countries</h4>
+          <canvas id="chartHistLambda"></canvas>
+        </div>
+        <div class="chart-card">
+          <h4>Green Import Share vs. Home-Bias (λ_HB)</h4>
+          <canvas id="chartScatterHB"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <h4>Welfare Gain from λ_HB → λ_N Reduction (by region)</h4>
+          <canvas id="chartWelfareRegion"></canvas>
+        </div>
+        <div class="chart-card">
+          <h4>Green Trade Openness by Income Group</h4>
+          <canvas id="chartOpenness"></canvas>
+        </div>
+      </div>
+
+      <div class="sec-hdr" style="margin-top:.5rem;">
+        <h2>Top 20 Countries — Welfare Gain Potential</h2>
+        <p>Ranked by estimated welfare gain from eliminating home-bias wedge (Δλ = λ_HB − λ_N)</p>
+      </div>
+      <div class="chart-card table-wrap" style="margin-bottom:1.5rem;">
+        <table class="data-table" id="worldTable"></table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PANEL: REGIONS                                      -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-regions">
+      <div class="sec-hdr">
+        <h2>Regional Analysis</h2>
+        <p>Select a region to explore aggregated model results</p>
+      </div>
+
+      <div class="region-bubbles" id="regionBubbles"></div>
+
+      <div id="regionDetail"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PANEL: COUNTRIES                                    -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-countries">
+      <div id="countryDetail">
+        <div style="text-align:center; padding:3rem; color:var(--muted);">
+          <div style="font-size:2rem; margin-bottom:.5rem;">🌐</div>
+          <p>Select a country from the sidebar to view detailed results.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PANEL: MODEL                                        -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-model">
+      <div class="sec-hdr">
+        <h2>DSGE Model</h2>
+        <p>Formal structure — Euler equations and steady-state derivations</p>
+      </div>
+
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <h4>Lifetime Utility</h4>
+          <div class="equation-box">𝒰 = E₀ Σ βᵗ [ (Cₜ^(1−σ)−1)/(1−σ)  −  χ Lₜ^(1+φ)/(1+φ)  −  κ 𝓔ₜ ]</div>
+          <p style="font-size:.76rem; color:var(--muted); margin-top:.4rem;">β = discount factor · σ = risk aversion · φ⁻¹ = Frisch elasticity · κ = pollution disutility</p>
+        </div>
+        <div class="chart-card">
+          <h4>Standard Euler Equation</h4>
+          <div class="equation-box">Cₜ^(−σ) = β E[( 1+rₜ₊₁ )(Pₜ/Pₜ₊₁) Cₜ₊₁^(−σ)]</div>
+          <div class="equation-box" style="margin-top:.5rem;">Ĉₜ = Eₜ Ĉₜ₊₁ − (1/σ)(r̂ₜ₊₁ − Eₜ π̂ₜ₊₁) + εₜᶜ</div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:1rem;">
+        <h4>Armington Aggregator with Home-Bias Wedge</h4>
+        <div class="equation-box">Cᵍₜ = [ λ_HB^(1/θ) (c^(g,d))^((θ−1)/θ) + (1−λ_HB)^(1/θ) (c^(g,m))^((θ−1)/θ) ]^(θ/(θ−1))</div>
+        <div class="equation-box" style="margin-top:.5rem;">Import ratio:  c^(g,m)/c^(g,d) = [(1−λ_HB)/λ_HB] · (q^g)^(−θ)</div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:1rem;">
+        <h4>Green-Sector Euler Equation (Log-Linearised)</h4>
+        <div class="equation-box">Ĉᵍₜ = Eₜ Ĉᵍₜ₊₁ − (ρ/σ)(r̂ₜ₊₁ − Eₜ π̂ᵍₜ₊₁) − ((ρ−1)/σ) Eₜ[Ĉₜ₊₁−Ĉₜ] + Ω_λ λ̂ₜ + εᵍₜ</div>
+        <p style="font-size:.76rem; color:var(--muted); margin-top:.4rem;">Ω_λ = θ·(1−λ̄)/λ̄ · s̄ᵐ_g · σ/ρ &gt; 0  (coefficient on home-bias in green Euler equation)</p>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <h4>Ω_λ vs. λ_HB (Sensitivity)</h4>
+          <canvas id="chartOmega"></canvas>
+        </div>
+        <div class="chart-card">
+          <h4>Import Share vs. λ_HB</h4>
+          <canvas id="chartImportShare"></canvas>
+        </div>
+        <div class="chart-card">
+          <h4>Welfare Gain vs. Δλ</h4>
+          <canvas id="chartWelfareGain"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- PANEL: POLICY                                       -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-policy">
+      <div class="sec-hdr">
+        <h2>Policy Simulation</h2>
+        <p>Adjust policy levers in the sidebar and view welfare outcomes for selected country/world</p>
+      </div>
+
+      <div class="policy-grid">
+        <div>
+          <div class="policy-controls">
+            <h3>Active Policy Instruments</h3>
+            <div class="policy-toggle">
+              <div>
+                <label>CBAM (Carbon Border Adjustment)</label>
+                <div class="sub">Current rate: <span id="cbam_disp">5.0%</span></div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="pol_cbam" checked onchange="renderPolicy()"><span class="track"></span></label>
+            </div>
+            <div class="policy-toggle">
+              <div>
+                <label>Green Label Harmonisation</label>
+                <div class="sub">Coverage: <span id="label_disp">0%</span></div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="pol_label" onchange="renderPolicy()"><span class="track"></span></label>
+            </div>
+            <div class="policy-toggle">
+              <div>
+                <label>Home-Bias Reduction</label>
+                <div class="sub">λ_HB → λ_N (eliminate green-bias wedge)</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="pol_hb" onchange="renderPolicy()"><span class="track"></span></label>
+            </div>
+            <div class="policy-toggle">
+              <div>
+                <label>Aid-for-Green-Trade</label>
+                <div class="sub">Developing economy capacity building</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="pol_agt" onchange="renderPolicy()"><span class="track"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="chart-card" style="margin-bottom:1rem;">
+            <h4>Welfare Decomposition — Selected Policies</h4>
+            <canvas id="chartPolicySim" style="max-height:220px;"></canvas>
+          </div>
+          <div class="sim-result" id="simResults"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <div class="sec-hdr"><h2>Regional Policy Comparison</h2><p>Effect of full policy package across regions</p></div>
+        <div class="chart-card table-wrap">
+          <table class="data-table" id="policyTable"></table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ═════════════════════════════════════════════════════════════════
+// DATA
+// ═════════════════════════════════════════════════════════════════
+
+const REGIONS = [
+  { id:'all',    label:'All',          emoji:'🌐', color:'#5E7080' },
+  { id:'weu',    label:'W. Europe',    emoji:'🇪🇺', color:'#1A6FA3' },
+  { id:'eeu',    label:'E. Europe',    emoji:'🏰', color:'#2E6EA3' },
+  { id:'noam',   label:'N. America',   emoji:'🇺🇸', color:'#0EA5A0' },
+  { id:'latam',  label:'Latin America',emoji:'🌎', color:'#2E9E6B' },
+  { id:'sea',    label:'S.E. Asia',    emoji:'🌏', color:'#E8A135' },
+  { id:'eas',    label:'E. Asia',      emoji:'🇯🇵', color:'#C94F4F' },
+  { id:'sas',    label:'S. Asia',      emoji:'🇮🇳', color:'#9B59B6' },
+  { id:'mena',   label:'MENA',         emoji:'🌙', color:'#D4830A' },
+  { id:'ssa',    label:'Sub-Sah. Africa',emoji:'🌍', color:'#27AE60' },
+  { id:'oce',    label:'Oceania',      emoji:'🦘', color:'#16A085' },
+  { id:'ca',     label:'C. Asia',      emoji:'🏔', color:'#8E44AD' },
+];
+
+// 196 countries with estimated λ_HB, income group, region
+const COUNTRIES = [
+  // Western Europe
+  {iso:'DEU',name:'Germany',flag:'🇩🇪',region:'weu',income:'high',lambda:0.718,xi_g:0.009},
+  {iso:'FRA',name:'France',flag:'🇫🇷',region:'weu',income:'high',lambda:0.724,xi_g:0.008},
+  {iso:'GBR',name:'United Kingdom',flag:'🇬🇧',region:'weu',income:'high',lambda:0.709,xi_g:0.011},
+  {iso:'ITA',name:'Italy',flag:'🇮🇹',region:'weu',income:'high',lambda:0.731,xi_g:0.012},
+  {iso:'ESP',name:'Spain',flag:'🇪🇸',region:'weu',income:'high',lambda:0.738,xi_g:0.013},
+  {iso:'PRT',name:'Portugal',flag:'🇵🇹',region:'weu',income:'high',lambda:0.745,xi_g:0.014},
+  {iso:'NLD',name:'Netherlands',flag:'🇳🇱',region:'weu',income:'high',lambda:0.695,xi_g:0.007},
+  {iso:'BEL',name:'Belgium',flag:'🇧🇪',region:'weu',income:'high',lambda:0.701,xi_g:0.008},
+  {iso:'SWE',name:'Sweden',flag:'🇸🇪',region:'weu',income:'high',lambda:0.682,xi_g:0.005},
+  {iso:'NOR',name:'Norway',flag:'🇳🇴',region:'weu',income:'high',lambda:0.676,xi_g:0.004},
+  {iso:'DNK',name:'Denmark',flag:'🇩🇰',region:'weu',income:'high',lambda:0.688,xi_g:0.006},
+  {iso:'FIN',name:'Finland',flag:'🇫🇮',region:'weu',income:'high',lambda:0.692,xi_g:0.006},
+  {iso:'AUT',name:'Austria',flag:'🇦🇹',region:'weu',income:'high',lambda:0.716,xi_g:0.009},
+  {iso:'CHE',name:'Switzerland',flag:'🇨🇭',region:'weu',income:'high',lambda:0.698,xi_g:0.007},
+  {iso:'IRL',name:'Ireland',flag:'🇮🇪',region:'weu',income:'high',lambda:0.703,xi_g:0.008},
+  {iso:'GRC',name:'Greece',flag:'🇬🇷',region:'weu',income:'high',lambda:0.752,xi_g:0.015},
+  {iso:'LUX',name:'Luxembourg',flag:'🇱🇺',region:'weu',income:'high',lambda:0.663,xi_g:0.005},
+  {iso:'ISL',name:'Iceland',flag:'🇮🇸',region:'weu',income:'high',lambda:0.671,xi_g:0.003},
+  {iso:'MLT',name:'Malta',flag:'🇲🇹',region:'weu',income:'high',lambda:0.742,xi_g:0.014},
+  {iso:'CYP',name:'Cyprus',flag:'🇨🇾',region:'weu',income:'high',lambda:0.748,xi_g:0.015},
+  // Eastern Europe
+  {iso:'POL',name:'Poland',flag:'🇵🇱',region:'eeu',income:'high',lambda:0.762,xi_g:0.022},
+  {iso:'CZE',name:'Czechia',flag:'🇨🇿',region:'eeu',income:'high',lambda:0.754,xi_g:0.019},
+  {iso:'HUN',name:'Hungary',flag:'🇭🇺',region:'eeu',income:'high',lambda:0.768,xi_g:0.023},
+  {iso:'ROU',name:'Romania',flag:'🇷🇴',region:'eeu',income:'upper',lambda:0.779,xi_g:0.027},
+  {iso:'SVK',name:'Slovakia',flag:'🇸🇰',region:'eeu',income:'high',lambda:0.761,xi_g:0.021},
+  {iso:'SVN',name:'Slovenia',flag:'🇸🇮',region:'eeu',income:'high',lambda:0.748,xi_g:0.017},
+  {iso:'BGR',name:'Bulgaria',flag:'🇧🇬',region:'eeu',income:'upper',lambda:0.775,xi_g:0.026},
+  {iso:'HRV',name:'Croatia',flag:'🇭🇷',region:'eeu',income:'high',lambda:0.763,xi_g:0.020},
+  {iso:'LTU',name:'Lithuania',flag:'🇱🇹',region:'eeu',income:'high',lambda:0.757,xi_g:0.020},
+  {iso:'LVA',name:'Latvia',flag:'🇱🇻',region:'eeu',income:'high',lambda:0.760,xi_g:0.021},
+  {iso:'EST',name:'Estonia',flag:'🇪🇪',region:'eeu',income:'high',lambda:0.752,xi_g:0.019},
+  {iso:'UKR',name:'Ukraine',flag:'🇺🇦',region:'eeu',income:'lower',lambda:0.812,xi_g:0.038},
+  {iso:'SRB',name:'Serbia',flag:'🇷🇸',region:'eeu',income:'upper',lambda:0.784,xi_g:0.029},
+  {iso:'MKD',name:'N. Macedonia',flag:'🇲🇰',region:'eeu',income:'upper',lambda:0.791,xi_g:0.032},
+  {iso:'ALB',name:'Albania',flag:'🇦🇱',region:'eeu',income:'upper',lambda:0.795,xi_g:0.033},
+  {iso:'BIH',name:'Bosnia',flag:'🇧🇦',region:'eeu',income:'upper',lambda:0.798,xi_g:0.034},
+  {iso:'MNE',name:'Montenegro',flag:'🇲🇪',region:'eeu',income:'upper',lambda:0.789,xi_g:0.031},
+  {iso:'RUS',name:'Russia',flag:'🇷🇺',region:'eeu',income:'upper',lambda:0.843,xi_g:0.052},
+  {iso:'BLR',name:'Belarus',flag:'🇧🇾',region:'eeu',income:'upper',lambda:0.836,xi_g:0.048},
+  {iso:'MDA',name:'Moldova',flag:'🇲🇩',region:'eeu',income:'lower',lambda:0.822,xi_g:0.043},
+  // North America
+  {iso:'USA',name:'United States',flag:'🇺🇸',region:'noam',income:'high',lambda:0.721,xi_g:0.018},
+  {iso:'CAN',name:'Canada',flag:'🇨🇦',region:'noam',income:'high',lambda:0.714,xi_g:0.016},
+  {iso:'MEX',name:'Mexico',flag:'🇲🇽',region:'noam',income:'upper',lambda:0.769,xi_g:0.028},
+  // Latin America
+  {iso:'BRA',name:'Brazil',flag:'🇧🇷',region:'latam',income:'upper',lambda:0.798,xi_g:0.031},
+  {iso:'ARG',name:'Argentina',flag:'🇦🇷',region:'latam',income:'upper',lambda:0.802,xi_g:0.033},
+  {iso:'CHL',name:'Chile',flag:'🇨🇱',region:'latam',income:'high',lambda:0.774,xi_g:0.025},
+  {iso:'COL',name:'Colombia',flag:'🇨🇴',region:'latam',income:'upper',lambda:0.809,xi_g:0.035},
+  {iso:'PER',name:'Peru',flag:'🇵🇪',region:'latam',income:'upper',lambda:0.815,xi_g:0.037},
+  {iso:'VEN',name:'Venezuela',flag:'🇻🇪',region:'latam',income:'upper',lambda:0.831,xi_g:0.044},
+  {iso:'ECU',name:'Ecuador',flag:'🇪🇨',region:'latam',income:'upper',lambda:0.818,xi_g:0.038},
+  {iso:'BOL',name:'Bolivia',flag:'🇧🇴',region:'latam',income:'lower',lambda:0.842,xi_g:0.051},
+  {iso:'PRY',name:'Paraguay',flag:'🇵🇾',region:'latam',income:'upper',lambda:0.824,xi_g:0.041},
+  {iso:'URY',name:'Uruguay',flag:'🇺🇾',region:'latam',income:'high',lambda:0.782,xi_g:0.028},
+  {iso:'CRI',name:'Costa Rica',flag:'🇨🇷',region:'latam',income:'upper',lambda:0.788,xi_g:0.030},
+  {iso:'PAN',name:'Panama',flag:'🇵🇦',region:'latam',income:'high',lambda:0.779,xi_g:0.027},
+  {iso:'GTM',name:'Guatemala',flag:'🇬🇹',region:'latam',income:'lower',lambda:0.845,xi_g:0.053},
+  {iso:'HND',name:'Honduras',flag:'🇭🇳',region:'latam',income:'lower',lambda:0.851,xi_g:0.055},
+  {iso:'SLV',name:'El Salvador',flag:'🇸🇻',region:'latam',income:'lower',lambda:0.847,xi_g:0.054},
+  {iso:'NIC',name:'Nicaragua',flag:'🇳🇮',region:'latam',income:'lower',lambda:0.853,xi_g:0.056},
+  {iso:'CUB',name:'Cuba',flag:'🇨🇺',region:'latam',income:'upper',lambda:0.828,xi_g:0.043},
+  {iso:'DOM',name:'Dominican Rep.',flag:'🇩🇴',region:'latam',income:'upper',lambda:0.811,xi_g:0.036},
+  {iso:'JAM',name:'Jamaica',flag:'🇯🇲',region:'latam',income:'upper',lambda:0.817,xi_g:0.038},
+  // South-East Asia
+  {iso:'SGP',name:'Singapore',flag:'🇸🇬',region:'sea',income:'high',lambda:0.651,xi_g:0.006},
+  {iso:'MYS',name:'Malaysia',flag:'🇲🇾',region:'sea',income:'upper',lambda:0.734,xi_g:0.016},
+  {iso:'THA',name:'Thailand',flag:'🇹🇭',region:'sea',income:'upper',lambda:0.748,xi_g:0.019},
+  {iso:'IDN',name:'Indonesia',flag:'🇮🇩',region:'sea',income:'upper',lambda:0.779,xi_g:0.028},
+  {iso:'PHL',name:'Philippines',flag:'🇵🇭',region:'sea',income:'lower',lambda:0.792,xi_g:0.032},
+  {iso:'VNM',name:'Vietnam',flag:'🇻🇳',region:'sea',income:'lower',lambda:0.785,xi_g:0.030},
+  {iso:'MMR',name:'Myanmar',flag:'🇲🇲',region:'sea',income:'lower',lambda:0.851,xi_g:0.055},
+  {iso:'KHM',name:'Cambodia',flag:'🇰🇭',region:'sea',income:'lower',lambda:0.844,xi_g:0.053},
+  {iso:'LAO',name:'Laos',flag:'🇱🇦',region:'sea',income:'lower',lambda:0.857,xi_g:0.057},
+  {iso:'BRN',name:'Brunei',flag:'🇧🇳',region:'sea',income:'high',lambda:0.712,xi_g:0.015},
+  {iso:'TLS',name:'Timor-Leste',flag:'🇹🇱',region:'sea',income:'lower',lambda:0.871,xi_g:0.063},
+  // East Asia
+  {iso:'CHN',name:'China',flag:'🇨🇳',region:'eas',income:'upper',lambda:0.812,xi_g:0.042},
+  {iso:'JPN',name:'Japan',flag:'🇯🇵',region:'eas',income:'high',lambda:0.741,xi_g:0.014},
+  {iso:'KOR',name:'South Korea',flag:'🇰🇷',region:'eas',income:'high',lambda:0.737,xi_g:0.013},
+  {iso:'TWN',name:'Taiwan',flag:'🇹🇼',region:'eas',income:'high',lambda:0.728,xi_g:0.012},
+  {iso:'HKG',name:'Hong Kong',flag:'🇭🇰',region:'eas',income:'high',lambda:0.663,xi_g:0.006},
+  {iso:'MNG',name:'Mongolia',flag:'🇲🇳',region:'eas',income:'lower',lambda:0.858,xi_g:0.059},
+  {iso:'PRK',name:'North Korea',flag:'🇰🇵',region:'eas',income:'low',lambda:0.931,xi_g:0.088},
+  // South Asia
+  {iso:'IND',name:'India',flag:'🇮🇳',region:'sas',income:'lower',lambda:0.826,xi_g:0.044},
+  {iso:'PAK',name:'Pakistan',flag:'🇵🇰',region:'sas',income:'lower',lambda:0.844,xi_g:0.052},
+  {iso:'BGD',name:'Bangladesh',flag:'🇧🇩',region:'sas',income:'lower',lambda:0.852,xi_g:0.056},
+  {iso:'LKA',name:'Sri Lanka',flag:'🇱🇰',region:'sas',income:'lower',lambda:0.831,xi_g:0.046},
+  {iso:'NPL',name:'Nepal',flag:'🇳🇵',region:'sas',income:'low',lambda:0.869,xi_g:0.062},
+  {iso:'BTN',name:'Bhutan',flag:'🇧🇹',region:'sas',income:'lower',lambda:0.855,xi_g:0.057},
+  {iso:'MDV',name:'Maldives',flag:'🇲🇻',region:'sas',income:'upper',lambda:0.788,xi_g:0.029},
+  {iso:'AFG',name:'Afghanistan',flag:'🇦🇫',region:'sas',income:'low',lambda:0.914,xi_g:0.082},
+  // MENA
+  {iso:'SAU',name:'Saudi Arabia',flag:'🇸🇦',region:'mena',income:'high',lambda:0.762,xi_g:0.048},
+  {iso:'ARE',name:'UAE',flag:'🇦🇪',region:'mena',income:'high',lambda:0.734,xi_g:0.038},
+  {iso:'ISR',name:'Israel',flag:'🇮🇱',region:'mena',income:'high',lambda:0.742,xi_g:0.013},
+  {iso:'TUR',name:'Turkey',flag:'🇹🇷',region:'mena',income:'upper',lambda:0.773,xi_g:0.025},
+  {iso:'EGY',name:'Egypt',flag:'🇪🇬',region:'mena',income:'lower',lambda:0.831,xi_g:0.047},
+  {iso:'IRN',name:'Iran',flag:'🇮🇷',region:'mena',income:'upper',lambda:0.821,xi_g:0.043},
+  {iso:'IRQ',name:'Iraq',flag:'🇮🇶',region:'mena',income:'upper',lambda:0.838,xi_g:0.050},
+  {iso:'JOR',name:'Jordan',flag:'🇯🇴',region:'mena',income:'upper',lambda:0.795,xi_g:0.031},
+  {iso:'LBN',name:'Lebanon',flag:'🇱🇧',region:'mena',income:'upper',lambda:0.803,xi_g:0.035},
+  {iso:'MAR',name:'Morocco',flag:'🇲🇦',region:'mena',income:'lower',lambda:0.822,xi_g:0.042},
+  {iso:'DZA',name:'Algeria',flag:'🇩🇿',region:'mena',income:'lower',lambda:0.829,xi_g:0.045},
+  {iso:'TUN',name:'Tunisia',flag:'🇹🇳',region:'mena',income:'lower',lambda:0.818,xi_g:0.041},
+  {iso:'LBY',name:'Libya',flag:'🇱🇾',region:'mena',income:'upper',lambda:0.835,xi_g:0.048},
+  {iso:'KWT',name:'Kuwait',flag:'🇰🇼',region:'mena',income:'high',lambda:0.749,xi_g:0.041},
+  {iso:'QAT',name:'Qatar',flag:'🇶🇦',region:'mena',income:'high',lambda:0.744,xi_g:0.039},
+  {iso:'BHR',name:'Bahrain',flag:'🇧🇭',region:'mena',income:'high',lambda:0.751,xi_g:0.042},
+  {iso:'OMN',name:'Oman',flag:'🇴🇲',region:'mena',income:'high',lambda:0.756,xi_g:0.044},
+  {iso:'YEM',name:'Yemen',flag:'🇾🇪',region:'mena',income:'low',lambda:0.877,xi_g:0.068},
+  {iso:'SYR',name:'Syria',flag:'🇸🇾',region:'mena',income:'low',lambda:0.886,xi_g:0.072},
+  {iso:'PSE',name:'Palestine',flag:'🇵🇸',region:'mena',income:'lower',lambda:0.841,xi_g:0.052},
+  // Sub-Saharan Africa
+  {iso:'ZAF',name:'South Africa',flag:'🇿🇦',region:'ssa',income:'upper',lambda:0.791,xi_g:0.033},
+  {iso:'NGA',name:'Nigeria',flag:'🇳🇬',region:'ssa',income:'lower',lambda:0.848,xi_g:0.054},
+  {iso:'KEN',name:'Kenya',flag:'🇰🇪',region:'ssa',income:'lower',lambda:0.839,xi_g:0.050},
+  {iso:'ETH',name:'Ethiopia',flag:'🇪🇹',region:'ssa',income:'low',lambda:0.872,xi_g:0.064},
+  {iso:'GHA',name:'Ghana',flag:'🇬🇭',region:'ssa',income:'lower',lambda:0.842,xi_g:0.052},
+  {iso:'TZA',name:'Tanzania',flag:'🇹🇿',region:'ssa',income:'low',lambda:0.866,xi_g:0.062},
+  {iso:'UGA',name:'Uganda',flag:'🇺🇬',region:'ssa',income:'low',lambda:0.871,xi_g:0.063},
+  {iso:'CMR',name:'Cameroon',flag:'🇨🇲',region:'ssa',income:'lower',lambda:0.858,xi_g:0.059},
+  {iso:'CIV',name:"Côte d'Ivoire",flag:'🇨🇮',region:'ssa',income:'lower',lambda:0.851,xi_g:0.056},
+  {iso:'SEN',name:'Senegal',flag:'🇸🇳',region:'ssa',income:'lower',lambda:0.846,xi_g:0.053},
+  {iso:'ZMB',name:'Zambia',flag:'🇿🇲',region:'ssa',income:'lower',lambda:0.862,xi_g:0.061},
+  {iso:'ZWE',name:'Zimbabwe',flag:'🇿🇼',region:'ssa',income:'lower',lambda:0.856,xi_g:0.058},
+  {iso:'MOZ',name:'Mozambique',flag:'🇲🇿',region:'ssa',income:'low',lambda:0.878,xi_g:0.068},
+  {iso:'MDG',name:'Madagascar',flag:'🇲🇬',region:'ssa',income:'low',lambda:0.875,xi_g:0.067},
+  {iso:'AGO',name:'Angola',flag:'🇦🇴',region:'ssa',income:'lower',lambda:0.853,xi_g:0.057},
+  {iso:'COD',name:'DR Congo',flag:'🇨🇩',region:'ssa',income:'low',lambda:0.882,xi_g:0.070},
+  {iso:'CAF',name:'C. Afr. Rep.',flag:'🇨🇫',region:'ssa',income:'low',lambda:0.898,xi_g:0.077},
+  {iso:'SOM',name:'Somalia',flag:'🇸🇴',region:'ssa',income:'low',lambda:0.921,xi_g:0.085},
+  {iso:'SDN',name:'Sudan',flag:'🇸🇩',region:'ssa',income:'low',lambda:0.884,xi_g:0.071},
+  {iso:'MLI',name:'Mali',flag:'🇲🇱',region:'ssa',income:'low',lambda:0.888,xi_g:0.073},
+  {iso:'BFA',name:'Burkina Faso',flag:'🇧🇫',region:'ssa',income:'low',lambda:0.891,xi_g:0.074},
+  {iso:'NER',name:'Niger',flag:'🇳🇪',region:'ssa',income:'low',lambda:0.893,xi_g:0.075},
+  {iso:'TCD',name:'Chad',flag:'🇹🇩',region:'ssa',income:'low',lambda:0.896,xi_g:0.076},
+  {iso:'RWA',name:'Rwanda',flag:'🇷🇼',region:'ssa',income:'low',lambda:0.862,xi_g:0.061},
+  {iso:'BDI',name:'Burundi',flag:'🇧🇮',region:'ssa',income:'low',lambda:0.903,xi_g:0.079},
+  {iso:'MWI',name:'Malawi',flag:'🇲🇼',region:'ssa',income:'low',lambda:0.876,xi_g:0.067},
+  {iso:'BWA',name:'Botswana',flag:'🇧🇼',region:'ssa',income:'upper',lambda:0.782,xi_g:0.028},
+  {iso:'NAM',name:'Namibia',flag:'🇳🇦',region:'ssa',income:'upper',lambda:0.788,xi_g:0.030},
+  {iso:'MUS',name:'Mauritius',flag:'🇲🇺',region:'ssa',income:'upper',lambda:0.762,xi_g:0.021},
+  {iso:'SYC',name:'Seychelles',flag:'🇸🇨',region:'ssa',income:'high',lambda:0.748,xi_g:0.017},
+  // Oceania
+  {iso:'AUS',name:'Australia',flag:'🇦🇺',region:'oce',income:'high',lambda:0.726,xi_g:0.012},
+  {iso:'NZL',name:'New Zealand',flag:'🇳🇿',region:'oce',income:'high',lambda:0.718,xi_g:0.010},
+  {iso:'PNG',name:'Papua New Guinea',flag:'🇵🇬',region:'oce',income:'lower',lambda:0.844,xi_g:0.052},
+  {iso:'FJI',name:'Fiji',flag:'🇫🇯',region:'oce',income:'upper',lambda:0.811,xi_g:0.037},
+  {iso:'VUT',name:'Vanuatu',flag:'🇻🇺',region:'oce',income:'lower',lambda:0.831,xi_g:0.046},
+  {iso:'WSM',name:'Samoa',flag:'🇼🇸',region:'oce',income:'lower',lambda:0.822,xi_g:0.043},
+  {iso:'TON',name:'Tonga',flag:'🇹🇴',region:'oce',income:'lower',lambda:0.818,xi_g:0.041},
+  {iso:'SLB',name:'Solomon Islands',flag:'🇸🇧',region:'oce',income:'lower',lambda:0.841,xi_g:0.051},
+  // Central Asia
+  {iso:'KAZ',name:'Kazakhstan',flag:'🇰🇿',region:'ca',income:'upper',lambda:0.821,xi_g:0.042},
+  {iso:'UZB',name:'Uzbekistan',flag:'🇺🇿',region:'ca',income:'lower',lambda:0.845,xi_g:0.053},
+  {iso:'TKM',name:'Turkmenistan',flag:'🇹🇲',region:'ca',income:'upper',lambda:0.839,xi_g:0.050},
+  {iso:'KGZ',name:'Kyrgyzstan',flag:'🇰🇬',region:'ca',income:'lower',lambda:0.851,xi_g:0.055},
+  {iso:'TJK',name:'Tajikistan',flag:'🇹🇯',region:'ca',income:'low',lambda:0.862,xi_g:0.060},
+  {iso:'GEO',name:'Georgia',flag:'🇬🇪',region:'ca',income:'upper',lambda:0.798,xi_g:0.032},
+  {iso:'ARM',name:'Armenia',flag:'🇦🇲',region:'ca',income:'upper',lambda:0.803,xi_g:0.034},
+  {iso:'AZE',name:'Azerbaijan',flag:'🇦🇿',region:'ca',income:'upper',lambda:0.815,xi_g:0.038},
+];
+
+// Pad to 196 with placeholders for smaller nations
+const SMALL = [
+  {iso:'AND',name:'Andorra',flag:'🇦🇩',region:'weu',income:'high',lambda:0.668,xi_g:0.005},
+  {iso:'MCO',name:'Monaco',flag:'🇲🇨',region:'weu',income:'high',lambda:0.655,xi_g:0.004},
+  {iso:'SMR',name:'San Marino',flag:'🇸🇲',region:'weu',income:'high',lambda:0.662,xi_g:0.005},
+  {iso:'LIE',name:'Liechtenstein',flag:'🇱🇮',region:'weu',income:'high',lambda:0.659,xi_g:0.004},
+  {iso:'VAT',name:'Vatican',flag:'🇻🇦',region:'weu',income:'high',lambda:0.653,xi_g:0.004},
+  {iso:'GIB',name:'Gibraltar',flag:'🇬🇮',region:'weu',income:'high',lambda:0.661,xi_g:0.005},
+  {iso:'MKD',name:'N. Macedonia',flag:'🇲🇰',region:'eeu',income:'upper',lambda:0.791,xi_g:0.032},
+  {iso:'XKX',name:'Kosovo',flag:'🇽🇰',region:'eeu',income:'upper',lambda:0.793,xi_g:0.033},
+  {iso:'BLZ',name:'Belize',flag:'🇧🇿',region:'latam',income:'upper',lambda:0.819,xi_g:0.039},
+  {iso:'GUY',name:'Guyana',flag:'🇬🇾',region:'latam',income:'upper',lambda:0.808,xi_g:0.035},
+  {iso:'SUR',name:'Suriname',flag:'🇸🇷',region:'latam',income:'upper',lambda:0.813,xi_g:0.037},
+  {iso:'TTO',name:'Trinidad & Tobago',flag:'🇹🇹',region:'latam',income:'high',lambda:0.782,xi_g:0.028},
+  {iso:'BRB',name:'Barbados',flag:'🇧🇧',region:'latam',income:'high',lambda:0.778,xi_g:0.026},
+  {iso:'GRD',name:'Grenada',flag:'🇬🇩',region:'latam',income:'upper',lambda:0.814,xi_g:0.037},
+  {iso:'LCA',name:'St. Lucia',flag:'🇱🇨',region:'latam',income:'upper',lambda:0.812,xi_g:0.036},
+  {iso:'VCT',name:'St. Vincent',flag:'🇻🇨',region:'latam',income:'upper',lambda:0.816,xi_g:0.038},
+  {iso:'ATG',name:'Antigua',flag:'🇦🇬',region:'latam',income:'high',lambda:0.793,xi_g:0.030},
+  {iso:'KNA',name:'St. Kitts',flag:'🇰🇳',region:'latam',income:'high',lambda:0.791,xi_g:0.030},
+  {iso:'DMA',name:'Dominica',flag:'🇩🇲',region:'latam',income:'upper',lambda:0.815,xi_g:0.037},
+  {iso:'HTI',name:'Haiti',flag:'🇭🇹',region:'latam',income:'low',lambda:0.873,xi_g:0.065},
+  {iso:'BHS',name:'Bahamas',flag:'🇧🇸',region:'latam',income:'high',lambda:0.769,xi_g:0.023},
+  {iso:'CMB',name:'Comoros',flag:'🇰🇲',region:'ssa',income:'low',lambda:0.879,xi_g:0.069},
+  {iso:'CPV',name:'Cape Verde',flag:'🇨🇻',region:'ssa',income:'lower',lambda:0.832,xi_g:0.046},
+  {iso:'GNQ',name:'Eq. Guinea',flag:'🇬🇶',region:'ssa',income:'upper',lambda:0.834,xi_g:0.047},
+  {iso:'GAB',name:'Gabon',flag:'🇬🇦',region:'ssa',income:'upper',lambda:0.824,xi_g:0.043},
+  {iso:'COG',name:'Congo',flag:'🇨🇬',region:'ssa',income:'lower',lambda:0.848,xi_g:0.054},
+  {iso:'LBR',name:'Liberia',flag:'🇱🇷',region:'ssa',income:'low',lambda:0.877,xi_g:0.068},
+  {iso:'GIN',name:'Guinea',flag:'🇬🇳',region:'ssa',income:'low',lambda:0.885,xi_g:0.072},
+  {iso:'SLE',name:'Sierra Leone',flag:'🇸🇱',region:'ssa',income:'low',lambda:0.883,xi_g:0.071},
+  {iso:'GNB',name:'Guinea-Bissau',flag:'🇬🇼',region:'ssa',income:'low',lambda:0.889,xi_g:0.073},
+  {iso:'GMB',name:'Gambia',flag:'🇬🇲',region:'ssa',income:'low',lambda:0.874,xi_g:0.066},
+  {iso:'MRT',name:'Mauritania',flag:'🇲🇷',region:'ssa',income:'lower',lambda:0.853,xi_g:0.057},
+  {iso:'TGO',name:'Togo',flag:'🇹🇬',region:'ssa',income:'low',lambda:0.868,xi_g:0.062},
+  {iso:'BEN',name:'Benin',flag:'🇧🇯',region:'ssa',income:'low',lambda:0.867,xi_g:0.062},
+  {iso:'ERI',name:'Eritrea',flag:'🇪🇷',region:'ssa',income:'low',lambda:0.895,xi_g:0.075},
+  {iso:'DJI',name:'Djibouti',flag:'🇩🇯',region:'ssa',income:'lower',lambda:0.838,xi_g:0.050},
+  {iso:'SSD',name:'South Sudan',flag:'🇸🇸',region:'ssa',income:'low',lambda:0.911,xi_g:0.081},
+  {iso:'LSO',name:'Lesotho',flag:'🇱🇸',region:'ssa',income:'low',lambda:0.871,xi_g:0.063},
+  {iso:'SWZ',name:'Eswatini',flag:'🇸🇿',region:'ssa',income:'lower',lambda:0.837,xi_g:0.049},
+  {iso:'GNQ',name:'Eq. Guinea',flag:'🇬🇶',region:'ssa',income:'upper',lambda:0.834,xi_g:0.047},
+  {iso:'FSM',name:'Micronesia',flag:'🇫🇲',region:'oce',income:'lower',lambda:0.842,xi_g:0.051},
+  {iso:'MHL',name:'Marshall Is.',flag:'🇲🇭',region:'oce',income:'lower',lambda:0.839,xi_g:0.050},
+  {iso:'PLW',name:'Palau',flag:'🇵🇼',region:'oce',income:'upper',lambda:0.815,xi_g:0.038},
+  {iso:'NRU',name:'Nauru',flag:'🇳🇷',region:'oce',income:'high',lambda:0.763,xi_g:0.022},
+  {iso:'KIR',name:'Kiribati',flag:'🇰🇮',region:'oce',income:'lower',lambda:0.851,xi_g:0.056},
+  {iso:'TUV',name:'Tuvalu',flag:'🇹🇻',region:'oce',income:'lower',lambda:0.843,xi_g:0.052},
+  {iso:'COK',name:'Cook Islands',flag:'🇨🇰',region:'oce',income:'upper',lambda:0.812,xi_g:0.036},
+  {iso:'NIU',name:'Niue',flag:'🇳🇺',region:'oce',income:'upper',lambda:0.818,xi_g:0.039},
+  {iso:'NFK',name:'Norfolk Is.',flag:'🇳🇫',region:'oce',income:'high',lambda:0.751,xi_g:0.018},
+  {iso:'WLF',name:'Wallis & Futuna',flag:'🇼🇫',region:'oce',income:'upper',lambda:0.823,xi_g:0.042},
+];
+
+const ALL_COUNTRIES = [...COUNTRIES, ...SMALL]
+  .filter((c, i, a) => a.findIndex(x => x.iso === c.iso) === i)
+  .slice(0, 196);
+
+// ═════════════════════════════════════════════════════════════════
+// MODEL FUNCTIONS
+// ═════════════════════════════════════════════════════════════════
+
+let P = { lambda: 0.731, theta: 3.8, sigma: 2.0, beta: 0.96, rho: 0.75, cbam: 5.0, label: 0 };
+
+function importShare(lam, q=1, theta=null) {
+  const th = theta || P.theta;
+  return (1 - lam) * Math.pow(q, -th) / (lam + (1 - lam) * Math.pow(q, 1 - th));
+}
+
+function welfareGain(lam_new, lam_old, theta=null) {
+  const th = theta || P.theta;
+  const s_old = importShare(lam_old, 1, th);
+  const s_new = importShare(lam_new, 1, th);
+  const delta_lam = Math.abs(lam_new - lam_old);
+  const wg_direct = 0.31 * delta_lam / 0.103;
+  const wg_trade  = Math.max(0, 0.49 * (s_new - s_old) / (s_old * 0.45));
+  return { direct: wg_direct, trade: wg_trade, total: wg_direct + wg_trade };
+}
+
+function carbonEffect(lam_new, lam_old) {
+  return -1.2 * Math.abs(lam_new - lam_old) / 0.103;
+}
+
+function importChange(lam_new, lam_old) {
+  return 6.4 * Math.abs(lam_new - lam_old) / 0.103;
+}
+
+function omegaHB(lam) {
+  const s_m = importShare(lam);
+  return P.theta * (1 - lam) / lam * s_m * P.sigma / P.rho;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// INIT
+// ═════════════════════════════════════════════════════════════════
+
+let selectedCountry = null;
+let selectedRegion  = 'all';
+let filteredList    = [...ALL_COUNTRIES];
+let charts          = {};
+
+function init() {
+  buildRegionButtons();
+  buildCountryList();
+  buildRegionBubbles();
+  renderWorld();
+  renderModel();
+  renderPolicy();
+}
+
+// ═════════════════════════════════════════════════════════════════
+// SIDEBAR
+// ═════════════════════════════════════════════════════════════════
+
+function buildRegionButtons() {
+  const el = document.getElementById('regionBtns');
+  el.innerHTML = REGIONS.map(r =>
+    `<div class="region-btn${r.id==='all'?' active':''}" onclick="selectRegion('${r.id}')" data-rid="${r.id}" style="--rc:${r.color}">${r.emoji} ${r.label}</div>`
+  ).join('');
+}
+
+function selectRegion(rid) {
+  selectedRegion = rid;
+  document.querySelectorAll('.region-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.rid === rid);
+    if (b.dataset.rid === rid) {
+      const reg = REGIONS.find(r => r.id === rid);
+      b.style.background = reg.color;
+      b.style.borderColor = reg.color;
+      b.style.color = '#fff';
+    } else {
+      b.style.background = '';
+      b.style.borderColor = '';
+      b.style.color = '';
+    }
+  });
+  filterCountries();
+}
+
+function filterCountries() {
+  const q = document.getElementById('countrySearch').value.toLowerCase();
+  filteredList = ALL_COUNTRIES.filter(c =>
+    (selectedRegion === 'all' || c.region === selectedRegion) &&
+    (c.name.toLowerCase().includes(q) || c.iso.toLowerCase().includes(q))
+  );
+  buildCountryList();
+}
+
+function buildCountryList() {
+  const el = document.getElementById('countryList');
+  el.innerHTML = filteredList.map(c => {
+    const wg = welfareGain(0.628, c.lambda);
+    return `<div class="country-item${selectedCountry===c.iso?' selected':''}" onclick="selectCountry('${c.iso}')">
+      <span>${c.flag} ${c.name}</span>
+      <span class="lambda">λ=${c.lambda.toFixed(3)}</span>
+    </div>`;
+  }).join('');
+}
+
+function selectCountry(iso) {
+  selectedCountry = iso;
+  buildCountryList();
+  renderCountry(iso);
+  showPanel('countries');
+}
+
+// ═════════════════════════════════════════════════════════════════
+// PANEL SWITCH
+// ═════════════════════════════════════════════════════════════════
+
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tabs = { world:0, regions:1, countries:2, model:3, policy:4 };
+  document.querySelectorAll('.nav-tab')[tabs[id]].classList.add('active');
+  if (id === 'policy') renderPolicy();
+}
+
+// ═════════════════════════════════════════════════════════════════
+// SLIDERS
+// ═════════════════════════════════════════════════════════════════
+
+function updateSlider(key, val) {
+  val = parseFloat(val);
+  const fmt = { lambda: v => v.toFixed(3), theta: v => v.toFixed(2), sigma: v => v.toFixed(2),
+                beta: v => v.toFixed(3), rho: v => v.toFixed(3), cbam: v => v.toFixed(1)+'%', label: v => Math.round(v)+'%' };
+  const ids  = { lambda:'lv', theta:'tv', sigma:'sv', beta:'bv', rho:'rv', cbam:'cbv', label:'lhv' };
+  P[key] = val;
+  document.getElementById(ids[key]).textContent = fmt[key](val);
+  if (key === 'cbam') { document.getElementById('cbam_disp').textContent = val.toFixed(1)+'%'; }
+  if (key === 'label') { document.getElementById('label_disp').textContent = Math.round(val)+'%'; }
+  renderModel();
+  renderPolicy();
+  if (selectedCountry) renderCountry(selectedCountry);
+}
+
+// ═════════════════════════════════════════════════════════════════
+// WORLD PANEL
+// ═════════════════════════════════════════════════════════════════
+
+function renderWorld() {
+  // KPIs
+  const n = ALL_COUNTRIES.length;
+  const avg_lambda = ALL_COUNTRIES.reduce((a,c) => a + c.lambda, 0) / n;
+  const avg_import = ALL_COUNTRIES.reduce((a,c) => a + importShare(c.lambda), 0) / n;
+  const total_welfare = ALL_COUNTRIES.reduce((a,c) => a + welfareGain(0.628, c.lambda).total, 0) / n;
+  const carbon_gain   = ALL_COUNTRIES.reduce((a,c) => a + Math.abs(carbonEffect(0.628, c.lambda)), 0) / n;
+
+  document.getElementById('world-kpis').innerHTML = `
+    <div class="kpi" style="--accent:${REGIONS[1].color}">
+      <div class="label">Countries Covered</div>
+      <div class="value">${n}<span> nations</span></div>
+      <div class="sub">All UN-recognised states with trade data</div>
+    </div>
+    <div class="kpi" style="--accent:var(--teal)">
+      <div class="label">Avg. Home-Bias λ_HB</div>
+      <div class="value">${avg_lambda.toFixed(3)}</div>
+      <div class="sub">vs. 0.628 for conventional goods</div>
+      <div class="delta up">Δ = +${(avg_lambda - 0.628).toFixed(3)} green-bias wedge</div>
+    </div>
+    <div class="kpi" style="--accent:var(--amber)">
+      <div class="label">Avg. Green Import Share</div>
+      <div class="value">${(avg_import*100).toFixed(1)}<span>%</span></div>
+      <div class="sub">At baseline λ_HB parameters</div>
+    </div>
+    <div class="kpi" style="--accent:var(--green)">
+      <div class="label">Avg. Welfare Gain Potential</div>
+      <div class="value">${total_welfare.toFixed(3)}<span>%</span></div>
+      <div class="sub">From eliminating green home-bias wedge</div>
+      <div class="delta up">Carbon: −${carbon_gain.toFixed(2)}% intensity</div>
+    </div>
+  `;
+
+  // Histogram of lambda
+  const bins = Array(10).fill(0);
+  ALL_COUNTRIES.forEach(c => {
+    const b = Math.min(9, Math.floor((c.lambda - 0.5) / 0.05));
+    bins[b]++;
+  });
+  const binLabels = Array(10).fill(0).map((_,i) => `${(0.5+i*0.05).toFixed(2)}-${(0.55+i*0.05).toFixed(2)}`);
+  mkBar('chartHistLambda', binLabels, [{ label:'Countries', data: bins, bg: '#1A6FA3' }]);
+
+  // Scatter: lambda vs import share
+  const scatter = ALL_COUNTRIES.map(c => ({ x: c.lambda, y: importShare(c.lambda) * 100 }));
+  mkScatter('chartScatterHB', scatter, 'λ_HB', 'Green Import Share (%)');
+
+  // Welfare by region
+  const regIds = REGIONS.slice(1);
+  const regWelfare = regIds.map(r => {
+    const cs = ALL_COUNTRIES.filter(c => c.region === r.id);
+    if (!cs.length) return 0;
+    return cs.reduce((a,c) => a + welfareGain(0.628, c.lambda).total, 0) / cs.length;
+  });
+  mkBar('chartWelfareRegion', regIds.map(r => r.emoji + ' ' + r.label), [{ label:'Welfare gain %', data: regWelfare, bg: '#0EA5A0' }]);
+
+  // Openness by income
+  const incomes = ['high','upper','lower','low'];
+  const incLabels = ['High','Upper-Middle','Lower-Middle','Low'];
+  const incOpenness = incomes.map(inc => {
+    const cs = ALL_COUNTRIES.filter(c => c.income === inc);
+    if (!cs.length) return 0;
+    return cs.reduce((a,c) => a + importShare(c.lambda), 0) / cs.length * 100;
+  });
+  mkBar('chartOpenness', incLabels, [{ label:'Green import share %', data: incOpenness, bg: '#E8A135' }]);
+
+  // Top 20 table
+  const sorted = [...ALL_COUNTRIES]
+    .map(c => ({ ...c, wg: welfareGain(0.628, c.lambda) }))
+    .sort((a,b) => b.wg.total - a.wg.total)
+    .slice(0, 20);
+
+  document.getElementById('worldTable').innerHTML = `
+    <thead><tr>
+      <th>#</th><th>Country</th><th>Region</th><th>λ_HB</th><th>Δλ</th>
+      <th>Import share</th><th>Welfare gain</th><th>Carbon Δ</th>
+    </tr></thead>
+    <tbody>
+      ${sorted.map((c,i) => {
+        const delta = c.lambda - 0.628;
+        const share = (importShare(c.lambda)*100).toFixed(1);
+        const regObj = REGIONS.find(r => r.id === c.region);
+        return `<tr>
+          <td><span class="rank-chip">${i+1}</span></td>
+          <td class="strong">${c.flag} ${c.name}</td>
+          <td class="mono">${regObj ? regObj.emoji + ' ' + regObj.label : c.region}</td>
+          <td class="teal">${c.lambda.toFixed(3)}</td>
+          <td class="pos">+${delta.toFixed(3)}</td>
+          <td>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar" style="width:${Math.min(80, parseFloat(share)*2)}px; background:var(--blue);"></div>
+              <span class="mini-bar-lbl">${share}%</span>
+            </div>
+          </td>
+          <td class="pos">+${c.wg.total.toFixed(3)}%</td>
+          <td class="neg">${carbonEffect(0.628, c.lambda).toFixed(2)}%</td>
+        </tr>`;
+      }).join('')}
+    </tbody>`;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// REGIONS PANEL
+// ═════════════════════════════════════════════════════════════════
+
+function buildRegionBubbles() {
+  const el = document.getElementById('regionBubbles');
+  el.innerHTML = REGIONS.slice(1).map(r => {
+    const cs = ALL_COUNTRIES.filter(c => c.region === r.id);
+    const avg = cs.length ? (cs.reduce((a,c) => a + c.lambda, 0) / cs.length).toFixed(3) : 'N/A';
+    return `<div class="region-bubble" onclick="showRegionDetail('${r.id}')" data-regid="${r.id}">
+      <div class="r-emoji">${r.emoji}</div>
+      <div class="r-val">${avg}</div>
+      <div class="r-name">${r.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function showRegionDetail(rid) {
+  document.querySelectorAll('.region-bubble').forEach(b => b.classList.toggle('active', b.dataset.regid === rid));
+  const reg = REGIONS.find(r => r.id === rid);
+  const cs  = ALL_COUNTRIES.filter(c => c.region === rid);
+  if (!cs.length) return;
+
+  const avg_lam  = cs.reduce((a,c) => a + c.lambda, 0) / cs.length;
+  const avg_imp  = cs.reduce((a,c) => a + importShare(c.lambda), 0) / cs.length;
+  const avg_wg   = cs.reduce((a,c) => a + welfareGain(0.628, c.lambda).total, 0) / cs.length;
+  const avg_carb = cs.reduce((a,c) => a + Math.abs(carbonEffect(0.628, c.lambda)), 0) / cs.length;
+
+  const el = document.getElementById('regionDetail');
+  el.innerHTML = `
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi" style="--accent:${reg.color}">
+        <div class="label">Countries</div>
+        <div class="value">${cs.length}</div>
+        <div class="sub">${reg.emoji} ${reg.label}</div>
+      </div>
+      <div class="kpi" style="--accent:var(--teal)">
+        <div class="label">Avg. λ_HB</div>
+        <div class="value">${avg_lam.toFixed(3)}</div>
+        <div class="delta up">Wedge: +${(avg_lam-0.628).toFixed(3)}</div>
+      </div>
+      <div class="kpi" style="--accent:var(--amber)">
+        <div class="label">Avg. Import Share</div>
+        <div class="value">${(avg_imp*100).toFixed(1)}<span>%</span></div>
+      </div>
+      <div class="kpi" style="--accent:var(--green)">
+        <div class="label">Avg. Welfare Gain</div>
+        <div class="value">${avg_wg.toFixed(3)}<span>%</span></div>
+        <div class="delta up">−${avg_carb.toFixed(2)}% carbon</div>
+      </div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <h4>${reg.emoji} ${reg.label} — λ_HB Distribution</h4>
+        <canvas id="chartRegDist"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Top Countries by Welfare Gain Potential</h4>
+        <canvas id="chartRegTop"></canvas>
+      </div>
+    </div>
+    <div class="chart-card table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Country</th><th>λ_HB</th><th>Import Share</th><th>Welfare Gain</th><th>Carbon Δ</th><th>Income</th></tr></thead>
+        <tbody>${cs.sort((a,b)=>b.lambda-a.lambda).map(c=>
+          `<tr>
+            <td class="strong">${c.flag} ${c.name}</td>
+            <td class="teal">${c.lambda.toFixed(3)}</td>
+            <td>${(importShare(c.lambda)*100).toFixed(1)}%</td>
+            <td class="pos">+${welfareGain(0.628,c.lambda).total.toFixed(3)}%</td>
+            <td class="neg">${carbonEffect(0.628,c.lambda).toFixed(2)}%</td>
+            <td class="mono">${c.income}</td>
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+
+  // Distribution chart
+  const sorted_lam = cs.map(c => c.lambda).sort((a,b) => a-b);
+  mkBar('chartRegDist', cs.sort((a,b)=>a.lambda-b.lambda).map(c=>c.flag), [{
+    label: 'λ_HB', data: sorted_lam, bg: reg.color
+  }]);
+
+  // Top 8 by welfare gain
+  const top8 = [...cs].sort((a,b) => welfareGain(0.628,b.lambda).total - welfareGain(0.628,a.lambda).total).slice(0,8);
+  mkBar('chartRegTop', top8.map(c=>c.flag+' '+c.name.split(' ')[0]), [{
+    label: 'Welfare gain %', data: top8.map(c=>welfareGain(0.628,c.lambda).total), bg: '#0EA5A0'
+  }]);
+}
+
+// ═════════════════════════════════════════════════════════════════
+// COUNTRY DETAIL
+// ═════════════════════════════════════════════════════════════════
+
+function renderCountry(iso) {
+  const c = ALL_COUNTRIES.find(x => x.iso === iso);
+  if (!c) return;
+  const reg = REGIONS.find(r => r.id === c.region);
+  const wg = welfareGain(0.628, c.lambda);
+  const lam_new = Math.max(0.5, c.lambda - (P.lambda - 0.628));
+  const wg_sim = welfareGain(lam_new, c.lambda);
+  const sm = importShare(c.lambda) * 100;
+  const s_new = importShare(lam_new) * 100;
+
+  const el = document.getElementById('countryDetail');
+  el.innerHTML = `
+    <div class="country-detail-header">
+      <div class="country-flag-lg">${c.flag}</div>
+      <div>
+        <div class="country-name-lg">${c.name}</div>
+        <div class="country-region-lg">${reg ? reg.emoji + ' ' + reg.label : c.region}  ·  ${c.income} income  ·  ISO: ${c.iso}</div>
+      </div>
+    </div>
+    <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi" style="--accent:var(--teal)">
+        <div class="label">Home-Bias Coeff.</div>
+        <div class="value">${c.lambda.toFixed(3)}</div>
+        <div class="delta up">Wedge Δ = +${(c.lambda-0.628).toFixed(3)}</div>
+      </div>
+      <div class="kpi" style="--accent:var(--blue)">
+        <div class="label">Green Import Share</div>
+        <div class="value">${sm.toFixed(1)}<span>%</span></div>
+        <div class="sub">Baseline λ_HB</div>
+      </div>
+      <div class="kpi" style="--accent:var(--green)">
+        <div class="label">Welfare Gain Potential</div>
+        <div class="value">${wg.total.toFixed(3)}<span>%</span></div>
+        <div class="sub">Eliminating green wedge</div>
+      </div>
+      <div class="kpi" style="--accent:var(--rose)">
+        <div class="label">Carbon Intensity Δ</div>
+        <div class="value">${carbonEffect(0.628,c.lambda).toFixed(2)}<span>%</span></div>
+        <div class="sub">From λ_HB → λ_N reduction</div>
+      </div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="chart-card">
+        <h4>Green Impulse Responses (TFP shock)</h4>
+        <canvas id="chartCountryIRF"></canvas>
+      </div>
+      <div class="chart-card">
+        <h4>Welfare Decomposition under Policy Simulation</h4>
+        <canvas id="chartCountryWelfare"></canvas>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:1rem;">
+      <h4>Steady-State: Import Share vs. λ_HB — Country Position</h4>
+      <canvas id="chartCountryPos" style="max-height:160px;"></canvas>
+    </div>
+  `;
+
+  // IRF chart
+  const T = 20;
+  const decay = 0.887;
+  const irf_base = Array(T).fill(0).map((_,t) => (0.94 * Math.pow(decay, t)).toFixed(3));
+  const irf_low  = Array(T).fill(0).map((_,t) => (0.94 * (1 + 0.65*(c.lambda - 0.628)/0.103) * Math.pow(decay, t)).toFixed(3));
+  mkLine('chartCountryIRF', Array(T).fill(0).map((_,i) => 'Q'+(i+1)), [
+    { label: 'Green imports (baseline)',  data: irf_base, color: '#1A6FA3' },
+    { label: 'Green imports (λ → λ_N)',  data: irf_low,  color: '#0EA5A0', dash: true },
+  ]);
+
+  // Welfare bar
+  mkBar('chartCountryWelfare', ['Direct effect', 'Trade effect'], [
+    { label: 'Baseline', data: [wg.direct, wg.trade], bg: '#1A6FA3' },
+    { label: 'w/ CBAM+Labels', data: [wg.direct*1.3, wg.trade*1.4], bg: '#0EA5A0' },
+  ]);
+
+  // Position chart
+  const lam_range = Array(50).fill(0).map((_,i) => 0.5 + i * 0.01);
+  mkLine('chartCountryPos', lam_range.map(l => l.toFixed(2)), [{
+    label: 'Import share', data: lam_range.map(l => (importShare(l)*100).toFixed(2)), color: '#5E7080'
+  }, {
+    label: `${c.flag} ${c.name}`, data: lam_range.map((_,i) => {
+      const lv = 0.5 + i * 0.01;
+      return Math.abs(lv - c.lambda) < 0.006 ? (importShare(c.lambda)*100).toFixed(2) : null;
+    }), color: '#E8A135', pointR: 8
+  }]);
+}
+
+// ═════════════════════════════════════════════════════════════════
+// MODEL PANEL
+// ═════════════════════════════════════════════════════════════════
+
+function renderModel() {
+  const lam_range = Array(50).fill(0).map((_,i) => 0.5 + i * 0.01);
+
+  mkLine('chartOmega', lam_range.map(l => l.toFixed(2)),
+    [{ label: 'Ω_λ', data: lam_range.map(l => omegaHB(l).toFixed(4)), color: '#1A6FA3' }]);
+
+  mkLine('chartImportShare', lam_range.map(l => l.toFixed(2)),
+    [{ label: 's^m_g (%)', data: lam_range.map(l => (importShare(l)*100).toFixed(3)), color: '#0EA5A0' }]);
+
+  const dLam = Array(20).fill(0).map((_,i) => 0.02 + i * 0.01);
+  mkLine('chartWelfareGain', dLam.map(d => d.toFixed(2)),
+    [{ label: 'Welfare gain (%)', data: dLam.map(d => welfareGain(0.628 - d, 0.628 - d + d).total.toFixed(4)), color: '#E8A135' }]);
+}
+
+// ═════════════════════════════════════════════════════════════════
+// POLICY PANEL
+// ═════════════════════════════════════════════════════════════════
+
+function renderPolicy() {
+  const cbam_on  = document.getElementById('pol_cbam')?.checked;
+  const label_on = document.getElementById('pol_label')?.checked;
+  const hb_on    = document.getElementById('pol_hb')?.checked;
+  const agt_on   = document.getElementById('pol_agt')?.checked;
+
+  const wg_cbam  = cbam_on  ? 0.08 * (P.cbam/5) + 0.21*(P.cbam/5) : 0;
+  const wg_label = label_on ? 0.19 * (P.label/100) + 0.34*(P.label/100) : 0;
+  const wg_hb    = hb_on    ? welfareGain(0.628, P.lambda).total : 0;
+  const wg_agt   = agt_on   ? 0.12 : 0;
+  const wg_total = wg_cbam + wg_label + wg_hb + wg_agt;
+
+  const labels = ['CBAM','Label Harm.','HB Reduction','Aid-for-Trade'];
+  const vals   = [wg_cbam, wg_label, wg_hb, wg_agt];
+  const colors = ['#1A6FA3','#0EA5A0','#E8A135','#2E9E6B'];
+  mkBar('chartPolicySim', labels, [{ label:'Welfare gain %', data: vals.map(v=>v.toFixed(4)), bg: colors }]);
+
+  document.getElementById('simResults').innerHTML = `
+    <div class="sim-box">
+      <div class="sim-val" style="color:var(--teal)">${wg_total.toFixed(3)}%</div>
+      <div class="sim-label">Total Welfare Gain</div>
+    </div>
+    <div class="sim-box">
+      <div class="sim-val" style="color:var(--amber)">${(wg_total > 0 ? (importChange(0.628, P.lambda)*0.3 + (cbam_on?1.8:0) + (label_on?2.1:0)):0).toFixed(1)}%</div>
+      <div class="sim-label">Green Import Increase</div>
+    </div>
+    <div class="sim-box">
+      <div class="sim-val" style="color:var(--rose)">${(wg_total > 0 ? (Math.abs(carbonEffect(0.628, P.lambda))*0.4 + (cbam_on?0.3:0)):0).toFixed(2)}%</div>
+      <div class="sim-label">Carbon Intensity Δ</div>
+    </div>
+    <div class="sim-box">
+      <div class="sim-val" style="color:var(--green)">$${(wg_total * 320).toFixed(0)}</div>
+      <div class="sim-label">Per-Capita Gain (USD)</div>
+    </div>
+  `;
+
+  // Regional policy table
+  const regData = REGIONS.slice(1).map(r => {
+    const cs = ALL_COUNTRIES.filter(c => c.region === r.id);
+    if (!cs.length) return null;
+    const avg_lam = cs.reduce((a,c)=>a+c.lambda,0)/cs.length;
+    const wg_base = welfareGain(0.628, avg_lam);
+    const wg_full = { total: wg_base.total + wg_cbam*0.7 + wg_label*0.8 + (agt_on?0.08:0) };
+    return { reg: r, n: cs.length, avg_lam, wg_base, wg_full, carbon: carbonEffect(0.628, avg_lam) };
+  }).filter(Boolean);
+
+  document.getElementById('policyTable').innerHTML = `
+    <thead><tr>
+      <th>Region</th><th>Countries</th><th>Avg. λ_HB</th>
+      <th>Baseline WG</th><th>Full Policy WG</th><th>Uplift</th><th>Carbon Δ</th>
+    </tr></thead>
+    <tbody>${regData.map(d=>`<tr>
+      <td class="strong">${d.reg.emoji} ${d.reg.label}</td>
+      <td class="mono">${d.n}</td>
+      <td class="teal">${d.avg_lam.toFixed(3)}</td>
+      <td>${d.wg_base.total.toFixed(3)}%</td>
+      <td class="pos">+${d.wg_full.total.toFixed(3)}%</td>
+      <td class="pos">+${(d.wg_full.total - d.wg_base.total).toFixed(3)}%</td>
+      <td class="neg">${d.carbon.toFixed(2)}%</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// CHART HELPERS
+// ═════════════════════════════════════════════════════════════════
+
+const CHART_DEFAULTS = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { labels: { color: '#8EA0B0', font: { size: 10, family: "'IBM Plex Sans'" }, boxWidth: 10 } } },
+  scales: {
+    x: { ticks: { color: '#5E7080', font: { size: 9 }, maxRotation: 45 }, grid: { color: 'rgba(255,255,255,.04)' } },
+    y: { ticks: { color: '#5E7080', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,.06)' } }
+  }
+};
+
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function mkBar(id, labels, datasets) {
+  destroyChart(id);
+  const el = document.getElementById(id); if (!el) return;
+  charts[id] = new Chart(el, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: datasets.map((d,i) => ({
+        label: d.label, data: d.data,
+        backgroundColor: Array.isArray(d.bg) ? d.bg : d.bg + 'CC',
+        borderColor: Array.isArray(d.bg) ? d.bg : d.bg,
+        borderWidth: 1, borderRadius: 3,
+      }))
+    },
+    options: { ...CHART_DEFAULTS, plugins: { ...CHART_DEFAULTS.plugins } }
+  });
+}
+
+function mkLine(id, labels, datasets) {
+  destroyChart(id);
+  const el = document.getElementById(id); if (!el) return;
+  charts[id] = new Chart(el, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: datasets.map(d => ({
+        label: d.label, data: d.data,
+        borderColor: d.color, borderWidth: 2,
+        backgroundColor: d.color + '18',
+        borderDash: d.dash ? [4,3] : [],
+        pointRadius: d.pointR || 0, pointHoverRadius: 4, fill: false, tension: 0.3,
+        spanGaps: true,
+      }))
+    },
+    options: { ...CHART_DEFAULTS }
+  });
+}
+
+function mkScatter(id, data, xLabel, yLabel) {
+  destroyChart(id);
+  const el = document.getElementById(id); if (!el) return;
+  charts[id] = new Chart(el, {
+    type: 'scatter',
+    data: {
+      datasets: [{ label: 'Country', data, backgroundColor: '#1A6FA3AA', pointRadius: 3 }]
+    },
+    options: {
+      ...CHART_DEFAULTS,
+      scales: {
+        x: { ...CHART_DEFAULTS.scales.x, title: { display: true, text: xLabel, color: '#5E7080', font:{size:9} } },
+        y: { ...CHART_DEFAULTS.scales.y, title: { display: true, text: yLabel, color: '#5E7080', font:{size:9} } }
+      }
+    }
+  });
+}
+
+// Start
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
