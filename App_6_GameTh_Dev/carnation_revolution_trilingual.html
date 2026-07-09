@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0d0805">
+<title>Revolução dos Cravos · Carnation Revolution · Revolución de los Claveles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,400&family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DESIGN DIRECTION: Revolutionary editorial — newspapers,
+   manifestos, 1974 propaganda posters. Dark mode = midnight
+   lisbon cobblestones. Light mode = aged newsprint.
+   Typography: Cormorant Garamond (soul) + Josefin Sans (edge).
+═══════════════════════════════════════════════════════════ */
+
+:root {
+  --red:    #c0392b;
+  --red2:   #e74c3c;
+  --green:  #1a7a4a;
+  --green2: #27ae60;
+  --blue:   #1a3a5c;
+  --blue2:  #2980b9;
+  --gold:   #c9a84c;
+  --gold2:  #f0c96a;
+}
+
+[data-theme="dark"] {
+  --bg:        #0d0805;
+  --bg2:       #17100a;
+  --bg3:       #201610;
+  --bg4:       #2a1e13;
+  --surface:   #1e1510;
+  --border:    rgba(201,168,76,0.18);
+  --text:      #f0e8d8;
+  --text2:     #c4b49a;
+  --text3:     #8a7a65;
+  --heading:   #f5ede0;
+  --card-bg:   #1e1510;
+  --card-bg2:  #251c14;
+  --eq-bg:     rgba(26,122,74,0.18);
+  --eq-border: #1a7a4a;
+  --tab-bg:    #130e08;
+  --tab-text:  rgba(240,232,216,0.45);
+  --tab-act:   #c9a84c;
+  --hero-text: #f5ede0;
+  --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+[data-theme="light"] {
+  --bg:        #f5f0e8;
+  --bg2:       #ede7d9;
+  --bg3:       #e4dccb;
+  --bg4:       #d8cfbc;
+  --surface:   #faf6ef;
+  --border:    rgba(26,58,92,0.15);
+  --text:      #1c1007;
+  --text2:     #4a3820;
+  --text3:     #8a7055;
+  --heading:   #0d0805;
+  --card-bg:   #faf6ef;
+  --card-bg2:  #f0e9da;
+  --eq-bg:     rgba(26,122,74,0.10);
+  --eq-border: #1a7a4a;
+  --tab-bg:    #1a3a5c;
+  --tab-text:  rgba(255,255,255,0.5);
+  --tab-act:   #c9a84c;
+  --hero-text: #f5ede0;
+  --grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Josefin Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.4s, color 0.4s;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: var(--grain); opacity: 1;
+}
+
+/* ── TOPBAR ─────────────────────────────────────────────── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: rgba(13,8,5,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+[data-theme="light"] .topbar { background: rgba(26,58,92,0.95); }
+
+.topbar-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 600; letter-spacing: 0.06em;
+  color: var(--gold); text-transform: uppercase;
+}
+
+.topbar-controls { display: flex; align-items: center; gap: 0.5rem; }
+
+/* Language toggle */
+.lang-toggle {
+  display: flex; border: 1px solid var(--gold); border-radius: 4px; overflow: hidden;
+}
+.lang-btn {
+  padding: 0.3rem 0.55rem; background: none; border: none; cursor: pointer;
+  font-family: 'Josefin Sans', sans-serif; font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.06em; color: var(--gold); transition: all 0.2s;
+}
+.lang-btn.active { background: var(--gold); color: #0d0805; }
+.lang-btn:not(:last-child) { border-right: 1px solid var(--gold); }
+
+/* Theme toggle */
+.theme-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+  background: var(--bg3); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 1rem; transition: all 0.3s; color: var(--text);
+}
+.theme-btn:hover { border-color: var(--gold); }
+
+/* ── HERO ─────────────────────────────────────────────── */
+.hero {
+  min-height: 100svh;
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(192,57,43,0.25) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 30%, rgba(26,58,92,0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 90%, rgba(201,168,76,0.08) 0%, transparent 50%),
+    linear-gradient(175deg, #0d0805 0%, #1a0e06 40%, #0d1a2a 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 5rem 1.5rem 3rem;
+  position: relative; overflow: hidden;
+}
+
+[data-theme="light"] .hero {
+  background:
+    radial-gradient(ellipse at 30% 60%, rgba(192,57,43,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 30%, rgba(26,58,92,0.25) 0%, transparent 55%),
+    linear-gradient(175deg, #1a0e06 0%, #1a3a5c 100%);
+}
+
+.hero-date {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.45em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem;
+  opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+}
+
+.carnation-row {
+  display: flex; gap: 0.3rem; justify-content: center; margin-bottom: 1.4rem;
+  opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+}
+.carnation-row span { font-size: 2.2rem; animation: sway 3s ease-in-out infinite; }
+.carnation-row span:nth-child(1) { animation-delay: 0s; }
+.carnation-row span:nth-child(2) { animation-delay: 0.4s; }
+.carnation-row span:nth-child(3) { animation-delay: 0.8s; }
+.carnation-row span:nth-child(4) { animation-delay: 0.3s; }
+.carnation-row span:nth-child(5) { animation-delay: 0.7s; }
+@keyframes sway { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 9vw, 4.5rem);
+  font-weight: 700; line-height: 1.05;
+  color: var(--hero-text); margin-bottom: 0.4rem;
+  opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
+}
+.hero-title em { color: var(--gold); font-style: italic; }
+
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  font-style: italic; font-weight: 300;
+  color: rgba(240,232,216,0.55); margin-bottom: 2rem;
+  opacity: 0; animation: fadeUp 0.9s 0.7s forwards;
+  max-width: 360px;
+}
+
+.hero-ds {
+  display: flex; gap: 0.7rem; margin-bottom: 2.5rem;
+  opacity: 0; animation: fadeUp 0.9s 0.9s forwards;
+}
+.hero-d {
+  padding: 0.6rem 1rem; border-radius: 6px; text-align: center;
+  font-family: 'Josefin Sans', sans-serif;
+}
+.hero-d .big { font-size: 1.5rem; font-weight: 700; display: block; }
+.hero-d .sm  { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.85; display: block; margin-top: 2px; }
+.hero-d.d1 { background: rgba(26,58,92,0.7); color: #8ab4d8; border: 1px solid rgba(26,58,92,0.8); }
+.hero-d.d2 { background: rgba(192,57,43,0.7); color: #f0a09a; border: 1px solid rgba(192,57,43,0.8); }
+.hero-d.d3 { background: rgba(26,122,74,0.7); color: #8adab0; border: 1px solid rgba(26,122,74,0.8); }
+
+.hero-scroll {
+  opacity: 0; animation: fadeUp 0.9s 1.1s forwards;
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  color: rgba(201,168,76,0.5); font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
+}
+.scroll-arrow { animation: bounce 2s ease-in-out infinite; font-size: 1.2rem; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── TAB NAV ────────────────────────────────────────────── */
+.tab-nav {
+  position: sticky; top: 53px; z-index: 100;
+  background: var(--tab-bg);
+  display: flex; overflow-x: auto; scrollbar-width: none;
+  border-bottom: 2px solid var(--border);
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 0 0 auto; padding: 0.75rem 1rem;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tab-text); background: none; border: none; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; transition: all 0.25s;
+}
+.tab-btn.active { color: var(--tab-act); border-bottom-color: var(--tab-act); }
+.tab-btn:hover:not(.active) { color: rgba(201,168,76,0.6); }
+
+/* ── SECTIONS ───────────────────────────────────────────── */
+.section { display: none; padding: 2rem 1.2rem 5rem; max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+.section.active { display: block; animation: fadeSection 0.35s ease; }
+@keyframes fadeSection { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── TYPOGRAPHY ─────────────────────────────────────────── */
+.eyebrow {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem;
+}
+.sec-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.7rem, 6vw, 2.4rem);
+  font-weight: 700; line-height: 1.12; color: var(--heading);
+  margin-bottom: 1rem;
+}
+.sec-title.red   { color: var(--red2); }
+.sec-title.green { color: var(--green2); }
+.sec-title.gold  { color: var(--gold); }
+
+.lead {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-style: italic; font-weight: 300;
+  color: var(--text2); line-height: 1.75; margin-bottom: 1.2rem;
+}
+.body { font-size: 0.88rem; color: var(--text2); line-height: 1.8; margin-bottom: 1rem; letter-spacing: 0.01em; }
+.rule {
+  height: 1px; border: none; margin: 1.8rem 0;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0.4;
+}
+
+/* ── CARDS ──────────────────────────────────────────────── */
+.card {
+  border-radius: 8px; padding: 1.1rem 1.2rem; margin: 0.8rem 0;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+  transition: background 0.3s;
+}
+.card.blue  { border-left-color: var(--blue2); }
+.card.red   { border-left-color: var(--red2); }
+.card.green { border-left-color: var(--green2); }
+.card.gold  { border-left-color: var(--gold); }
+.card-label {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.25em;
+  text-transform: uppercase; margin-bottom: 0.45rem;
+}
+.card.blue  .card-label { color: var(--blue2); }
+.card.red   .card-label { color: var(--red2); }
+.card.green .card-label { color: var(--green2); }
+.card.gold  .card-label { color: var(--gold); }
+.card p { font-size: 0.86rem; line-height: 1.72; color: var(--text2); }
+
+/* ── D BADGES ───────────────────────────────────────────── */
+.d-badges { display: flex; gap: 0.7rem; margin: 1.4rem 0; }
+.d-badge {
+  flex: 1; border-radius: 8px; padding: 1rem 0.5rem;
+  text-align: center; font-family: 'Josefin Sans', sans-serif;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.d-badge .big { font-size: 1.9rem; font-weight: 700; display: block; font-family: 'Cormorant Garamond', serif; }
+.d-badge .sm  { font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-top: 4px; opacity: 0.85; }
+.d-badge.d1 { background: rgba(26,58,92,0.5);  color: #8ab4d8; }
+.d-badge.d2 { background: rgba(192,57,43,0.5); color: #f0a09a; }
+.d-badge.d3 { background: rgba(26,122,74,0.5); color: #8adab0; }
+[data-theme="light"] .d-badge.d1 { background: rgba(26,58,92,0.12);  color: var(--blue); }
+[data-theme="light"] .d-badge.d2 { background: rgba(192,57,43,0.12); color: var(--red); }
+[data-theme="light"] .d-badge.d3 { background: rgba(26,122,74,0.12); color: var(--green); }
+
+/* ── GAME TABLE ─────────────────────────────────────────── */
+.game-wrap { overflow-x: auto; border-radius: 8px; margin: 1.2rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+.game-table { width: 100%; border-collapse: collapse; min-width: 280px; font-size: 0.78rem; }
+.game-table th {
+  padding: 0.65rem 0.7rem; text-align: center;
+  font-family: 'Josefin Sans', sans-serif; font-size: 0.65rem;
+  letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;
+}
+.game-table td { padding: 0.7rem 0.6rem; text-align: center; border: 1px solid var(--border); font-size: 0.78rem; line-height: 1.4; color: var(--text2); }
+.game-table .th-blue  { background: var(--blue);  color: #fff; }
+.game-table .th-red   { background: var(--red);   color: #fff; }
+.game-table .th-green { background: var(--green); color: #fff; }
+.game-table .corner   { background: var(--bg4); color: var(--text3); }
+.game-table .rh-blue  { background: rgba(26,58,92,0.35);  color: #8ab4d8; font-weight: 700; font-size: 0.72rem; }
+.game-table .rh-red   { background: rgba(192,57,43,0.3);  color: #f0a09a; font-weight: 700; font-size: 0.72rem; }
+.game-table .rh-green { background: rgba(26,122,74,0.3);  color: #8adab0; font-weight: 700; font-size: 0.72rem; }
+[data-theme="light"] .game-table .rh-blue  { background: rgba(26,58,92,0.08);  color: var(--blue); }
+[data-theme="light"] .game-table .rh-red   { background: rgba(192,57,43,0.08); color: var(--red); }
+[data-theme="light"] .game-table .rh-green { background: rgba(26,122,74,0.08); color: var(--green); }
+.game-table .eq { background: var(--eq-bg); color: var(--green2); font-weight: 700; outline: 2px solid var(--eq-border); outline-offset: -2px; }
+.game-table .td-normal { background: var(--card-bg); }
+
+/* ── RESULT PILL ────────────────────────────────────────── */
+.result-pill {
+  display: flex; align-items: flex-start; gap: 0.9rem;
+  border-radius: 8px; padding: 1rem 1.1rem; margin: 1.2rem 0;
+  border: 1px solid;
+}
+.result-pill.green { background: rgba(26,122,74,0.12); border-color: rgba(26,122,74,0.4); }
+.result-pill.blue  { background: rgba(26,58,92,0.18);  border-color: rgba(26,58,92,0.5); }
+.result-pill.red   { background: rgba(192,57,43,0.12); border-color: rgba(192,57,43,0.4); }
+.result-pill .icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+.result-pill .rp-title { font-family: 'Josefin Sans', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.result-pill.green .rp-title { color: var(--green2); }
+.result-pill.blue  .rp-title { color: var(--blue2); }
+.result-pill.red   .rp-title { color: var(--red2); }
+.result-pill .rp-body { font-size: 0.84rem; color: var(--text2); line-height: 1.65; }
+
+/* ── ACCORDION ──────────────────────────────────────────── */
+.accordion { margin: 0.7rem 0; }
+.acc-hd {
+  width: 100%; text-align: left; cursor: pointer;
+  background: var(--card-bg2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.9rem 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: 'Josefin Sans', sans-serif; font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.03em; color: var(--text); transition: all 0.2s;
+}
+.acc-hd:hover { border-color: var(--gold); }
+.acc-arrow { transition: transform 0.3s; color: var(--gold); font-size: 1.1rem; flex-shrink: 0; margin-left: 0.5rem; }
+.acc-hd.open .acc-arrow { transform: rotate(180deg); }
+.acc-body { background: var(--card-bg); border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.25s; }
+.acc-body.open { max-height: 500px; padding: 1rem; }
+.acc-body p { font-size: 0.84rem; color: var(--text2); line-height: 1.72; margin-bottom: 0.5rem; }
+.acc-body p:last-child { margin-bottom: 0; }
+
+/* ── TIMELINE ───────────────────────────────────────────── */
+.timeline { position: relative; padding-left: 1.8rem; margin: 1.2rem 0; }
+.timeline::before { content:''; position:absolute; left:0.45rem; top:4px; bottom:4px; width:1.5px; background: linear-gradient(180deg,var(--gold),var(--blue)); opacity:0.5; border-radius:1px; }
+.tl-item { position:relative; margin-bottom:1.3rem; }
+.tl-dot { position:absolute; left:-1.6rem; top:3px; width:11px; height:11px; border-radius:50%; border:2px solid var(--bg); box-shadow:0 0 0 1.5px var(--gold); background:var(--gold); }
+.tl-dot.red   { background:var(--red2);   box-shadow:0 0 0 1.5px var(--red2); }
+.tl-dot.green { background:var(--green2); box-shadow:0 0 0 1.5px var(--green2); }
+.tl-dot.blue  { background:var(--blue2);  box-shadow:0 0 0 1.5px var(--blue2); }
+.tl-year { font-family:'Josefin Sans',sans-serif; font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:2px; }
+.tl-text { font-size:0.84rem; line-height:1.65; color:var(--text2); }
+
+/* ── CF CARDS ───────────────────────────────────────────── */
+.cf-card { border-radius:8px; overflow:hidden; margin:1rem 0; box-shadow:0 4px 20px rgba(0,0,0,0.2); }
+.cf-header { padding:0.8rem 1rem; font-family:'Josefin Sans',sans-serif; font-weight:700; font-size:0.82rem; letter-spacing:0.04em; }
+.cf-header.blue  { background:rgba(26,58,92,0.7);  color:#8ab4d8; }
+.cf-header.red   { background:rgba(192,57,43,0.7); color:#f0a09a; }
+.cf-header.green { background:rgba(26,122,74,0.7); color:#8adab0; }
+[data-theme="light"] .cf-header.blue  { background:var(--blue);  color:#fff; }
+[data-theme="light"] .cf-header.red   { background:var(--red);   color:#fff; }
+[data-theme="light"] .cf-header.green { background:var(--green); color:#fff; }
+.cf-body { background:var(--card-bg2); padding:1rem; border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; }
+.cf-body p { font-size:0.84rem; line-height:1.7; color:var(--text2); margin-bottom:0.5rem; }
+.cf-body p:last-child { margin-bottom:0; }
+
+/* ── QUIZ ───────────────────────────────────────────────── */
+.quiz-q { font-family:'Cormorant Garamond',serif; font-size:1.15rem; font-weight:600; line-height:1.5; color:var(--heading); margin-bottom:1rem; }
+.quiz-opts { display:flex; flex-direction:column; gap:0.55rem; margin-bottom:1rem; }
+.quiz-opt {
+  padding:0.85rem 1rem; border-radius:6px;
+  border:1px solid var(--border); background:var(--card-bg);
+  cursor:pointer; font-family:'Josefin Sans',sans-serif;
+  font-size:0.82rem; line-height:1.4; text-align:left;
+  color:var(--text); transition:all 0.2s; letter-spacing:0.01em;
+}
+.quiz-opt:hover { border-color:var(--gold); background:var(--card-bg2); }
+.quiz-opt.correct { background:rgba(26,122,74,0.18); border-color:var(--green2); color:var(--green2); font-weight:700; }
+.quiz-opt.wrong   { background:rgba(192,57,43,0.15); border-color:var(--red2);   color:var(--red2); }
+.quiz-opt.neutral { border-color:var(--green2); opacity:0.6; }
+.quiz-fb { border-radius:6px; padding:0.85rem 1rem; font-size:0.83rem; line-height:1.65; margin:0.5rem 0; display:none; }
+.quiz-fb.show { display:block; }
+.quiz-fb.ok  { background:rgba(26,122,74,0.12); border:1px solid rgba(26,122,74,0.4); color:var(--green2); }
+.quiz-fb.bad { background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); color:var(--red2); }
+.quiz-next { margin-top:1rem; padding:0.75rem 1.8rem; background:var(--gold); color:#0d0805; border:none; border-radius:6px; font-family:'Josefin Sans',sans-serif; font-size:0.82rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; display:none; transition:opacity 0.2s; }
+.quiz-next.show { display:inline-block; }
+.quiz-next:hover { opacity:0.85; }
+.progress-wrap { height:3px; background:var(--bg4); border-radius:2px; margin-bottom:1.5rem; }
+.progress-bar  { height:100%; background:var(--gold); border-radius:2px; transition:width 0.4s ease; }
+.quiz-num { font-family:'Josefin Sans',sans-serif; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text3); margin-bottom:0.8rem; }
+.score-big { font-family:'Cormorant Garamond',serif; font-size:4.5rem; font-weight:700; color:var(--gold); display:block; text-align:center; }
+.score-msg { text-align:center; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.2rem; color:var(--text2); margin:0.5rem 0 1.5rem; }
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+.site-footer {
+  background:var(--tab-bg); border-top:1px solid var(--border);
+  text-align:center; padding:2rem 1.5rem;
+  font-family:'Josefin Sans',sans-serif; font-size:0.68rem;
+  letter-spacing:0.06em; line-height:1.9; color:var(--text3);
+  position:relative; z-index:1;
+}
+.site-footer a { color:var(--gold); text-decoration:none; }
+
+/* ── PLAYER GRID ────────────────────────────────────────── */
+.player-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin:1rem 0; }
+.player-card { border-radius:8px; padding:0.9rem; background:var(--card-bg); border:1px solid var(--border); }
+.player-icon { font-size:1.4rem; margin-bottom:0.4rem; display:block; }
+.player-name { font-family:'Josefin Sans',sans-serif; font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.3rem; }
+.player-card.blue  .player-name { color:var(--blue2); }
+.player-card.red   .player-name { color:var(--red2); }
+.player-card.green .player-name { color:var(--green2); }
+.player-card.gold  .player-name { color:var(--gold); }
+.player-desc { font-size:0.78rem; color:var(--text3); line-height:1.6; }
+
+/* ── UNIFIED VISUAL ─────────────────────────────────────── */
+.chain { display:flex; align-items:center; gap:0.4rem; margin:1rem 0; flex-wrap:wrap; }
+.chain-node { border-radius:6px; padding:0.6rem 0.9rem; font-family:'Josefin Sans',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; text-align:center; }
+.chain-node.d1 { background:rgba(26,58,92,0.5);  color:#8ab4d8; }
+.chain-node.d2 { background:rgba(192,57,43,0.5); color:#f0a09a; }
+.chain-node.d3 { background:rgba(26,122,74,0.5); color:#8adab0; }
+[data-theme="light"] .chain-node.d1 { background:rgba(26,58,92,0.12);  color:var(--blue); }
+[data-theme="light"] .chain-node.d2 { background:rgba(192,57,43,0.12); color:var(--red); }
+[data-theme="light"] .chain-node.d3 { background:rgba(26,122,74,0.12); color:var(--green); }
+.chain-arrow { color:var(--gold); font-size:1.1rem; opacity:0.7; }
+.chain-eq { background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.4); border-radius:6px; padding:0.6rem 1rem; font-family:'Josefin Sans',sans-serif; font-size:0.78rem; font-weight:700; color:var(--gold); letter-spacing:0.06em; text-align:center; margin:1rem 0; }
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ───────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="topbar-logo">🌹 <span data-i18n="topbar_logo">Cravos 1974</span></div>
+  <div class="topbar-controls">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('pt')">PT</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('es')">ES</button>
+    </div>
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">🌙</button>
+  </div>
+</header>
+
+<!-- ── HERO ─────────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-date" data-i18n="hero_date">25 de Abril de 1974 · Portugal</div>
+  <div class="carnation-row"><span>🌹</span><span>🌹</span><span>🌹</span><span>🌹</span><span>🌹</span></div>
+  <h1 class="hero-title" data-i18n="hero_title">Revolução<br>dos <em>Cravos</em></h1>
+  <p class="hero-subtitle" data-i18n="hero_subtitle">Três letras mudaram um país. A teoria dos jogos explica porquê.</p>
+  <div class="hero-ds">
+    <div class="hero-d d1"><span class="big">D1</span><span class="sm" data-i18n="d1_short">Democratização</span></div>
+    <div class="hero-d d2"><span class="big">D2</span><span class="sm" data-i18n="d2_short">Descolonização</span></div>
+    <div class="hero-d d3"><span class="big">D3</span><span class="sm" data-i18n="d3_short">Desenvolvimento</span></div>
+  </div>
+  <div class="hero-scroll"><span class="scroll-arrow">↓</span><span data-i18n="hero_scroll">Explorar</span></div>
+</section>
+
+<!-- ── TAB NAV ──────────────────────────────────────────── -->
+<nav class="tab-nav" id="tabNav">
+  <button class="tab-btn active" data-tab="story"   data-i18n="tab_story">História</button>
+  <button class="tab-btn"        data-tab="theory"  data-i18n="tab_theory">Teoria</button>
+  <button class="tab-btn"        data-tab="d1"      data-i18n="tab_d1">D1</button>
+  <button class="tab-btn"        data-tab="d2"      data-i18n="tab_d2">D2</button>
+  <button class="tab-btn"        data-tab="d3"      data-i18n="tab_d3">D3</button>
+  <button class="tab-btn"        data-tab="unified" data-i18n="tab_unified">Equilíbrio</button>
+  <button class="tab-btn"        data-tab="whatif"  data-i18n="tab_whatif">E se…?</button>
+  <button class="tab-btn"        data-tab="quiz"    data-i18n="tab_quiz">Quiz 🌹</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTIONS
+══════════════════════════════════════════════════════ -->
+
+<!-- STORY -->
+<section class="section active" id="tab-story">
+  <div class="eyebrow" data-i18n="story_eyebrow">O Contexto</div>
+  <h2 class="sec-title" data-i18n="story_title">O Dia em que os Cravos Floresceram</h2>
+  <p class="lead" data-i18n="story_lead">Antes do amanhecer do 25 de Abril de 1974, uma música soou na rádio portuguesa. Era um sinal. Em poucas horas, uma ditadura com quase 50 anos entrou em colapso — praticamente sem derramamento de sangue.</p>
+  <p class="body" data-i18n="story_body1">O Movimento das Forças Armadas (MFA) lançou um golpe de Estado. Os cidadãos saíram à rua e colocaram cravos vermelhos nos canos dos rifles dos soldados. O regime Estado Novo de Marcelo Caetano caiu nessa mesma tarde. O programa do MFA resumia-se a três letras:</p>
+
+  <div class="d-badges">
+    <div class="d-badge d1"><span class="big">D1</span><span class="sm" data-i18n="d1_long">Democratização</span></div>
+    <div class="d-badge d2"><span class="big">D2</span><span class="sm" data-i18n="d2_long">Descolonização</span></div>
+    <div class="d-badge d3"><span class="big">D3</span><span class="sm" data-i18n="d3_long">Desenvolvimento</span></div>
+  </div>
+
+  <hr class="rule">
+  <div class="eyebrow" data-i18n="players_eyebrow">Os Quatro Jogadores</div>
+  <div class="player-grid">
+    <div class="player-card blue"><span class="player-icon">⚖️</span><div class="player-name" data-i18n="p_ruler_name">O Regime (R)</div><div class="player-desc" data-i18n="p_ruler_desc">O governo autoritário. Queria preservar o poder e manter as colónias.</div></div>
+    <div class="player-card gold"><span class="player-icon">🎖️</span><div class="player-name" data-i18n="p_mfa_name">O MFA</div><div class="player-desc" data-i18n="p_mfa_desc">As Forças Armadas. Queriam democracia, fim das guerras e renovação nacional.</div></div>
+    <div class="player-card red"><span class="player-icon">✊</span><div class="player-name" data-i18n="p_col_name">Os Povos Colonizados (C)</div><div class="player-desc" data-i18n="p_col_desc">Populações de Angola, Moçambique, Guiné-Bissau, Cabo Verde, São Tomé — a lutar pela independência.</div></div>
+    <div class="player-card green"><span class="player-icon">📈</span><div class="player-name" data-i18n="p_mkt_name">O Mercado (M)</div><div class="player-desc" data-i18n="p_mkt_desc">Empresas, investidores e a Comunidade Europeia — a querer instituições estáveis e comércio livre.</div></div>
+  </div>
+
+  <hr class="rule">
+  <p class="body" data-i18n="story_body2">Esta aplicação explica como a teoria dos jogos demonstra que o que aconteceu não foi apenas historicamente inevitável — foi matematicamente racional. Cada jogador, dado o que os outros faziam, escolheu a sua melhor opção disponível.</p>
+</section>
+
+<!-- THEORY -->
+<section class="section" id="tab-theory">
+  <div class="eyebrow" data-i18n="theory_eyebrow">O Método</div>
+  <h2 class="sec-title" data-i18n="theory_title">O que é a Teoria dos Jogos?</h2>
+  <p class="lead" data-i18n="theory_lead">A teoria dos jogos estuda como atores racionais tomam decisões quando os resultados dependem das escolhas de todos — e não apenas das suas.</p>
+
+  <div class="accordion">
+    <button class="acc-hd" onclick="toggleAcc(this)"><span data-i18n="acc_nash_q">O que é um Equilíbrio de Nash?</span><span class="acc-arrow">▾</span></button>
+    <div class="acc-body"><p data-i18n="acc_nash_a">Batizado em honra de John Nash (do filme <em>Uma Mente Brilhante</em>), um Equilíbrio de Nash é uma situação em que nenhum jogador consegue melhorar o seu resultado mudando unilateralmente a sua estratégia. É um ponto de repouso estável — como os condutores que concordam em circular no mesmo sentido numa rotunda.</p></div>
+  </div>
+  <div class="accordion">
+    <button class="acc-hd" onclick="toggleAcc(this)"><span data-i18n="acc_seq_q">O que é um jogo sequencial?</span><span class="acc-arrow">▾</span></button>
+    <div class="acc-body"><p data-i18n="acc_seq_a">Num jogo sequencial, os jogadores movem-se um após o outro e podem observar as jogadas anteriores. Os jogos da Revolução são sequenciais: o MFA moveu-se primeiro no 25 de Abril, e os outros responderam. Usamos a <em>indução retroativa</em> — raciocinar do fim para o início — para prever o que jogadores racionais farão.</p></div>
+  </div>
+  <div class="accordion">
+    <button class="acc-hd" onclick="toggleAcc(this)"><span data-i18n="acc_payoff_q">O que é um payoff (ganho)?</span><span class="acc-arrow">▾</span></button>
+    <div class="acc-body"><p data-i18n="acc_payoff_a">Um payoff é o benefício que um jogador recebe de um determinado resultado. Não tem de ser dinheiro — pode representar poder, segurança ou prestígio. Neste artigo, os payoffs são ordinais de 1 a 4 (mais alto = melhor).</p></div>
+  </div>
+  <div class="accordion">
+    <button class="acc-hd" onclick="toggleAcc(this)"><span data-i18n="acc_spe_q">O que é o Equilíbrio Perfeito em Subjogos?</span><span class="acc-arrow">▾</span></button>
+    <div class="acc-body"><p data-i18n="acc_spe_a">Uma extensão do Equilíbrio de Nash para jogos sequenciais. Uma estratégia é perfeita em subjogos se especifica comportamento racional em cada ponto do jogo — incluindo caminhos fora do equilíbrio. Elimina ameaças "não credíveis" que nenhum jogador racional executaria.</p></div>
+  </div>
+
+  <hr class="rule">
+  <div class="result-pill blue">
+    <div class="icon">📐</div>
+    <div><div class="rp-title" data-i18n="theory_result_title">Resultado Principal</div><div class="rp-body" data-i18n="theory_result_body">O único Equilíbrio de Nash do jogo combinado 3D é (D1, D2, D3). Nenhum jogador tem incentivo racional para desviar, dado o que os outros fazem.</div></div>
+  </div>
+</section>
+
+<!-- D1 -->
+<section class="section" id="tab-d1">
+  <div class="eyebrow" data-i18n="d1_eyebrow">O Primeiro D · 1974–1976</div>
+  <h2 class="sec-title" data-i18n="d1_title">D1 — Democratização</h2>
+  <p class="lead" data-i18n="d1_lead">O MFA move-se primeiro. O Regime tem de responder: resistir ou ceder?</p>
+  <div class="card blue"><div class="card-label" data-i18n="d1_players_label">Jogadores</div><p data-i18n="d1_players_body">MFA (primeiro a mover) vs. Regime R (responde). O MFA controla o exército. O Regime controla pouco mais no 25 de Abril.</p></div>
+  <p class="body" data-i18n="d1_table_note">Payoffs: (MFA, Regime). Maior = melhor (4 = ótimo).</p>
+
+  <div class="game-wrap">
+    <table class="game-table">
+      <thead><tr>
+        <th class="corner"></th>
+        <th class="th-blue" data-i18n="d1_col1">Regime: Aceita</th>
+        <th class="th-blue" data-i18n="d1_col2">Regime: Resiste</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="rh-blue" data-i18n="d1_row1">MFA: Avança</td>
+          <td class="eq">MFA: 4, R: 2 ✓ <span data-i18n="eq_label">EPS</span></td>
+          <td class="td-normal">MFA: 3, R: 1</td>
+        </tr>
+        <tr>
+          <td class="rh-blue" data-i18n="d1_row2">MFA: Aborta</td>
+          <td class="td-normal">MFA: 1, R: 4</td>
+          <td class="td-normal">MFA: 2, R: 3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="result-pill green">
+    <div class="icon">🌹</div>
+    <div><div class="rp-title" data-i18n="d1_eq_title">Equilíbrio: Avança + Aceita</div><div class="rp-body" data-i18n="d1_eq_body">A estratégia dominante do MFA é D1. Dado isso, a melhor resposta do Regime é aceitar — resistir apenas piora o seu resultado. Caetano rendeu-se horas após o início do golpe.</div></div>
+  </div>
+
+  <hr class="rule">
+  <div class="eyebrow" data-i18n="timeline_label">Cronologia</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">25 Abr 1974</div><div class="tl-text" data-i18n="tl_d1_1">Golpe do MFA; Caetano rende-se ao General Spínola</div></div>
+    <div class="tl-item"><div class="tl-dot blue"></div><div class="tl-year">Set 1974</div><div class="tl-text" data-i18n="tl_d1_2">Spínola demite-se; ala radical do MFA consolida-se</div></div>
+    <div class="tl-item"><div class="tl-dot red"></div><div class="tl-year">25 Nov 1975</div><div class="tl-text" data-i18n="tl_d1_3">Militares moderados travam tentativa de golpe de extrema-esquerda — a democracia resiste</div></div>
+    <div class="tl-item"><div class="tl-dot blue"></div><div class="tl-year">2 Abr 1976</div><div class="tl-text" data-i18n="tl_d1_4">Constituição democrática aprovada. D1 concluído.</div></div>
+    <div class="tl-item"><div class="tl-dot green"></div><div class="tl-year">2024</div><div class="tl-text" data-i18n="tl_d1_5">50.º aniversário — democracia liberal estável</div></div>
+  </div>
+</section>
+
+<!-- D2 -->
+<section class="section" id="tab-d2">
+  <div class="eyebrow" data-i18n="d2_eyebrow">O Segundo D · 1974–1975</div>
+  <h2 class="sec-title red" data-i18n="d2_title">D2 — Descolonização</h2>
+  <p class="lead" data-i18n="d2_lead">Portugal travava guerras coloniais em África há 13 anos. Ambos os lados tinham muito mais a ganhar com a paz do que com o conflito prolongado.</p>
+  <div class="card red"><div class="card-label" data-i18n="d2_players_label">Jogadores</div><p data-i18n="d2_players_body">MFA vs. Povos colonizados C. Em 1974, Portugal gastava mais de 40% do orçamento do Estado em guerras coloniais.</p></div>
+  <p class="body" data-i18n="d2_table_note">Payoffs: (MFA, Colónias). Maior = melhor.</p>
+
+  <div class="game-wrap">
+    <table class="game-table">
+      <thead><tr>
+        <th class="corner"></th>
+        <th class="th-red" data-i18n="d2_col1">Colónias: Aceitam</th>
+        <th class="th-red" data-i18n="d2_col2">Colónias: Continuam guerra</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="rh-red" data-i18n="d2_row1">MFA: Concede</td>
+          <td class="eq">MFA: 4, C: 4 ✓ <span data-i18n="pareto_label">Pareto</span></td>
+          <td class="td-normal">MFA: 2, C: 3</td>
+        </tr>
+        <tr>
+          <td class="rh-red" data-i18n="d2_row2">MFA: Mantém</td>
+          <td class="td-normal">MFA: 1, C: 2</td>
+          <td class="td-normal">MFA: 3, C: 1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="result-pill red">
+    <div class="icon">🕊️</div>
+    <div><div class="rp-title" data-i18n="d2_eq_title">Equilíbrio: Concede + Aceita</div><div class="rp-body" data-i18n="d2_eq_body">Resultado Pareto-dominante — ambos os jogadores fazem melhor aqui do que em qualquer outra célula. A independência negociada supera a guerra prolongada para todos.</div></div>
+  </div>
+
+  <div class="card red"><div class="card-label" data-i18n="angola_label">A Exceção — Angola</div><p data-i18n="angola_body">Angola desceu ao caos de guerra civil (1975–2002) não porque o MFA recusou a independência, mas porque três movimentos de libertação (MPLA, FNLA, UNITA) não conseguiram coordenar a partilha do poder pós-independência. Este é um <strong>fracasso de coordenação</strong> dentro de um subjogo.</p></div>
+
+  <hr class="rule">
+  <div class="eyebrow" data-i18n="timeline_label">Cronologia</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot red"></div><div class="tl-year">Set 1974</div><div class="tl-text" data-i18n="tl_d2_1">Independência da Guiné-Bissau</div></div>
+    <div class="tl-item"><div class="tl-dot red"></div><div class="tl-year">Jun 1975</div><div class="tl-text" data-i18n="tl_d2_2">Independência de Moçambique (Acordo de Lusaka)</div></div>
+    <div class="tl-item"><div class="tl-dot red"></div><div class="tl-year">Jul 1975</div><div class="tl-text" data-i18n="tl_d2_3">Independência de São Tomé e Príncipe e de Cabo Verde</div></div>
+    <div class="tl-item"><div class="tl-dot red"></div><div class="tl-year">Nov 1975</div><div class="tl-text" data-i18n="tl_d2_4">Independência de Angola — começa guerra civil</div></div>
+    <div class="tl-item"><div class="tl-dot green"></div><div class="tl-year">2002</div><div class="tl-text" data-i18n="tl_d2_5">Fim da guerra civil angolana. D2 plenamente resolvido.</div></div>
+  </div>
+</section>
+
+<!-- D3 -->
+<section class="section" id="tab-d3">
+  <div class="eyebrow" data-i18n="d3_eyebrow">O Terceiro D · 1974 – Presente</div>
+  <h2 class="sec-title green" data-i18n="d3_title">D3 — Desenvolvimento</h2>
+  <p class="lead" data-i18n="d3_lead">O desenvolvimento é o D mais longo. Ao contrário da democracia (dois anos) ou da descolonização (18 meses), é um jogo repetido — ainda em curso.</p>
+  <div class="card green"><div class="card-label" data-i18n="d3_players_label">Jogadores</div><p data-i18n="d3_players_body">Estado R vs. Mercado M. Um jogo de coordenação repetido: ambos os lados escolhem cooperar e crescer juntos, ou restringir e estagnar.</p></div>
+  <p class="body" data-i18n="d3_table_note">Payoffs do jogo-etapa (Estado, Mercado). Joga-se em cada período.</p>
+
+  <div class="game-wrap">
+    <table class="game-table">
+      <thead><tr>
+        <th class="corner"></th>
+        <th class="th-green" data-i18n="d3_col1">Mercado: Investe</th>
+        <th class="th-green" data-i18n="d3_col2">Mercado: Desinveste</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="rh-green" data-i18n="d3_row1">Estado: Abre e Reforma</td>
+          <td class="eq">E: 3, M: 3 ✓ <span data-i18n="eq_label">EPS</span></td>
+          <td class="td-normal">E: 1, M: 2</td>
+        </tr>
+        <tr>
+          <td class="rh-green" data-i18n="d3_row2">Estado: Controla</td>
+          <td class="td-normal">E: 2, M: 1</td>
+          <td class="td-normal">E: 0, M: 0 — <span data-i18n="stagnation">Estagnação</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card gold"><div class="card-label" data-i18n="d3_eu_label">1986: O Ponto de Viragem</div><p data-i18n="d3_eu_body">A adesão à Comunidade Europeia transformou permanentemente o jogo. A CEE funcionou como um <em>dispositivo de compromisso</em>: tornou políticas favoráveis ao mercado credíveis e o custo de reverter para o controlo estatal tornou-se enorme.</p></div>
+
+  <hr class="rule">
+  <div class="eyebrow" data-i18n="d3_phases_label">Fases do Jogo D3</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot red"></div><div class="tl-year">1974–75</div><div class="tl-text" data-i18n="tl_d3_1">Onda de nacionalizações (PREC) — desvio para controlo estatal</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1976–85</div><div class="tl-text" data-i18n="tl_d3_2">Reprivatizações; regresso gradual ao equilíbrio de mercado</div></div>
+    <div class="tl-item"><div class="tl-dot green"></div><div class="tl-year">1986</div><div class="tl-text" data-i18n="tl_d3_3">Adesão à CEE — o ponto de viragem. Crescimento forte começa.</div></div>
+    <div class="tl-item"><div class="tl-dot green"></div><div class="tl-year">2002</div><div class="tl-text" data-i18n="tl_d3_4">Adoção do euro. Integração plena no mercado único.</div></div>
+    <div class="tl-item"><div class="tl-dot red"></div><div class="tl-year">2011–14</div><div class="tl-text" data-i18n="tl_d3_5">Resgate da Troika — teste de stress, mas o equilíbrio mantém-se</div></div>
+    <div class="tl-item"><div class="tl-dot green"></div><div class="tl-year">2015–24</div><div class="tl-text" data-i18n="tl_d3_6">Recuperação; regresso ao equilíbrio cooperativo</div></div>
+  </div>
+</section>
+
+<!-- UNIFIED -->
+<section class="section" id="tab-unified">
+  <div class="eyebrow" data-i18n="unified_eyebrow">O Quadro Geral</div>
+  <h2 class="sec-title" data-i18n="unified_title">O Equilíbrio 3D</h2>
+  <p class="lead" data-i18n="unified_lead">Três jogos. Quatro jogadores. Um equilíbrio: (D1, D2, D3). Cada jogador fez a sua melhor escolha dado o que os outros faziam.</p>
+
+  <div class="chain">
+    <div class="chain-node d1">D1<br><small data-i18n="d1_short">Democratização</small></div>
+    <span class="chain-arrow">→</span>
+    <div class="chain-node d2">D2<br><small data-i18n="d2_short">Descolonização</small></div>
+    <span class="chain-arrow">→</span>
+    <div class="chain-node d3">D3<br><small data-i18n="d3_short">Desenvolvimento</small></div>
+  </div>
+  <div class="chain-eq" data-i18n="chain_eq">Equilíbrio de Nash Único: (D1, D2, D3)</div>
+
+  <div class="result-pill blue">
+    <div class="icon">📐</div>
+    <div><div class="rp-title" data-i18n="unified_theorem_title">Teorema Central</div><div class="rp-body" data-i18n="unified_theorem_body">Sob informação perfeita, o único Equilíbrio de Nash em estratégias puras do jogo unificado 3D é (D1, D2, D3). A prova usa indução retroativa: em cada fase, dado o que os outros jogadores fazem, nenhum jogador tem incentivo para se desviar.</div></div>
+  </div>
+
+  <hr class="rule">
+  <div class="eyebrow" data-i18n="unified_why_label">Porque Cada D Precisou dos Outros</div>
+  <div class="card blue"><div class="card-label" data-i18n="unified_d1d2_label">D1 viabilizou D2</div><p data-i18n="unified_d1d2_body">Só um governo democrático tinha legitimidade para negociar a independência de forma credível. Um MFA autoritário teria enfrentado muito maior resistência à descolonização — interna e internacionalmente.</p></div>
+  <div class="card red"><div class="card-label" data-i18n="unified_d2d3_label">D2 libertou D3</div><p data-i18n="unified_d2d3_body">O fim das guerras coloniais liberou mais de 40% do orçamento do Estado — recursos que podiam agora ser canalizados para o desenvolvimento em vez de despesa militar em África.</p></div>
+  <div class="card green"><div class="card-label" data-i18n="unified_d3d1_label">D3 precisou de D1</div><p data-i18n="unified_d3d1_body">A adesão à CEE — âncora do equilíbrio D3 — só estava disponível para estados democráticos. Sem D1, a adesão de 1986 teria sido impossível.</p></div>
+
+  <hr class="rule">
+  <div class="eyebrow" data-i18n="unified_rational_label">Porque Nenhum Desvio Era Racional</div>
+  <div class="accordion">
+    <button class="acc-hd" onclick="toggleAcc(this)"><span data-i18n="unified_acc1_q">Porque não resistiu mais o Regime?</span><span class="acc-arrow">▾</span></button>
+    <div class="acc-body"><p data-i18n="unified_acc1_a">O MFA controlava o exército. A resistência armada teria falhado e provavelmente resultaria em condições piores para o Regime. Aceitar a democracia era a melhor resposta racional — e Caetano soube-o. Rendeu-se em poucas horas.</p></div>
+  </div>
+  <div class="accordion">
+    <button class="acc-hd" onclick="toggleAcc(this)"><span data-i18n="unified_acc2_q">Porque não ficou o MFA com as colónias?</span><span class="acc-arrow">▾</span></button>
+    <div class="acc-body"><p data-i18n="unified_acc2_a">Portugal gastava mais de 40% do orçamento em guerras coloniais. Continuar teria falido qualquer novo governo e destruído a legitimidade popular do MFA. O cálculo era simples: descolonizar ou colapsar.</p></div>
+  </div>
+  <div class="accordion">
+    <button class="acc-hd" onclick="toggleAcc(this)"><span data-i18n="unified_acc3_q">Porque não adotou Portugal uma economia de comando?</span><span class="acc-arrow">▾</span></button>
+    <div class="acc-body"><p data-i18n="unified_acc3_a">O período PREC de 1975 mostrou que o controlo estatal levava à estagnação e à fuga de capitais. Uma economia de comando era incompatível com a adesão à CEE — bloqueando a maior fonte de fundos de desenvolvimento que Portugal alguma vez recebeu.</p></div>
+  </div>
+</section>
+
+<!-- WHAT IF -->
+<section class="section" id="tab-whatif">
+  <div class="eyebrow" data-i18n="whatif_eyebrow">Análise Contrafactual</div>
+  <h2 class="sec-title gold" data-i18n="whatif_title">E se Tivesse Corrido Diferente?</h2>
+  <p class="lead" data-i18n="whatif_lead">A teoria dos jogos permite-nos traçar o que teria acontecido se um jogador tivesse desviado do caminho de equilíbrio. A resposta é consistentemente: piores resultados para todos.</p>
+
+  <div class="cf-card">
+    <div class="cf-header blue" data-i18n="cf1_title">E se não houvesse democracia? (¬D1)</div>
+    <div class="cf-body">
+      <p data-i18n="cf1_body1">Uma ditadura militar seria inelegível para aderir à CEE, cortando Portugal dos mercados e fundos que impulsionaram o D3. Sem legitimidade democrática, as negociações D2 teriam sido muito mais caóticas.</p>
+      <p data-i18n="cf1_body2"><strong>Paralelo histórico:</strong> Espanha sob Franco permaneceu fora da Comunidade Europeia até após a democratização em 1977. Portugal teria seguido uma trajetória semelhante de exclusão prolongada.</p>
+    </div>
+  </div>
+
+  <div class="cf-card">
+    <div class="cf-header red" data-i18n="cf2_title">E se as colónias não tivessem sido descolonizadas? (¬D2)</div>
+    <div class="cf-body">
+      <p data-i18n="cf2_body1">Portugal gastava mais de 40% do orçamento em guerras inganháveis. Continuar teria tornado o D3 economicamente impossível.</p>
+      <p data-i18n="cf2_body2"><strong>Paralelo histórico:</strong> A guerra da Argélia em França (1954–1962) durou mais oito anos ao custo de vidas e dinheiro enormes — e terminou igualmente com a independência. Portugal teria enfrentado o mesmo resultado, em piores condições.</p>
+    </div>
+  </div>
+
+  <div class="cf-card">
+    <div class="cf-header green" data-i18n="cf3_title">E se Portugal tivesse escolhido uma economia de comando? (¬D3)</div>
+    <div class="cf-body">
+      <p data-i18n="cf3_body1">O período PREC de 1975 deu uma breve amostra: produtividade caiu, investimento secou, a economia contraiu. Uma economia socialista de comando seria incompatível com a adesão à CEE.</p>
+      <p data-i18n="cf3_body2"><strong>Comparação:</strong> O PIB per capita de Portugal era aproximadamente igual ao da Grécia em 1974. Os países que escolheram modelos de maior controlo estatal ficaram sistematicamente atrás dos que se abriram ao mercado europeu.</p>
+    </div>
+  </div>
+
+  <hr class="rule">
+  <div class="card gold"><div class="card-label" data-i18n="cf_lesson_label">A Lição Contrafactual</div><p data-i18n="cf_lesson_body">Cada D era individualmente necessário e mutuamente reforçante. Remover qualquer pilar enfraqueceria toda a estrutura. O equilíbrio (D1, D2, D3) não foi apenas o melhor resultado — foi o único resultado estável consistente com comportamento racional de todos os jogadores.</p></div>
+</section>
+
+<!-- QUIZ -->
+<section class="section" id="tab-quiz">
+  <div class="eyebrow" data-i18n="quiz_eyebrow">Teste os seus Conhecimentos</div>
+  <h2 class="sec-title" data-i18n="quiz_title">Quiz</h2>
+  <p class="body" data-i18n="quiz_intro">Cinco perguntas sobre o jogo 3D. Cada pergunta tem uma resposta correta.</p>
+  <div style="height:1rem"></div>
+  <div class="progress-wrap"><div class="progress-bar" id="qProgress" style="width:0%"></div></div>
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <p data-i18n="footer_based">Baseado em / Based on / Basado en:</p>
+  <p>Sousa, M.R. &amp; Duarte, V. (2021). <em data-i18n="footer_title">Lessons from the Portuguese Carnations Revolution of 1974 by a game theory approach.</em></p>
+  <p>CEFAGE Working Paper 2021/2022 · Universidade de Évora</p>
+  <p style="margin-top:0.5rem"><a href="https://www.cefage.uevora.pt/en/research/publications/working-papers/4278/" data-i18n="footer_link">Ler o artigo original →</a></p>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// i18n DATA
+// ════════════════════════════════════════════════════════════
+const i18n = {
+  pt: {
+    topbar_logo:"Cravos 1974", hero_date:"25 de Abril de 1974 · Portugal",
+    hero_title:"Revolução<br>dos <em>Cravos</em>",
+    hero_subtitle:"Três letras mudaram um país. A teoria dos jogos explica porquê.",
+    hero_scroll:"Explorar",
+    d1_short:"Democratização", d2_short:"Descolonização", d3_short:"Desenvolvimento",
+    d1_long:"Democratização", d2_long:"Descolonização", d3_long:"Desenvolvimento",
+    tab_story:"História", tab_theory:"Teoria", tab_d1:"D1", tab_d2:"D2", tab_d3:"D3",
+    tab_unified:"Equilíbrio", tab_whatif:"E se…?", tab_quiz:"Quiz 🌹",
+    story_eyebrow:"O Contexto",
+    story_title:"O Dia em que os Cravos Floresceram",
+    story_lead:"Antes do amanhecer do 25 de Abril de 1974, uma música soou na rádio portuguesa. Era um sinal. Em poucas horas, uma ditadura com quase 50 anos entrou em colapso — praticamente sem derramamento de sangue.",
+    story_body1:"O Movimento das Forças Armadas (MFA) lançou um golpe de Estado. Os cidadãos saíram à rua e colocaram cravos vermelhos nos canos dos rifles dos soldados. O regime Estado Novo de Marcelo Caetano caiu nessa mesma tarde. O programa do MFA resumia-se a três letras:",
+    story_body2:"Esta aplicação explica como a teoria dos jogos demonstra que o que aconteceu não foi apenas historicamente inevitável — foi matematicamente racional. Cada jogador, dado o que os outros faziam, escolheu a sua melhor opção disponível.",
+    players_eyebrow:"Os Quatro Jogadores",
+    p_ruler_name:"O Regime (R)", p_ruler_desc:"O governo autoritário. Queria preservar o poder e manter as colónias.",
+    p_mfa_name:"O MFA", p_mfa_desc:"As Forças Armadas. Queriam democracia, fim das guerras e renovação nacional.",
+    p_col_name:"Os Povos Colonizados (C)", p_col_desc:"Populações de Angola, Moçambique, Guiné-Bissau, Cabo Verde, São Tomé — a lutar pela independência.",
+    p_mkt_name:"O Mercado (M)", p_mkt_desc:"Empresas, investidores e a Comunidade Europeia — a querer instituições estáveis e comércio livre.",
+    theory_eyebrow:"O Método", theory_title:"O que é a Teoria dos Jogos?",
+    theory_lead:"A teoria dos jogos estuda como atores racionais tomam decisões quando os resultados dependem das escolhas de todos — e não apenas das suas.",
+    acc_nash_q:"O que é um Equilíbrio de Nash?",
+    acc_nash_a:"Batizado em honra de John Nash (do filme <em>Uma Mente Brilhante</em>), um Equilíbrio de Nash é uma situação em que nenhum jogador consegue melhorar o seu resultado mudando unilateralmente a sua estratégia. É um ponto de repouso estável — como os condutores que concordam em circular no mesmo sentido numa rotunda.",
+    acc_seq_q:"O que é um jogo sequencial?",
+    acc_seq_a:"Num jogo sequencial, os jogadores movem-se um após o outro e podem observar as jogadas anteriores. Os jogos da Revolução são sequenciais: o MFA moveu-se primeiro no 25 de Abril, e os outros responderam. Usamos a <em>indução retroativa</em> — raciocinar do fim para o início — para prever o que jogadores racionais farão.",
+    acc_payoff_q:"O que é um payoff (ganho)?",
+    acc_payoff_a:"Um payoff é o benefício que um jogador recebe de um determinado resultado. Não tem de ser dinheiro — pode representar poder, segurança ou prestígio. Neste artigo, os payoffs são ordinais de 1 a 4 (mais alto = melhor).",
+    acc_spe_q:"O que é o Equilíbrio Perfeito em Subjogos?",
+    acc_spe_a:"Uma extensão do Equilíbrio de Nash para jogos sequenciais. Uma estratégia é perfeita em subjogos se especifica comportamento racional em cada ponto do jogo — incluindo caminhos fora do equilíbrio. Elimina ameaças 'não credíveis' que nenhum jogador racional executaria.",
+    theory_result_title:"Resultado Principal",
+    theory_result_body:"O único Equilíbrio de Nash do jogo combinado 3D é (D1, D2, D3). Nenhum jogador tem incentivo racional para desviar, dado o que os outros fazem.",
+    d1_eyebrow:"O Primeiro D · 1974–1976", d1_title:"D1 — Democratização",
+    d1_lead:"O MFA move-se primeiro. O Regime tem de responder: resistir ou ceder?",
+    d1_players_label:"Jogadores",
+    d1_players_body:"MFA (primeiro a mover) vs. Regime R (responde). O MFA controla o exército. O Regime controla pouco mais no 25 de Abril.",
+    d1_table_note:"Payoffs: (MFA, Regime). Maior = melhor (4 = ótimo).",
+    d1_col1:"Regime: Aceita", d1_col2:"Regime: Resiste",
+    d1_row1:"MFA: Avança", d1_row2:"MFA: Aborta",
+    eq_label:"EPS", pareto_label:"Pareto",
+    d1_eq_title:"Equilíbrio: Avança + Aceita",
+    d1_eq_body:"A estratégia dominante do MFA é D1. Dado isso, a melhor resposta do Regime é aceitar — resistir apenas piora o seu resultado. Caetano rendeu-se horas após o início do golpe.",
+    timeline_label:"Cronologia",
+    tl_d1_1:"Golpe do MFA; Caetano rende-se ao General Spínola",
+    tl_d1_2:"Spínola demite-se; ala radical do MFA consolida-se",
+    tl_d1_3:"Militares moderados travam tentativa de golpe de extrema-esquerda — a democracia resiste",
+    tl_d1_4:"Constituição democrática aprovada. D1 concluído.",
+    tl_d1_5:"50.º aniversário — democracia liberal estável",
+    d2_eyebrow:"O Segundo D · 1974–1975", d2_title:"D2 — Descolonização",
+    d2_lead:"Portugal travava guerras coloniais em África há 13 anos. Ambos os lados tinham muito mais a ganhar com a paz do que com o conflito prolongado.",
+    d2_players_label:"Jogadores",
+    d2_players_body:"MFA vs. Povos colonizados C. Em 1974, Portugal gastava mais de 40% do orçamento do Estado em guerras coloniais.",
+    d2_table_note:"Payoffs: (MFA, Colónias). Maior = melhor.",
+    d2_col1:"Colónias: Aceitam", d2_col2:"Colónias: Continuam guerra",
+    d2_row1:"MFA: Concede", d2_row2:"MFA: Mantém",
+    d2_eq_title:"Equilíbrio: Concede + Aceita",
+    d2_eq_body:"Resultado Pareto-dominante — ambos os jogadores fazem melhor aqui do que em qualquer outra célula. A independência negociada supera a guerra prolongada para todos.",
+    angola_label:"A Exceção — Angola",
+    angola_body:"Angola desceu ao caos de guerra civil (1975–2002) não porque o MFA recusou a independência, mas porque três movimentos de libertação (MPLA, FNLA, UNITA) não conseguiram coordenar a partilha do poder pós-independência. Este é um <strong>fracasso de coordenação</strong> dentro de um subjogo.",
+    tl_d2_1:"Independência da Guiné-Bissau", tl_d2_2:"Independência de Moçambique (Acordo de Lusaka)",
+    tl_d2_3:"Independência de São Tomé e Príncipe e de Cabo Verde",
+    tl_d2_4:"Independência de Angola — começa guerra civil",
+    tl_d2_5:"Fim da guerra civil angolana. D2 plenamente resolvido.",
+    d3_eyebrow:"O Terceiro D · 1974 – Presente", d3_title:"D3 — Desenvolvimento",
+    d3_lead:"O desenvolvimento é o D mais longo. Ao contrário da democracia (dois anos) ou da descolonização (18 meses), é um jogo repetido — ainda em curso.",
+    d3_players_label:"Jogadores",
+    d3_players_body:"Estado R vs. Mercado M. Um jogo de coordenação repetido: ambos os lados escolhem cooperar e crescer juntos, ou restringir e estagnar.",
+    d3_table_note:"Payoffs do jogo-etapa (Estado, Mercado). Joga-se em cada período.",
+    d3_col1:"Mercado: Investe", d3_col2:"Mercado: Desinveste",
+    d3_row1:"Estado: Abre e Reforma", d3_row2:"Estado: Controla",
+    stagnation:"Estagnação",
+    d3_eu_label:"1986: O Ponto de Viragem",
+    d3_eu_body:"A adesão à Comunidade Europeia transformou permanentemente o jogo. A CEE funcionou como um <em>dispositivo de compromisso</em>: tornou políticas favoráveis ao mercado credíveis e o custo de reverter para o controlo estatal tornou-se enorme.",
+    d3_phases_label:"Fases do Jogo D3",
+    tl_d3_1:"Onda de nacionalizações (PREC) — desvio para controlo estatal",
+    tl_d3_2:"Reprivatizações; regresso gradual ao equilíbrio de mercado",
+    tl_d3_3:"Adesão à CEE — o ponto de viragem. Crescimento forte começa.",
+    tl_d3_4:"Adoção do euro. Integração plena no mercado único.",
+    tl_d3_5:"Resgate da Troika — teste de stress, mas o equilíbrio mantém-se",
+    tl_d3_6:"Recuperação; regresso ao equilíbrio cooperativo",
+    unified_eyebrow:"O Quadro Geral", unified_title:"O Equilíbrio 3D",
+    unified_lead:"Três jogos. Quatro jogadores. Um equilíbrio: (D1, D2, D3). Cada jogador fez a sua melhor escolha dado o que os outros faziam.",
+    chain_eq:"Equilíbrio de Nash Único: (D1, D2, D3)",
+    unified_theorem_title:"Teorema Central",
+    unified_theorem_body:"Sob informação perfeita, o único Equilíbrio de Nash em estratégias puras do jogo unificado 3D é (D1, D2, D3). A prova usa indução retroativa: em cada fase, dado o que os outros jogadores fazem, nenhum jogador tem incentivo para se desviar.",
+    unified_why_label:"Porque Cada D Precisou dos Outros",
+    unified_d1d2_label:"D1 viabilizou D2", unified_d1d2_body:"Só um governo democrático tinha legitimidade para negociar a independência de forma credível. Um MFA autoritário teria enfrentado muito maior resistência à descolonização — interna e internacionalmente.",
+    unified_d2d3_label:"D2 libertou D3", unified_d2d3_body:"O fim das guerras coloniais liberou mais de 40% do orçamento do Estado — recursos que podiam agora ser canalizados para o desenvolvimento em vez de despesa militar em África.",
+    unified_d3d1_label:"D3 precisou de D1", unified_d3d1_body:"A adesão à CEE — âncora do equilíbrio D3 — só estava disponível para estados democráticos. Sem D1, a adesão de 1986 teria sido impossível.",
+    unified_rational_label:"Porque Nenhum Desvio Era Racional",
+    unified_acc1_q:"Porque não resistiu mais o Regime?",
+    unified_acc1_a:"O MFA controlava o exército. A resistência armada teria falhado e provavelmente resultaria em condições piores para o Regime. Aceitar a democracia era a melhor resposta racional — e Caetano soube-o. Rendeu-se em poucas horas.",
+    unified_acc2_q:"Porque não ficou o MFA com as colónias?",
+    unified_acc2_a:"Portugal gastava mais de 40% do orçamento em guerras coloniais. Continuar teria falido qualquer novo governo e destruído a legitimidade popular do MFA. O cálculo era simples: descolonizar ou colapsar.",
+    unified_acc3_q:"Porque não adotou Portugal uma economia de comando?",
+    unified_acc3_a:"O período PREC de 1975 mostrou que o controlo estatal levava à estagnação e à fuga de capitais. Uma economia de comando era incompatível com a adesão à CEE — bloqueando a maior fonte de fundos de desenvolvimento que Portugal alguma vez recebeu.",
+    whatif_eyebrow:"Análise Contrafactual", whatif_title:"E se Tivesse Corrido Diferente?",
+    whatif_lead:"A teoria dos jogos permite-nos traçar o que teria acontecido se um jogador tivesse desviado do caminho de equilíbrio. A resposta é consistentemente: piores resultados para todos.",
+    cf1_title:"E se não houvesse democracia? (¬D1)",
+    cf1_body1:"Uma ditadura militar seria inelegível para aderir à CEE, cortando Portugal dos mercados e fundos que impulsionaram o D3. Sem legitimidade democrática, as negociações D2 teriam sido muito mais caóticas.",
+    cf1_body2:"<strong>Paralelo histórico:</strong> Espanha sob Franco permaneceu fora da Comunidade Europeia até após a democratização em 1977. Portugal teria seguido uma trajetória semelhante de exclusão prolongada.",
+    cf2_title:"E se as colónias não tivessem sido descolonizadas? (¬D2)",
+    cf2_body1:"Portugal gastava mais de 40% do orçamento em guerras inganháveis. Continuar teria tornado o D3 economicamente impossível.",
+    cf2_body2:"<strong>Paralelo histórico:</strong> A guerra da Argélia em França (1954–1962) durou mais oito anos ao custo de vidas e dinheiro enormes — e terminou igualmente com a independência.",
+    cf3_title:"E se Portugal tivesse escolhido uma economia de comando? (¬D3)",
+    cf3_body1:"O período PREC de 1975 deu uma breve amostra: produtividade caiu, investimento secou, a economia contraiu. Uma economia socialista de comando seria incompatível com a adesão à CEE.",
+    cf3_body2:"<strong>Comparação:</strong> O PIB per capita de Portugal era aproximadamente igual ao da Grécia em 1974. Os países que escolheram modelos de maior controlo estatal ficaram sistematicamente atrás dos que se abriram ao mercado europeu.",
+    cf_lesson_label:"A Lição Contrafactual",
+    cf_lesson_body:"Cada D era individualmente necessário e mutuamente reforçante. Remover qualquer pilar enfraqueceria toda a estrutura. O equilíbrio (D1, D2, D3) não foi apenas o melhor resultado — foi o único resultado estável consistente com comportamento racional de todos os jogadores.",
+    quiz_eyebrow:"Teste os seus Conhecimentos", quiz_title:"Quiz",
+    quiz_intro:"Cinco perguntas sobre o jogo 3D. Cada pergunta tem uma resposta correta.",
+    footer_based:"Baseado em:", footer_title:"Lessons from the Portuguese Carnations Revolution of 1974 by a game theory approach.",
+    footer_link:"Ler o artigo original →",
+    quiz_questions:[
+      { q:"O que significa MFA no contexto da Revolução dos Cravos?",
+        opts:["Aliança Marítima das Forças","Movimento das Forças Armadas","Ministério dos Assuntos Externos","Mercado de Financiamento Autónomo"],
+        correct:1, explain:"MFA = Movimento das Forças Armadas — o grupo de oficiais militares que lançou o golpe de 25 de Abril de 1974." },
+      { q:"No jogo D1, porque aceitou o Regime a democracia?",
+        opts:["O MFA prometeu proteger os seus bens","O Regime não tinha opção militar credível","Pressão internacional da NATO","O Regime apoiava secretamente a democracia"],
+        correct:1, explain:"O MFA controlava o exército. Dada a correlação de forças, resistir apenas pioraria a situação do Regime. Aceitar era a melhor resposta racional." },
+      { q:"Que evento de 1986 ancorou definitivamente o equilíbrio D3?",
+        opts:["A adoção do euro","A adesão à Comunidade Europeia","O resgate do FMI","A privatização dos bancos estatais"],
+        correct:1, explain:"A adesão à CEE em 1986 funcionou como um dispositivo de compromisso — tornando políticas favoráveis ao mercado credíveis e desencadeando uma década de crescimento forte." },
+      { q:"Porque desceu Angola à guerra civil apesar de D2 prever cooperação?",
+        opts:["O MFA recusou a independência angolana","Três movimentos de libertação não conseguiram coordenar-se","A União Soviética invadiu Angola","Portugal manteve bases militares em Angola"],
+        correct:1, explain:"Angola é um fracasso de coordenação dentro do D2 — não entre Portugal e as colónias, mas entre os três movimentos angolanos (MPLA, FNLA, UNITA) que não chegaram a acordo." },
+      { q:"O que significa um Equilíbrio de Nash?",
+        opts:["Um jogador ganha tudo","Nenhum jogador melhora mudando apenas a sua estratégia","Uma trégua entre partes em conflito","O melhor resultado para a sociedade"],
+        correct:1, explain:"Um Equilíbrio de Nash é estável: dado o que todos os outros fazem, nenhum jogador beneficia de se desviar unilateralmente. Os três jogos 3D têm esta propriedade no resultado (D, D)." }
+    ],
+    quiz_correct:"✓ Correto! ", quiz_wrong:"✗ Nem por isso. ",
+    quiz_next:"Próxima →", quiz_results:"Ver Resultados", quiz_restart:"Recomeçar",
+    score_msg_5:"🌹 Perfeito! Domina o jogo 3D.", score_msg_3:"📚 Bom trabalho. Tem as ideias principais.",
+    score_msg_0:"🔄 Reveja as secções e tente novamente!",
+  },
+
+  en: {
+    topbar_logo:"Carnations 1974", hero_date:"25 April 1974 · Portugal",
+    hero_title:"The Carnation<br><em>Revolution</em>",
+    hero_subtitle:"Three letters changed a country. Game theory explains why.",
+    hero_scroll:"Explore",
+    d1_short:"Democratisation", d2_short:"Decolonisation", d3_short:"Development",
+    d1_long:"Democratisation", d2_long:"Decolonisation", d3_long:"Development",
+    tab_story:"Story", tab_theory:"Theory", tab_d1:"D1", tab_d2:"D2", tab_d3:"D3",
+    tab_unified:"Equilibrium", tab_whatif:"What If?", tab_quiz:"Quiz 🌹",
+    story_eyebrow:"The Background",
+    story_title:"The Day the Carnations Bloomed",
+    story_lead:"Before dawn on 25 April 1974, a song crackled on Portuguese radio. It was a coded signal. Within hours, a nearly 50-year dictatorship had collapsed — almost without a shot fired.",
+    story_body1:"The Armed Forces Movement (MFA) launched a coup. Citizens poured into the streets, placing red carnations in soldiers' rifle barrels. Marcelo Caetano's Estado Novo regime fell by that afternoon. The MFA's programme was summed up in three letters:",
+    story_body2:"This app explains how game theory shows that what happened was not merely historically inevitable — it was mathematically rational. Each player, given what the others were doing, chose their best available option.",
+    players_eyebrow:"The Four Players",
+    p_ruler_name:"The Ruler (R)", p_ruler_desc:"The authoritarian government. It wanted to preserve power and keep the colonies.",
+    p_mfa_name:"The MFA", p_mfa_desc:"The Armed Forces. They wanted democracy, an end to the wars, and national renewal.",
+    p_col_name:"The Colonial Peoples (C)", p_col_desc:"Populations of Angola, Mozambique, Guinea-Bissau, Cape Verde, São Tomé — fighting for independence.",
+    p_mkt_name:"The Market (M)", p_mkt_desc:"Businesses, investors, and the European Community — wanting stable institutions and open trade.",
+    theory_eyebrow:"The Method", theory_title:"What Is Game Theory?",
+    theory_lead:"Game theory studies how rational actors make decisions when outcomes depend on everyone's choices — not just their own.",
+    acc_nash_q:"What is a Nash Equilibrium?",
+    acc_nash_a:"Named after John Nash (of <em>A Beautiful Mind</em>), a Nash Equilibrium is a situation where no player can improve their outcome by unilaterally changing their strategy. It is a stable resting point — like drivers agreeing to travel in the same direction on a roundabout.",
+    acc_seq_q:"What is a sequential game?",
+    acc_seq_a:"In a sequential game, players move one after another and can observe earlier moves. The Revolution games are sequential: the MFA moved first on 25 April, and everyone else responded. We use <em>backward induction</em> — reasoning from the end to the beginning — to predict what rational players will do.",
+    acc_payoff_q:"What is a payoff?",
+    acc_payoff_a:"A payoff is the benefit a player receives from a particular outcome. It does not have to be money — it can represent power, security, or prestige. In this paper, payoffs are ordinal rankings from 1 to 4 (higher = better).",
+    acc_spe_q:"What is Subgame Perfect Equilibrium?",
+    acc_spe_a:"An extension of Nash Equilibrium for sequential games. A strategy is subgame perfect if it specifies rational behaviour at every point in the game — including off-equilibrium paths. It rules out 'incredible threats' that no rational player would actually carry out.",
+    theory_result_title:"Main Result",
+    theory_result_body:"The unique Nash Equilibrium of the combined 3D game is (D1, D2, D3). No player has a rational incentive to deviate, given what the others are doing.",
+    d1_eyebrow:"The First D · 1974–1976", d1_title:"D1 — Democratisation",
+    d1_lead:"The MFA moves first. The Ruler must respond: resist, or yield?",
+    d1_players_label:"Players",
+    d1_players_body:"MFA (first mover) vs. Ruler R (responds). The MFA controls the army. The Ruler controls little else by 25 April 1974.",
+    d1_table_note:"Payoffs: (MFA, Ruler). Higher = better (4 = best).",
+    d1_col1:"Ruler: Accepts", d1_col2:"Ruler: Resists",
+    d1_row1:"MFA: Push Democracy", d1_row2:"MFA: Abort Coup",
+    eq_label:"SPE", pareto_label:"Pareto",
+    d1_eq_title:"Equilibrium: Push + Accept",
+    d1_eq_body:"The MFA's dominant strategy is D1. Given that, the Ruler's best response is to accept — resistance only worsens their outcome. Caetano surrendered hours after the coup began.",
+    timeline_label:"Timeline",
+    tl_d1_1:"MFA coup; Caetano surrenders to General Spínola",
+    tl_d1_2:"Spínola resigns; radical MFA consolidates power",
+    tl_d1_3:"Moderate officers prevent a far-left takeover — democracy holds",
+    tl_d1_4:"Democratic constitution adopted. D1 complete.",
+    tl_d1_5:"50th anniversary — stable liberal democracy",
+    d2_eyebrow:"The Second D · 1974–1975", d2_title:"D2 — Decolonisation",
+    d2_lead:"Portugal had been at war in Africa for 13 years. Both sides had far more to gain from peace than from prolonged conflict.",
+    d2_players_label:"Players",
+    d2_players_body:"MFA vs. Colonial peoples C. By 1974, Portugal was spending over 40% of its state budget on colonial wars.",
+    d2_table_note:"Payoffs: (MFA, Colonies). Higher = better.",
+    d2_col1:"Colonies: Accept", d2_col2:"Colonies: Continue War",
+    d2_row1:"MFA: Grant Independence", d2_row2:"MFA: Keep Colonies",
+    d2_eq_title:"Equilibrium: Grant + Accept",
+    d2_eq_body:"A Pareto-dominant outcome — both players do better here than in any other cell. Negotiated independence beats prolonged war for everyone.",
+    angola_label:"The Exception — Angola",
+    angola_body:"Angola descended into civil war (1975–2002) not because the MFA refused independence, but because three liberation movements (MPLA, FNLA, UNITA) could not coordinate on power-sharing after independence. This is a <strong>coordination failure</strong> within a sub-game.",
+    tl_d2_1:"Guinea-Bissau independence", tl_d2_2:"Mozambique independence (Lusaka Accord)",
+    tl_d2_3:"São Tomé e Príncipe and Cape Verde independence",
+    tl_d2_4:"Angola independence — civil war begins",
+    tl_d2_5:"Angola civil war ends. D2 fully resolved.",
+    d3_eyebrow:"The Third D · 1974 – Present", d3_title:"D3 — Development",
+    d3_lead:"Development is the longest D. Unlike democracy (two years) or decolonisation (18 months), it is a repeated game — still ongoing.",
+    d3_players_label:"Players",
+    d3_players_body:"State R vs. Market M. A repeated coordination game: both sides choose to cooperate and grow together, or restrict and stagnate.",
+    d3_table_note:"Stage-game payoffs (State, Market). Played every period.",
+    d3_col1:"Market: Invest", d3_col2:"Market: Disinvest",
+    d3_row1:"State: Open & Reform", d3_row2:"State: Restrict & Control",
+    stagnation:"Stagnation",
+    d3_eu_label:"1986: The Turning Point",
+    d3_eu_body:"Joining the European Community permanently changed the game. The EEC acted as a <em>commitment device</em>: it made market-friendly policies credible and made reverting to state control enormously costly.",
+    d3_phases_label:"Phases of the D3 Game",
+    tl_d3_1:"Nationalisation wave (PREC) — brief deviation toward state control",
+    tl_d3_2:"Re-privatisations; gradual return to market equilibrium",
+    tl_d3_3:"EEC accession — the turning point. Strong growth begins.",
+    tl_d3_4:"Euro adoption. Full integration into the single market.",
+    tl_d3_5:"Troika bailout — stress test, but equilibrium holds",
+    tl_d3_6:"Recovery; return to the cooperative equilibrium",
+    unified_eyebrow:"The Big Picture", unified_title:"The 3D Equilibrium",
+    unified_lead:"Three games. Four players. One equilibrium: (D1, D2, D3). Each player made their best choice given what the others were doing.",
+    chain_eq:"Unique Nash Equilibrium: (D1, D2, D3)",
+    unified_theorem_title:"Central Theorem",
+    unified_theorem_body:"Under perfect information, the unique pure-strategy Nash Equilibrium of the unified 3D game is (D1, D2, D3). The proof uses backward induction: at each stage, given what the other players do, no player has an incentive to deviate.",
+    unified_why_label:"Why Each D Needed the Others",
+    unified_d1d2_label:"D1 enabled D2", unified_d1d2_body:"Only a democratic government had the legitimacy to negotiate independence credibly. An authoritarian MFA would have faced far greater resistance to decolonisation — domestically and internationally.",
+    unified_d2d3_label:"D2 freed D3", unified_d2d3_body:"Ending the colonial wars freed over 40% of the state budget — resources that could now be channelled toward development rather than military spending in Africa.",
+    unified_d3d1_label:"D3 needed D1", unified_d3d1_body:"EEC membership — the anchor of the D3 equilibrium — was only available to democratic states. Without D1, the 1986 accession would have been impossible.",
+    unified_rational_label:"Why No Deviation Was Rational",
+    unified_acc1_q:"Why didn't the Ruler resist harder?",
+    unified_acc1_a:"The MFA controlled the army. Armed resistance would have failed and likely ended in worse terms for the Ruler. Accepting democracy was the rational best response — and Caetano knew it. He surrendered within hours.",
+    unified_acc2_q:"Why didn't the MFA keep the colonies?",
+    unified_acc2_a:"Portugal was spending over 40% of its budget on colonial wars. Continuing would have bankrupted any new government and destroyed the MFA's popular legitimacy. The calculation was simple: decolonise or collapse.",
+    unified_acc3_q:"Why didn't Portugal choose a command economy?",
+    unified_acc3_a:"The 1975 PREC period showed that state control led to stagnation and capital flight. A command economy was incompatible with EEC membership — blocking the largest source of development funds Portugal has ever received.",
+    whatif_eyebrow:"Counterfactual Analysis", whatif_title:"What If It Had Gone Differently?",
+    whatif_lead:"Game theory lets us trace what would have happened if a player had deviated from the equilibrium path. The answer is consistently: worse outcomes for everyone.",
+    cf1_title:"What if there had been no democracy? (¬D1)",
+    cf1_body1:"A military dictatorship would have been ineligible for EEC membership, cutting Portugal off from the markets and funds that drove D3. Without democratic legitimacy, D2 negotiations would have been far more chaotic.",
+    cf1_body2:"<strong>Historical parallel:</strong> Spain under Franco remained outside the European Community until after democratisation in 1977. Portugal would have followed a similar trajectory of prolonged exclusion.",
+    cf2_title:"What if the colonies had not been decolonised? (¬D2)",
+    cf2_body1:"Portugal was spending over 40% of its budget on unwinnable wars. Continuing would have made D3 economically impossible.",
+    cf2_body2:"<strong>Historical parallel:</strong> France's Algeria war (1954–1962) lasted eight more years at enormous cost — and ended in independence anyway.",
+    cf3_title:"What if Portugal had chosen a command economy? (¬D3)",
+    cf3_body1:"The 1975 PREC period offered a brief glimpse: productivity fell, investment dried up, the economy contracted. A command economy would have been incompatible with EEC membership.",
+    cf3_body2:"<strong>Comparison:</strong> Portugal's GDP per capita was roughly equal to Greece's in 1974. Countries that chose state-heavy models consistently fell behind those that opened to European markets.",
+    cf_lesson_label:"The Counterfactual Lesson",
+    cf_lesson_body:"Each D was individually necessary and mutually reinforcing. Remove any one pillar and the whole structure weakens. The (D1, D2, D3) equilibrium was not just the best outcome — it was the only stable outcome consistent with rational behaviour by all players.",
+    quiz_eyebrow:"Test Your Knowledge", quiz_title:"Quiz",
+    quiz_intro:"Five questions on the 3D game. Each question has one correct answer.",
+    footer_based:"Based on:", footer_title:"Lessons from the Portuguese Carnations Revolution of 1974 by a game theory approach.",
+    footer_link:"Read the original paper →",
+    quiz_questions:[
+      { q:"What does MFA stand for in the context of the Carnation Revolution?",
+        opts:["Maritime Forces Alliance","Armed Forces Movement","Ministry of Foreign Affairs","Market Freedom Association"],
+        correct:1, explain:"MFA stands for Movimento das Forças Armadas — the Armed Forces Movement, the group of military officers who launched the 25 April 1974 coup." },
+      { q:"In the D1 game, why did the Ruler accept democracy?",
+        opts:["The MFA promised to protect Ruler assets","The Ruler had no credible military counter-option","International pressure from NATO","The Ruler secretly supported democracy"],
+        correct:1, explain:"The MFA controlled the army. Given the military balance, resistance would only worsen the Ruler's outcome. Accepting was the rational best response." },
+      { q:"Which 1986 event permanently anchored Portugal's D3 equilibrium?",
+        opts:["Adoption of the euro","Joining the European Community","The IMF bailout","Privatisation of state banks"],
+        correct:1, explain:"EEC accession in 1986 acted as a commitment device — making market-friendly policies credible and triggering a decade of strong growth from EU structural funds." },
+      { q:"Why did Angola descend into civil war despite D2 predicting cooperation?",
+        opts:["The MFA refused Angolan independence","Three liberation movements failed to coordinate on power-sharing","The Soviet Union invaded","Portugal retained military bases"],
+        correct:1, explain:"Angola is a coordination failure within D2 — not between Portugal and the colonies, but among the three Angolan movements (MPLA, FNLA, UNITA) that could not agree." },
+      { q:"A Nash Equilibrium means:",
+        opts:["One player wins everything","No player can improve by changing their strategy alone","A truce between warring parties","The outcome best for society overall"],
+        correct:1, explain:"A Nash Equilibrium is stable: given everyone else's choices, no single player gains by deviating unilaterally. All three 3D games have this property at the (D, D) outcome." }
+    ],
+    quiz_correct:"✓ Correct! ", quiz_wrong:"✗ Not quite. ",
+    quiz_next:"Next →", quiz_results:"See Results", quiz_restart:"Start Again",
+    score_msg_5:"🌹 Perfect! You have mastered the 3D game.", score_msg_3:"📚 Good work. You have the main ideas.",
+    score_msg_0:"🔄 Review the sections and try again!",
+  },
+
+  es: {
+    topbar_logo:"Claveles 1974", hero_date:"25 de Abril de 1974 · Portugal",
+    hero_title:"Revolución de<br>los <em>Claveles</em>",
+    hero_subtitle:"Tres letras cambiaron un país. La teoría de juegos explica por qué.",
+    hero_scroll:"Explorar",
+    d1_short:"Democratización", d2_short:"Descolonización", d3_short:"Desarrollo",
+    d1_long:"Democratización", d2_long:"Descolonización", d3_long:"Desarrollo",
+    tab_story:"Historia", tab_theory:"Teoría", tab_d1:"D1", tab_d2:"D2", tab_d3:"D3",
+    tab_unified:"Equilibrio", tab_whatif:"¿Y si…?", tab_quiz:"Quiz 🌹",
+    story_eyebrow:"El Contexto",
+    story_title:"El Día en que Florecieron los Claveles",
+    story_lead:"Antes del amanecer del 25 de abril de 1974, una canción sonó en la radio portuguesa. Era una señal en clave. En pocas horas, una dictadura de casi 50 años se derrumbó — casi sin derramamiento de sangre.",
+    story_body1:"El Movimiento de las Fuerzas Armadas (MFA) lanzó un golpe de estado. Los ciudadanos salieron a la calle y colocaron claveles rojos en los cañones de los fusiles de los soldados. El régimen Estado Novo de Marcelo Caetano cayó esa misma tarde. El programa del MFA se resumía en tres letras:",
+    story_body2:"Esta aplicación explica cómo la teoría de juegos demuestra que lo ocurrido no fue solo históricamente inevitable — fue matemáticamente racional. Cada jugador, dado lo que los demás hacían, eligió su mejor opción disponible.",
+    players_eyebrow:"Los Cuatro Jugadores",
+    p_ruler_name:"El Régimen (R)", p_ruler_desc:"El gobierno autoritario. Quería preservar el poder y mantener las colonias.",
+    p_mfa_name:"El MFA", p_mfa_desc:"Las Fuerzas Armadas. Querían democracia, el fin de las guerras y la renovación nacional.",
+    p_col_name:"Los Pueblos Colonizados (C)", p_col_desc:"Poblaciones de Angola, Mozambique, Guinea-Bisáu, Cabo Verde, Santo Tomé — luchando por la independencia.",
+    p_mkt_name:"El Mercado (M)", p_mkt_desc:"Empresas, inversores y la Comunidad Europea — que querían instituciones estables y libre comercio.",
+    theory_eyebrow:"El Método", theory_title:"¿Qué es la Teoría de Juegos?",
+    theory_lead:"La teoría de juegos estudia cómo los actores racionales toman decisiones cuando los resultados dependen de las elecciones de todos — no solo de las propias.",
+    acc_nash_q:"¿Qué es un Equilibrio de Nash?",
+    acc_nash_a:"Bautizado en honor a John Nash (de la película <em>Una mente maravillosa</em>), un Equilibrio de Nash es una situación en la que ningún jugador puede mejorar su resultado cambiando unilateralmente su estrategia. Es un punto de reposo estable — como los conductores que acuerdan circular en el mismo sentido en una rotonda.",
+    acc_seq_q:"¿Qué es un juego secuencial?",
+    acc_seq_a:"En un juego secuencial, los jugadores se mueven uno tras otro y pueden observar las jugadas anteriores. Los juegos de la Revolución son secuenciales: el MFA se movió primero el 25 de abril, y los demás respondieron. Usamos la <em>inducción hacia atrás</em> — razonar del final al principio — para predecir lo que harán los jugadores racionales.",
+    acc_payoff_q:"¿Qué es un pago (payoff)?",
+    acc_payoff_a:"Un pago es el beneficio que un jugador recibe de un resultado determinado. No tiene que ser dinero — puede representar poder, seguridad o prestigio. En este artículo, los pagos son ordinales del 1 al 4 (mayor = mejor).",
+    acc_spe_q:"¿Qué es el Equilibrio Perfecto en Subjuegos?",
+    acc_spe_a:"Una extensión del Equilibrio de Nash para juegos secuenciales. Una estrategia es perfecta en subjuegos si especifica comportamiento racional en cada punto del juego — incluidas las trayectorias fuera del equilibrio. Elimina amenazas 'no creíbles' que ningún jugador racional llevaría a cabo.",
+    theory_result_title:"Resultado Principal",
+    theory_result_body:"El único Equilibrio de Nash del juego combinado 3D es (D1, D2, D3). Ningún jugador tiene incentivo racional para desviarse, dado lo que hacen los demás.",
+    d1_eyebrow:"El Primer D · 1974–1976", d1_title:"D1 — Democratización",
+    d1_lead:"El MFA se mueve primero. El Régimen debe responder: ¿resistir o ceder?",
+    d1_players_label:"Jugadores",
+    d1_players_body:"MFA (primer movimiento) vs. Régimen R (responde). El MFA controla el ejército. El Régimen controla poco más el 25 de abril.",
+    d1_table_note:"Pagos: (MFA, Régimen). Mayor = mejor (4 = óptimo).",
+    d1_col1:"Régimen: Acepta", d1_col2:"Régimen: Resiste",
+    d1_row1:"MFA: Avanza", d1_row2:"MFA: Aborta",
+    eq_label:"EPS", pareto_label:"Pareto",
+    d1_eq_title:"Equilibrio: Avanza + Acepta",
+    d1_eq_body:"La estrategia dominante del MFA es D1. Dado eso, la mejor respuesta del Régimen es aceptar — resistir solo empeora su resultado. Caetano se rindió horas después del inicio del golpe.",
+    timeline_label:"Cronología",
+    tl_d1_1:"Golpe del MFA; Caetano se rinde al General Spínola",
+    tl_d1_2:"Spínola dimite; ala radical del MFA se consolida",
+    tl_d1_3:"Militares moderados evitan golpe de extrema izquierda — la democracia resiste",
+    tl_d1_4:"Constitución democrática aprobada. D1 completado.",
+    tl_d1_5:"50.º aniversario — democracia liberal estable",
+    d2_eyebrow:"El Segundo D · 1974–1975", d2_title:"D2 — Descolonización",
+    d2_lead:"Portugal llevaba 13 años en guerras coloniales en África. Ambas partes tenían mucho más que ganar con la paz que con el conflicto prolongado.",
+    d2_players_label:"Jugadores",
+    d2_players_body:"MFA vs. Pueblos colonizados C. En 1974, Portugal gastaba más del 40% de su presupuesto estatal en guerras coloniales.",
+    d2_table_note:"Pagos: (MFA, Colonias). Mayor = mejor.",
+    d2_col1:"Colonias: Aceptan", d2_col2:"Colonias: Continúan guerra",
+    d2_row1:"MFA: Concede", d2_row2:"MFA: Mantiene",
+    d2_eq_title:"Equilibrio: Concede + Acepta",
+    d2_eq_body:"Resultado Pareto-dominante — ambos jugadores están mejor aquí que en cualquier otra celda. La independencia negociada supera la guerra prolongada para todos.",
+    angola_label:"La Excepción — Angola",
+    angola_body:"Angola cayó en la guerra civil (1975–2002) no porque el MFA se negara a la independencia, sino porque tres movimientos de liberación (MPLA, FNLA, UNITA) no pudieron coordinarse para el reparto del poder. Este es un <strong>fallo de coordinación</strong> dentro de un subjuego.",
+    tl_d2_1:"Independencia de Guinea-Bisáu", tl_d2_2:"Independencia de Mozambique (Acuerdo de Lusaka)",
+    tl_d2_3:"Independencia de Santo Tomé y Príncipe y de Cabo Verde",
+    tl_d2_4:"Independencia de Angola — comienza la guerra civil",
+    tl_d2_5:"Fin de la guerra civil angoleña. D2 plenamente resuelto.",
+    d3_eyebrow:"El Tercer D · 1974 – Presente", d3_title:"D3 — Desarrollo",
+    d3_lead:"El desarrollo es el D más largo. A diferencia de la democracia (dos años) o la descolonización (18 meses), es un juego repetido — que aún continúa.",
+    d3_players_label:"Jugadores",
+    d3_players_body:"Estado R vs. Mercado M. Un juego de coordinación repetido: ambas partes eligen cooperar y crecer juntas, o restringir y estancarse.",
+    d3_table_note:"Pagos del juego-etapa (Estado, Mercado). Se juega cada período.",
+    d3_col1:"Mercado: Invierte", d3_col2:"Mercado: Desinvierte",
+    d3_row1:"Estado: Abre y Reforma", d3_row2:"Estado: Restringe",
+    stagnation:"Estancamiento",
+    d3_eu_label:"1986: El Punto de Inflexión",
+    d3_eu_body:"La adhesión a la Comunidad Europea transformó permanentemente el juego. La CEE actuó como un <em>dispositivo de compromiso</em>: hizo creíbles las políticas favorables al mercado y el coste de volver al control estatal se volvió enorme.",
+    d3_phases_label:"Fases del Juego D3",
+    tl_d3_1:"Ola de nacionalizaciones (PREC) — desvío hacia control estatal",
+    tl_d3_2:"Reprivatizaciones; retorno gradual al equilibrio de mercado",
+    tl_d3_3:"Adhesión a la CEE — el punto de inflexión. Comienza crecimiento fuerte.",
+    tl_d3_4:"Adopción del euro. Integración plena en el mercado único.",
+    tl_d3_5:"Rescate de la Troika — prueba de estrés, pero el equilibrio se mantiene",
+    tl_d3_6:"Recuperación; regreso al equilibrio cooperativo",
+    unified_eyebrow:"El Panorama General", unified_title:"El Equilibrio 3D",
+    unified_lead:"Tres juegos. Cuatro jugadores. Un equilibrio: (D1, D2, D3). Cada jugador tomó su mejor decisión dado lo que hacían los demás.",
+    chain_eq:"Equilibrio de Nash Único: (D1, D2, D3)",
+    unified_theorem_title:"Teorema Central",
+    unified_theorem_body:"Bajo información perfecta, el único Equilibrio de Nash en estrategias puras del juego unificado 3D es (D1, D2, D3). La prueba usa inducción hacia atrás: en cada etapa, dado lo que hacen los demás jugadores, ninguno tiene incentivo para desviarse.",
+    unified_why_label:"Por Qué Cada D Necesitó a los Otros",
+    unified_d1d2_label:"D1 habilitó D2", unified_d1d2_body:"Solo un gobierno democrático tenía la legitimidad para negociar la independencia de forma creíble. Un MFA autoritario habría enfrentado mucha mayor resistencia a la descolonización — interna e internacionalmente.",
+    unified_d2d3_label:"D2 liberó D3", unified_d2d3_body:"El fin de las guerras coloniales liberó más del 40% del presupuesto estatal — recursos que ahora podían canalizarse hacia el desarrollo en vez del gasto militar en África.",
+    unified_d3d1_label:"D3 necesitó D1", unified_d3d1_body:"La adhesión a la CEE — ancla del equilibrio D3 — solo estaba disponible para estados democráticos. Sin D1, la adhesión de 1986 habría sido imposible.",
+    unified_rational_label:"Por Qué Ninguna Desviación Era Racional",
+    unified_acc1_q:"¿Por qué no resistió más el Régimen?",
+    unified_acc1_a:"El MFA controlaba el ejército. La resistencia armada habría fracasado y probablemente habría resultado en condiciones peores para el Régimen. Aceptar la democracia era la mejor respuesta racional — y Caetano lo sabía. Se rindió en pocas horas.",
+    unified_acc2_q:"¿Por qué el MFA no conservó las colonias?",
+    unified_acc2_a:"Portugal gastaba más del 40% de su presupuesto en guerras coloniales. Continuar habría arruinado cualquier nuevo gobierno y destruido la legitimidad popular del MFA. El cálculo era sencillo: descolonizar o colapsar.",
+    unified_acc3_q:"¿Por qué Portugal no eligió una economía de mando?",
+    unified_acc3_a:"El período PREC de 1975 mostró que el control estatal llevaba al estancamiento y la fuga de capitales. Una economía de mando era incompatible con la adhesión a la CEE — bloqueando la mayor fuente de fondos de desarrollo que Portugal haya recibido.",
+    whatif_eyebrow:"Análisis Contrafactual", whatif_title:"¿Y si Hubiera Sido Diferente?",
+    whatif_lead:"La teoría de juegos nos permite trazar lo que habría ocurrido si un jugador se hubiera desviado del camino de equilibrio. La respuesta es consistentemente: peores resultados para todos.",
+    cf1_title:"¿Y si no hubiera habido democracia? (¬D1)",
+    cf1_body1:"Una dictadura militar habría sido inelegible para adherirse a la CEE, cortando a Portugal de los mercados y fondos que impulsaron D3. Sin legitimidad democrática, las negociaciones D2 habrían sido mucho más caóticas.",
+    cf1_body2:"<strong>Paralelo histórico:</strong> España bajo Franco permaneció fuera de la Comunidad Europea hasta después de la democratización en 1977. Portugal habría seguido una trayectoria similar de exclusión prolongada.",
+    cf2_title:"¿Y si las colonias no hubieran sido descolonizadas? (¬D2)",
+    cf2_body1:"Portugal gastaba más del 40% de su presupuesto en guerras imposibles de ganar. Continuar habría hecho D3 económicamente imposible.",
+    cf2_body2:"<strong>Paralelo histórico:</strong> La guerra de Argelia en Francia (1954–1962) duró ocho años más a un coste enorme — y terminó igualmente con la independencia.",
+    cf3_title:"¿Y si Portugal hubiera elegido una economía de mando? (¬D3)",
+    cf3_body1:"El período PREC de 1975 ofreció un breve vistazo: la productividad cayó, la inversión se secó, la economía se contrajo. Una economía de mando habría sido incompatible con la adhesión a la CEE.",
+    cf3_body2:"<strong>Comparación:</strong> El PIB per cápita de Portugal era aproximadamente igual al de Grecia en 1974. Los países que eligieron modelos de mayor control estatal quedaron sistemáticamente rezagados respecto a los que se abrieron al mercado europeo.",
+    cf_lesson_label:"La Lección Contrafactual",
+    cf_lesson_body:"Cada D era individualmente necesario y mutuamente reforzante. Quitar cualquier pilar debilitaría toda la estructura. El equilibrio (D1, D2, D3) no fue solo el mejor resultado — fue el único resultado estable consistente con el comportamiento racional de todos los jugadores.",
+    quiz_eyebrow:"Pon a Prueba tus Conocimientos", quiz_title:"Quiz",
+    quiz_intro:"Cinco preguntas sobre el juego 3D. Cada pregunta tiene una respuesta correcta.",
+    footer_based:"Basado en:", footer_title:"Lessons from the Portuguese Carnations Revolution of 1974 by a game theory approach.",
+    footer_link:"Leer el artículo original →",
+    quiz_questions:[
+      { q:"¿Qué significa MFA en el contexto de la Revolución de los Claveles?",
+        opts:["Alianza Marítima de Fuerzas","Movimiento de las Fuerzas Armadas","Ministerio de Asuntos Exteriores","Mercado de Financiación Autónoma"],
+        correct:1, explain:"MFA = Movimento das Forças Armadas — el Movimiento de las Fuerzas Armadas, el grupo de oficiales que lanzó el golpe del 25 de abril de 1974." },
+      { q:"En el juego D1, ¿por qué aceptó el Régimen la democracia?",
+        opts:["El MFA prometió proteger sus activos","El Régimen no tenía opción militar creíble","Presión internacional de la OTAN","El Régimen apoyaba secretamente la democracia"],
+        correct:1, explain:"El MFA controlaba el ejército. Dada la correlación de fuerzas, resistir solo empeoraría la situación del Régimen. Aceptar era la mejor respuesta racional." },
+      { q:"¿Qué evento de 1986 ancló definitivamente el equilibrio D3?",
+        opts:["La adopción del euro","La adhesión a la Comunidad Europea","El rescate del FMI","La privatización de los bancos estatales"],
+        correct:1, explain:"La adhesión a la CEE en 1986 actuó como dispositivo de compromiso — haciendo creíbles las políticas de mercado y desencadenando una década de fuerte crecimiento." },
+      { q:"¿Por qué Angola cayó en guerra civil a pesar de que D2 predecía cooperación?",
+        opts:["El MFA rechazó la independencia angoleña","Tres movimientos de liberación no lograron coordinarse","La Unión Soviética invadió Angola","Portugal mantuvo bases militares"],
+        correct:1, explain:"Angola es un fallo de coordinación dentro de D2 — no entre Portugal y las colonias, sino entre los tres movimientos angoleños (MPLA, FNLA, UNITA) que no llegaron a un acuerdo." },
+      { q:"Un Equilibrio de Nash significa:",
+        opts:["Un jugador gana todo","Ningún jugador mejora cambiando solo su estrategia","Una tregua entre partes en conflicto","El mejor resultado para la sociedad"],
+        correct:1, explain:"Un Equilibrio de Nash es estable: dado lo que hacen los demás, ningún jugador gana desviándose unilateralmente. Los tres juegos 3D tienen esta propiedad en el resultado (D, D)." }
+    ],
+    quiz_correct:"✓ ¡Correcto! ", quiz_wrong:"✗ No exactamente. ",
+    quiz_next:"Siguiente →", quiz_results:"Ver Resultados", quiz_restart:"Empezar de nuevo",
+    score_msg_5:"🌹 ¡Perfecto! Dominas el juego 3D.", score_msg_3:"📚 Buen trabajo. Tienes las ideas principales.",
+    score_msg_0:"🔄 ¡Revisa las secciones e inténtalo de nuevo!",
+  }
+};
+
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+let lang = 'pt';
+let theme = 'dark';
+let quizState = { current: 0, score: 0, answered: false };
+
+// ════════════════════════════════════════════════════════════
+// THEME
+// ════════════════════════════════════════════════════════════
+function toggleTheme() {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeBtn').textContent = theme === 'dark' ? '🌙' : '☀️';
+}
+
+// ════════════════════════════════════════════════════════════
+// LANGUAGE
+// ════════════════════════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === l));
+  document.documentElement.setAttribute('lang', l);
+  applyTranslations();
+  quizState = { current: 0, score: 0, answered: false };
+  renderQuiz();
+}
+
+function applyTranslations() {
+  const t = i18n[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════════════════════
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    window.scrollTo({ top: document.getElementById('tabNav').offsetTop - 53, behavior: 'smooth' });
+  });
+});
+
+// ════════════════════════════════════════════════════════════
+// ACCORDION
+// ════════════════════════════════════════════════════════════
+function toggleAcc(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  document.querySelectorAll('.acc-hd.open').forEach(h => { h.classList.remove('open'); h.nextElementSibling.classList.remove('open'); });
+  if (!isOpen) { btn.classList.add('open'); body.classList.add('open'); }
+}
+
+// ════════════════════════════════════════════════════════════
+// QUIZ
+// ════════════════════════════════════════════════════════════
+function renderQuiz() {
+  const t = i18n[lang];
+  const qs = t.quiz_questions;
+  const container = document.getElementById('quizContainer');
+  const bar = document.getElementById('qProgress');
+
+  if (quizState.current >= qs.length) {
+    const pct = quizState.score / qs.length;
+    const msg = pct === 1 ? t.score_msg_5 : pct >= 0.6 ? t.score_msg_3 : t.score_msg_0;
+    bar.style.width = '100%';
+    container.innerHTML = `
+      <div style="text-align:center;padding:2rem 0">
+        <span class="score-big">${quizState.score}/${qs.length}</span>
+        <p class="score-msg">${msg}</p>
+        <button class="quiz-next show" onclick="restartQuiz()">${t.quiz_restart}</button>
+      </div>`;
+    return;
+  }
+
+  const q = qs[quizState.current];
+  bar.style.width = (quizState.current / qs.length * 100) + '%';
+  const isLast = quizState.current === qs.length - 1;
+
+  container.innerHTML = `
+    <div class="quiz-num">${t.quiz_eyebrow} · ${quizState.current + 1} / ${qs.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o, i) => `<button class="quiz-opt" data-idx="${i}" onclick="selectOpt(this,${i})">${o}</button>`).join('')}
+    </div>
+    <div class="quiz-fb" id="qfb"></div>
+    <button class="quiz-next" id="qnext" onclick="nextQ()">${isLast ? t.quiz_results : t.quiz_next}</button>`;
+  quizState.answered = false;
+}
+
+function selectOpt(btn, idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const t = i18n[lang];
+  const q = t.quiz_questions[quizState.current];
+  const fb = document.getElementById('qfb');
+  document.querySelectorAll('.quiz-opt').forEach((o, i) => {
+    o.disabled = true;
+    if (i === q.correct) o.classList.add('correct');
+    else if (i === idx) o.classList.add('wrong');
+    else if (i !== idx && i !== q.correct) o.classList.add('neutral');
+  });
+  if (idx === q.correct) {
+    quizState.score++;
+    fb.className = 'quiz-fb show ok';
+    fb.textContent = t.quiz_correct + q.explain;
+  } else {
+    fb.className = 'quiz-fb show bad';
+    fb.textContent = t.quiz_wrong + q.explain;
+  }
+  document.getElementById('qnext').classList.add('show');
+}
+
+function nextQ() { quizState.current++; renderQuiz(); }
+function restartQuiz() { quizState = { current: 0, score: 0, answered: false }; renderQuiz(); }
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+applyTranslations();
+renderQuiz();
+</script>
+</body>
+</html>

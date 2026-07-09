@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collatz Conjecture Explorer</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    :root {
+        --primary: #4F46E5;
+        --primary-hover: #4338CA;
+        --bg: #F3F4F6;
+        --card: #FFFFFF;
+        --text: #1F2937;
+        --subtext: #6B7280;
+        --border: #E5E7EB;
+        --stats-bg: #F9FAFB;
+    }
+    [data-theme="dark"] {
+        --primary: #818CF8;
+        --primary-hover: #6366F1;
+        --bg: #111827;
+        --card: #1F2937;
+        --text: #F9FAFB;
+        --subtext: #9CA3AF;
+        --border: #374151;
+        --stats-bg: #374151;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .top-controls {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .top-controls select, .top-controls button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background-color: var(--card);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 14px;
+        outline: none;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .top-controls select:hover, .top-controls button:hover {
+        border-color: var(--primary);
+    }
+
+    .card {
+        background-color: var(--card);
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        padding: 40px;
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+        transition: background-color 0.3s;
+    }
+    
+    h1 {
+        margin-top: 0;
+        color: var(--primary);
+    }
+    
+    .author {
+        font-size: 0.9em;
+        color: var(--subtext);
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 20px;
+    }
+    
+    .input-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    input {
+        padding: 12px 20px;
+        font-size: 16px;
+        border: 2px solid var(--border);
+        background-color: var(--bg);
+        color: var(--text);
+        border-radius: 8px;
+        width: 60%;
+        outline: none;
+        transition: border-color 0.2s, background-color 0.3s, color 0.3s;
+    }
+    
+    input:focus {
+        border-color: var(--primary);
+    }
+    
+    .btn-calc {
+        padding: 12px 24px;
+        font-size: 16px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-calc:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .view-toggle {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+    }
+
+    .view-btn {
+        padding: 8px 16px;
+        background-color: var(--stats-bg);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .view-btn.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    
+    .stats {
+        display: flex;
+        justify-content: space-around;
+        background: var(--stats-bg);
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid var(--border);
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+    
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary);
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: var(--subtext);
+        letter-spacing: 0.05em;
+    }
+    
+    .sequence-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 20px;
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 10px;
+        background: var(--stats-bg);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+    
+    .node {
+        background: var(--primary);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    .arrow {
+        color: var(--subtext);
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+        margin-top: 20px;
+        display: none;
+        background: var(--card);
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+    }
+</style>
+</head>
+<body>
+
+<div class="top-controls">
+    <select id="langSelect" onchange="changeLanguage()">
+        <option value="en">🇬🇧 English</option>
+        <option value="pt">🇵🇹 Português</option>
+        <option value="es">🇪🇸 Castellano</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="it">🇮🇹 Italiano</option>
+        <option value="ja">🇯🇵 日本語 (Japanese)</option>
+    </select>
+    <button id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+</div>
+
+<div class="card">
+    <h1 id="ui-title">Collatz Sequence Explorer</h1>
+    <div class="author">
+        <strong id="ui-author">Author:</strong> Miguel Rocha de Sousa <br>
+        University of Évora | mrsousa@uevora.pt
+    </div>
+    
+    <p id="ui-desc">Enter any positive integer to see the 3n+1 sequence in action.</p>
+    
+    <div class="input-group">
+        <input type="number" id="seed" placeholder="Enter a starting number..." min="1" value="27" onkeypress="handleKeyPress(event)">
+        <button class="btn-calc" id="ui-calc" onclick="calculate()">Calculate</button>
+    </div>
+
+    <div class="view-toggle" id="viewToggleGroup" style="display:none;">
+        <button class="view-btn active" id="btn-seq" onclick="switchView('seq')">Numbers View</button>
+        <button class="view-btn" id="btn-chart" onclick="switchView('chart')">Cloud Pattern Graph</button>
+    </div>
+
+    <div id="results" style="display:none;">
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-value" id="steps">0</span>
+                <span class="stat-label" id="ui-steps">Total Steps</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="maxVal">0</span>
+                <span class="stat-label" id="ui-peak">Highest Peak</span>
+            </div>
+        </div>
+        
+        <div id="seqView">
+            <h3 id="ui-seq-title">The Sequence:</h3>
+            <div class="sequence-container" id="seqBox"></div>
+        </div>
+
+        <div id="chartView" class="chart-container">
+            <canvas id="collatzChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- TRANSLATIONS ---
+    const translations = {
+        en: {
+            title: "Collatz Sequence Explorer",
+            authorPrefix: "Author:",
+            desc: "Enter any positive integer to see the 3n+1 sequence in action.",
+            placeholder: "Enter a starting number...",
+            calcBtn: "Calculate",
+            stepsLabel: "Total Steps",
+            peakLabel: "Highest Peak",
+            seqTitle: "The Sequence:",
+            errorMsg: "Please enter a valid positive integer greater than 0.",
+            dark: "🌙 Dark Mode",
+            light: "☀️ Light Mode",
+            btnSeq: "Numbers View",
+            btnChart: "Cloud Pattern Graph",
+            chartTitle: "Collatz Trajectory"
+        },
+        pt: {
+            title: "Explorador da Sequência de Collatz",
+            authorPrefix: "Autor:",
+            desc: "Insira qualquer número inteiro positivo para ver a sequência 3n+1 em ação.",
+            placeholder: "Insira um número inicial...",
+            calcBtn: "Calcular",
+            stepsLabel: "Total de Passos",
+            peakLabel: "Pico Mais Alto",
+            seqTitle: "A Sequência:",
+            errorMsg: "Por favor, insira um número inteiro positivo válido maior que 0.",
+            dark: "🌙 Modo Escuro",
+            light: "☀️ Modo Claro",
+            btnSeq: "Vista de Números",
+            btnChart: "Gráfico Padrão de Nuvem",
+            chartTitle: "Trajetória de Collatz"
+        },
+        es: {
+            title: "Explorador de Secuencia de Collatz",
+            authorPrefix: "Autor:",
+            desc: "Ingrese cualquier número entero positivo para ver la secuencia 3n+1 en acción.",
+            placeholder: "Ingrese un número inicial...",
+            calcBtn: "Calcular",
+            stepsLabel: "Pasos Totales",
+            peakLabel: "Pico Más Alto",
+            seqTitle: "La Secuencia:",
+            errorMsg: "Por favor, ingrese un número entero positivo válido mayor que 0.",
+            dark: "🌙 Modo Oscuro",
+            light: "☀️ Modo Claro",
+            btnSeq: "Vista de Números",
+            btnChart: "Gráfico de Patrón de Nube",
+            chartTitle: "Trayectoria de Collatz"
+        },
+        fr: {
+            title: "Explorateur de la Suite de Collatz",
+            authorPrefix: "Auteur :",
+            desc: "Entrez n'importe quel entier positif pour voir la suite 3n+1 en action.",
+            placeholder: "Entrez un nombre de départ...",
+            calcBtn: "Calculer",
+            stepsLabel: "Total des Étapes",
+            peakLabel: "Plus Haut Sommet",
+            seqTitle: "La Suite :",
+            errorMsg: "Veuillez entrer un entier positif valide supérieur à 0.",
+            dark: "🌙 Mode Sombre",
+            light: "☀️ Mode Clair",
+            btnSeq: "Vue des Nombres",
+            btnChart: "Graphique en Nuage",
+            chartTitle: "Trajectoire de Collatz"
+        },
+        it: {
+            title: "Esploratore di Sequenza di Collatz",
+            authorPrefix: "Autore:",
+            desc: "Inserisci un numero intero positivo per vedere la sequenza 3n+1 in azione.",
+            placeholder: "Inserisci un numero di partenza...",
+            calcBtn: "Calcola",
+            stepsLabel: "Passi Totali",
+            peakLabel: "Picco Più Alto",
+            seqTitle: "La Sequenza:",
+            errorMsg: "Per favore, inserisci un numero intero positivo valido maggiore di 0.",
+            dark: "🌙 Modalità Scura",
+            light: "☀️ Modalità Chiara",
+            btnSeq: "Vista Numeri",
+            btnChart: "Grafico Modello Nuvola",
+            chartTitle: "Traiettoria di Collatz"
+        },
+        ja: {
+            title: "コラッツ予想エクスプローラー",
+            authorPrefix: "著者:",
+            desc: "任意の正の整数を入力して、3n+1の数列を確認してください。",
+            placeholder: "開始番号を入力してください...",
+            calcBtn: "計算する",
+            stepsLabel: "合計ステップ",
+            peakLabel: "最大値",
+            seqTitle: "数列:",
+            errorMsg: "0より大きい有効な正の整数を入力してください。",
+            dark: "🌙 ダークモード",
+            light: "☀️ ライトモード",
+            btnSeq: "数値ビュー",
+            btnChart: "クラウドパターングラフ",
+            chartTitle: "コラッツの軌跡"
+        }
+    };
+
+    let currentLang = "en";
+    let isDarkMode = false;
+    let chartInstance = null;
+    let currentSequence = [];
+
+    // --- LANGUAGE LOGIC ---
+    function changeLanguage() {
+        currentLang = document.getElementById('langSelect').value;
+        const t = translations[currentLang];
+        
+        document.getElementById('ui-title').innerText = t.title;
+        document.getElementById('ui-author').innerText = t.authorPrefix;
+        document.getElementById('ui-desc').innerText = t.desc;
+        document.getElementById('seed').placeholder = t.placeholder;
+        document.getElementById('ui-calc').innerText = t.calcBtn;
+        document.getElementById('ui-steps').innerText = t.stepsLabel;
+        document.getElementById('ui-peak').innerText = t.peakLabel;
+        document.getElementById('ui-seq-title').innerText = t.seqTitle;
+        document.getElementById('btn-seq').innerText = t.btnSeq;
+        document.getElementById('btn-chart').innerText = t.btnChart;
+        
+        updateThemeButtonText();
+        
+        if (chartInstance) {
+            chartInstance.data.datasets[0].label = t.chartTitle;
+            chartInstance.update();
+        }
+    }
+
+    // --- THEME LOGIC ---
+    function toggleTheme() {
+        isDarkMode = !isDarkMode;
+        if (isDarkMode) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        updateThemeButtonText();
+
+        if(chartInstance) {
+            let textColor = isDarkMode ? '#F9FAFB' : '#1F2937';
+            let gridColor = isDarkMode ? '#374151' : '#E5E7EB';
+            
+            chartInstance.options.scales.x.ticks.color = textColor;
+            chartInstance.options.scales.y.ticks.color = textColor;
+            chartInstance.options.scales.x.grid.color = gridColor;
+            chartInstance.options.scales.y.grid.color = gridColor;
+            chartInstance.options.plugins.legend.labels.color = textColor;
+            chartInstance.update();
+        }
+    }
+
+    function updateThemeButtonText() {
+        const t = translations[currentLang];
+        const btn = document.getElementById('themeToggle');
+        btn.innerText = isDarkMode ? t.light : t.dark;
+    }
+
+    // --- VIEW SWITCH LOGIC ---
+    function switchView(view) {
+        if (view === 'seq') {
+            document.getElementById('btn-seq').classList.add('active');
+            document.getElementById('btn-chart').classList.remove('active');
+            document.getElementById('seqView').style.display = 'block';
+            document.getElementById('chartView').style.display = 'none';
+        } else {
+            document.getElementById('btn-chart').classList.add('active');
+            document.getElementById('btn-seq').classList.remove('active');
+            document.getElementById('seqView').style.display = 'none';
+            document.getElementById('chartView').style.display = 'block';
+            renderChart();
+        }
+    }
+
+    // --- CALCULATION & CHART LOGIC ---
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            calculate();
+        }
+    }
+
+    function calculate() {
+        let n = parseInt(document.getElementById('seed').value);
+        if (isNaN(n) || n < 1) {
+            alert(translations[currentLang].errorMsg);
+            return;
+        }
+
+        currentSequence = [n];
+        let max_val = n;
+        let current = n;
+
+        while (current > 1) {
+            if (current % 2 === 0) {
+                current = current / 2;
+            } else {
+                current = current * 3 + 1;
+            }
+            currentSequence.push(current);
+            if (current > max_val) {
+                max_val = current;
+            }
+        }
+
+        document.getElementById('steps').innerText = currentSequence.length - 1;
+        document.getElementById('maxVal').innerText = max_val;
+
+        // Render Sequence HTML
+        let seqHtml = '';
+        for (let i = 0; i < currentSequence.length; i++) {
+            seqHtml += `<div class="node">${currentSequence[i]}</div>`;
+            if (i < currentSequence.length - 1) {
+                seqHtml += `<div class="arrow">&rarr;</div>`;
+            }
+        }
+        document.getElementById('seqBox').innerHTML = seqHtml;
+        
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('viewToggleGroup').style.display = 'flex';
+
+        // Update chart if currently active
+        if (document.getElementById('btn-chart').classList.contains('active')) {
+            renderChart();
+        }
+    }
+
+    function renderChart() {
+        const ctx = document.getElementById('collatzChart').getContext('2d');
+        const labels = Array.from({length: currentSequence.length}, (_, i) => i);
+        
+        let textColor = isDarkMode ? '#F9FAFB' : '#1F2937';
+        let gridColor = isDarkMode ? '#374151' : '#E5E7EB';
+        let primaryColor = isDarkMode ? '#818CF8' : '#4F46E5';
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: translations[currentLang].chartTitle,
+                    data: currentSequence,
+                    borderColor: primaryColor,
+                    backgroundColor: primaryColor,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: textColor }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Steps', color: textColor },
+                        ticks: { color: textColor },
+                        grid: { color: gridColor }
+                    },
+                    y: {
+                        title: { display: true, text: 'Value', color: textColor },
+                        ticks: { color: textColor },
+                        grid: { color: gridColor },
+                        type: 'logarithmic' // Log scale better shows the cloud pattern for large drops
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

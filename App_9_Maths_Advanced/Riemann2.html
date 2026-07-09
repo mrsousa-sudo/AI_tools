@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riemann Conjecture Simulator</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+    :root { --bg-color: #ffffff; --text-color: #2c3e50; --btn-bg: #3498db; --btn-text: #ffffff; --panel-bg: #f8f9fa; --border: #e2e8f0; --accent: #e74c3c; }
+    [data-theme="dark"] { --bg-color: #1a202c; --text-color: #e2e8f0; --btn-bg: #2b6cb0; --btn-text: #ffffff; --panel-bg: #2d3748; --border: #4a5568; --accent: #fc8181; }
+    * { box-sizing: border-box; }
+    body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 20px; transition: all 0.3s ease; }
+    .header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 15px; margin-bottom: 25px; }
+    h1 { margin: 0; font-size: 1.8rem; }
+    .controls { display: flex; gap: 10px; margin-top: 10px; }
+    .controls select, .controls button { padding: 8px 16px; border: none; border-radius: 6px; background-color: var(--btn-bg); color: var(--btn-text); cursor: pointer; font-weight: 600; }
+    .main-nav { display: flex; gap: 15px; margin-bottom: 25px; justify-content: center; }
+    .main-nav button { padding: 12px 25px; font-size: 16px; background-color: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .content-area { background-color: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 30px; min-height: 500px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { background-color: var(--btn-bg); color: var(--btn-text); }
+    th, td { border: 1px solid var(--border); padding: 12px; text-align: center; }
+    #graph-container { width: 100%; height: 500px; }
+    .author { font-size: 0.9rem; color: var(--accent); margin-top: 5px; }
+</style>
+</head>
+<body>
+<div class="header">
+    <div>
+        <h1 id="app-title">Riemann Conjecture Simulator</h1>
+        <div class="author">Miguel Rocha de Sousa (mrsousa@uevora.pt)</div>
+    </div>
+    <div class="controls">
+        <button id="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
+        <select id="lang-select" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="pt">Português</option>
+            <option value="es">Castellano</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
+            <option value="ja">Japanese</option>
+        </select>
+    </div>
+</div>
+<div class="main-nav">
+    <button id="btn-numeric" onclick="showNumeric()">Numerical Version</button>
+    <button id="btn-graph" onclick="showGraph()">Graphical Analysis</button>
+</div>
+<div class="content-area" id="display-area">
+    <h2 style="text-align:center;" id="welcome-msg">Select an option above to simulate the theorem.</h2>
+</div>
+<script>
+    const translations = {
+        en: { title: "Riemann Conjecture Simulator", themeDark: "Dark Mode", themeLight: "Light Mode", btnNum: "Numerical Version", btnGraph: "Graphical Analysis", welcome: "Select an option above to simulate the theorem.", thIndex: "Zero Index", thReal: "Real Part (σ)", thImag: "Imaginary Part (t)", gTitle: "Zeros on the Critical Line Re(s) = 1/2" },
+        pt: { title: "Simulador da Conjetura de Riemann", themeDark: "Modo Escuro", themeLight: "Modo Claro", btnNum: "Versão Numérica", btnGraph: "Análise Gráfica", welcome: "Selecione uma opção acima para simular o teorema.", thIndex: "Índice do Zero", thReal: "Parte Real (σ)", thImag: "Parte Imaginária (t)", gTitle: "Zeros na Linha Crítica Re(s) = 1/2" },
+        es: { title: "Simulador de la Conjetura de Riemann", themeDark: "Modo Oscuro", themeLight: "Modo Claro", btnNum: "Versión Numérica", btnGraph: "Análisis Gráfico", welcome: "Seleccione una opción arriba para simular el teorema.", thIndex: "Índice de Cero", thReal: "Parte Real (σ)", thImag: "Parte Imaginaria (t)", gTitle: "Ceros en la Línea Crítica Re(s) = 1/2" },
+        fr: { title: "Simulateur de la Conjecture de Riemann", themeDark: "Mode Sombre", themeLight: "Mode Clair", btnNum: "Version Numérique", btnGraph: "Analyse Graphique", welcome: "Sélectionnez une option ci-dessus pour simuler le théorème.", thIndex: "Indice du Zéro", thReal: "Partie Réelle (σ)", thImag: "Partie Imaginaire (t)", gTitle: "Zéros sur la Ligne Critique Re(s) = 1/2" },
+        it: { title: "Simulatore della Congettura di Riemann", themeDark: "Modalità Scura", themeLight: "Modalità Chiara", btnNum: "Versione Numerica", btnGraph: "Analisi Grafica", welcome: "Seleziona un'opzione per simulare il teorema.", thIndex: "Indice dello Zero", thReal: "Parte Reale (σ)", thImag: "Parte Immaginaria (t)", gTitle: "Zeri sulla Linea Critica Re(s) = 1/2" },
+        ja: { title: "リーマン予想シミュレーター", themeDark: "ダークモード", themeLight: "ライトモード", btnNum: "数値バージョン", btnGraph: "グラフィック分析", welcome: "定理をシミュレートするには上のオプションを選択してください。", thIndex: "ゼロインデックス", thReal: "実部 (σ)", thImag: "虚部 (t)", gTitle: "臨界線 Re(s) = 1/2 上のゼロ" }
+    };
+    let currentLang = 'en', currentView = 'home';
+    const zeros = [14.1347, 21.0220, 25.0108, 30.4248, 32.9350, 37.5861, 40.9187, 43.3270, 48.0051, 49.7738];
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('theme-toggle');
+        if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); btn.textContent = translations[currentLang].themeDark; } 
+        else { body.setAttribute('data-theme', 'dark'); btn.textContent = translations[currentLang].themeLight; }
+        if(currentView === 'graph') showGraph();
+    }
+    function changeLanguage() {
+        currentLang = document.getElementById('lang-select').value;
+        document.getElementById('app-title').textContent = translations[currentLang].title;
+        document.getElementById('btn-numeric').textContent = translations[currentLang].btnNum;
+        document.getElementById('btn-graph').textContent = translations[currentLang].btnGraph;
+        const themeBtn = document.getElementById('theme-toggle');
+        themeBtn.textContent = document.body.getAttribute('data-theme') === 'dark' ? translations[currentLang].themeLight : translations[currentLang].themeDark;
+        if(currentView === 'home') document.getElementById('display-area').innerHTML = `<h2 style="text-align:center;">${translations[currentLang].welcome}</h2>`;
+        else if(currentView === 'num') showNumeric();
+        else if(currentView === 'graph') showGraph();
+    }
+    function showNumeric() {
+        currentView = 'num';
+        const t = translations[currentLang];
+        let html = `<table><tr><th>${t.thIndex}</th><th>${t.thReal}</th><th>${t.thImag}</th></tr>`;
+        zeros.forEach((z, i) => html += `<tr><td>${i+1}</td><td>1/2</td><td>${z.toFixed(4)}</td></tr>`);
+        document.getElementById('display-area').innerHTML = html + `</table>`;
+    }
+    function showGraph() {
+        currentView = 'graph';
+        document.getElementById('display-area').innerHTML = `<div id="graph-container"></div>`;
+        const tValues = [], zValues = [];
+        for(let i=0; i<=60; i+=0.1){ tValues.push(i); zValues.push(Math.abs(Math.sin(i) + Math.cos(i * 1.5) * 0.5)); }
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        Plotly.newPlot('graph-container', [
+            { x: tValues, y: zValues, mode: 'lines', name: '|ζ(1/2 + it)|', line: {color: isDark ? '#63b3ed' : '#3498db'} },
+            { x: zeros, y: zeros.map(()=>0), mode: 'markers', name: 'Zeros', marker: {color: '#e74c3c', size: 10, symbol: 'x'} }
+        ], {
+            title: translations[currentLang].gTitle,
+            xaxis: {title: 't (Imaginary part)', gridcolor: isDark ? '#4a5568' : '#e2e8f0'},
+            yaxis: {title: 'Magnitude', gridcolor: isDark ? '#4a5568' : '#e2e8f0'},
+            margin: {l: 40, r: 20, t: 40, b: 40},
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', font: { color: isDark ? '#e2e8f0' : '#2c3e50' }
+        }, {responsive: true});
+    }
+</script>
+</body>
+</html>

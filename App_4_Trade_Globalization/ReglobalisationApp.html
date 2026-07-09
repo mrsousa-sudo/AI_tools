@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#003F7F"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Re-Globalisation Monitor</title>
+<style>
+:root{
+  --blue:#003F7F;--blue2:#1F5FAD;--red:#B22234;--green:#006400;
+  --gold:#B8860B;--amber:#F59E0B;--bg:#f0f4f8;--card:#fff;
+  --text:#222;--sub:#666;--border:#dde3ea;--radius:16px;
+  --nav-h:70px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);max-width:430px;
+     margin:0 auto;min-height:100vh;padding-bottom:var(--nav-h);overflow-x:hidden}
+/* Header */
+.hdr{background:linear-gradient(135deg,var(--blue) 0%,var(--blue2) 100%);
+     color:#fff;padding:14px 18px 12px;position:sticky;top:0;z-index:100}
+.hdr h1{font-size:15px;font-weight:800;letter-spacing:.3px}
+.hdr p{font-size:11px;opacity:.8;margin-top:2px}
+/* Nav */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+     width:100%;max-width:430px;background:#fff;border-top:1px solid var(--border);
+     display:flex;z-index:200;box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+.nav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;
+         align-items:center;gap:3px;background:none;border:none;cursor:pointer;
+         color:#999;font-size:10px;font-weight:400;transition:color .15s}
+.nav-btn.active{color:var(--blue);font-weight:700}
+.nav-btn span.ico{font-size:20px}
+/* Card */
+.card{background:var(--card);border-radius:var(--radius);margin:12px 14px;
+      padding:18px 16px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card-title{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:10px}
+/* Screen */
+.screen{display:none}.screen.active{display:block}
+/* Hero */
+.hero{background:linear-gradient(160deg,var(--blue) 0%,#1a6bb5 100%);
+      color:#fff;padding:24px 20px 28px}
+.hero-emoji{font-size:36px;margin-bottom:8px}
+.hero-title{font-size:18px;font-weight:800;line-height:1.3;margin-bottom:8px}
+.hero-sub{font-size:12px;opacity:.85;line-height:1.5}
+.jel-tags{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.jel-tag{background:rgba(255,255,255,.2);color:#fff;border-radius:20px;
+         padding:3px 10px;font-size:10px;font-weight:700}
+/* Author card */
+.author-card{border-top:4px solid var(--amber);margin-top:-12px}
+/* Stat row */
+.stat{display:flex;justify-content:space-between;align-items:center;
+      padding:8px 0;border-bottom:1px solid #f0f4f8}
+.stat:last-child{border:none}
+.stat-label{font-size:13px;color:#555}
+.stat-val{font-size:14px;font-weight:700;color:var(--blue)}
+/* Bloc card */
+.bloc-card{border-radius:14px;padding:14px;margin-bottom:10px;
+           cursor:pointer;transition:all .2s;border:2px solid transparent}
+.bloc-inner{display:flex;justify-content:space-between;align-items:center}
+.bloc-bar-wrap{margin-top:8px;background:rgba(255,255,255,.3);border-radius:4px;height:6px}
+.bloc-bar{height:6px;border-radius:4px;transition:width .4s}
+.bloc-detail{font-size:11px;line-height:1.6;margin-top:12px;opacity:.95}
+/* Chart */
+.chart-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+svg text{user-select:none}
+/* Slider */
+input[type=range]{width:100%;accent-color:var(--blue);margin:8px 0}
+/* Toggles */
+.toggle-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+            border-radius:20px;border:2px solid;background:transparent;
+            cursor:pointer;font-size:11px;font-weight:700;margin:0 6px 6px 0;
+            transition:all .15s}
+/* Policy */
+.policy-tabs{display:flex;gap:8px;margin-bottom:14px}
+.policy-tab{flex:1;padding:10px 6px;border-radius:10px;border:2px solid var(--border);
+            background:#fff;color:#555;font-size:12px;font-weight:700;cursor:pointer;
+            transition:all .15s}
+.policy-tab.active{border-color:var(--blue);background:var(--blue);color:#fff}
+.policy-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+             border-bottom:1px solid #f0f4f8}
+.policy-dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+/* Metric boxes */
+.metric-box{border-radius:10px;padding:14px;margin-bottom:10px}
+.metric-val{font-size:24px;font-weight:800;margin-bottom:4px}
+.metric-desc{font-size:11px;color:#444;line-height:1.4}
+/* Equation block */
+.eq-block{background:#f0f4f8;border-radius:8px;padding:10px 12px;
+          font-family:monospace;font-size:11px;color:#222;line-height:1.5;
+          word-break:break-all;margin-top:4px}
+/* Info strip */
+.info-strip{background:#fff3cd;border-radius:8px;padding:6px 10px;
+            color:#856404;font-size:11px;margin-top:8px}
+/* Finding item */
+.finding{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f0f4f8}
+.finding:last-child{border:none}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="hdr">
+  <h1>🌐 Re-Globalisation Monitor</h1>
+  <p>Rocha de Sousa (2026) · Universidade de Évora</p>
+</div>
+
+<!-- ── SCREEN: HOME ─────────────────────────────── -->
+<div id="screen-home" class="screen active">
+  <div class="hero">
+    <div class="hero-emoji">🌍🔀🌎</div>
+    <div class="hero-title">Re-Globalisation &amp; Regional Blocs</div>
+    <div class="hero-sub">How America's Trade Policy is Disrupting the World Order</div>
+    <div class="jel-tags">
+      <span class="jel-tag">JEL: F02</span><span class="jel-tag">F13</span>
+      <span class="jel-tag">F15</span><span class="jel-tag">C61</span>
+      <span class="jel-tag">C72</span>
+    </div>
+  </div>
+
+  <div class="card author-card">
+    <div style="font-size:13px;font-weight:700;color:var(--blue)">Miguel Rocha de Sousa</div>
+    <div style="font-size:11px;color:var(--sub);margin-top:3px">Universidade de Évora · Departamento de Economia</div>
+    <div style="font-size:11px;color:var(--sub)">mrsousa@uevora.pt · Submitted April 2026</div>
+    <div class="info-strip">📋 Submitted to the <em>Journal of Economic Integration</em></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚡ Key Findings</div>
+    <div class="finding"><span style="font-size:20px">📉</span><span style="font-size:12px;color:#333;line-height:1.4">Nash trade war costs ~1.8% of world consumption permanently</span></div>
+    <div class="finding"><span style="font-size:20px">🤝</span><span style="font-size:12px;color:#333;line-height:1.4">Kantian equilibrium dominates Nash in 97.3% of simulations</span></div>
+    <div class="finding"><span style="font-size:20px">📚</span><span style="font-size:12px;color:#333;line-height:1.4">LBD amplifies welfare loss by 2.1pp vs Bayesian learning</span></div>
+    <div class="finding"><span style="font-size:20px">🔀</span><span style="font-size:12px;color:#333;line-height:1.4">Re-routing partially offsets US tariff shock for EU &amp; ASEAN</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📄 Abstract</div>
+    <div style="font-size:12px;color:#444;line-height:1.6">
+      This paper develops a unified model of re-globalisation in which geopolitical risk
+      endogenously reshapes comparative advantage across five major trading blocs.
+      We introduce the <em>Geopolitical Comparative Advantage (GCA)</em> operator
+      and embed it in a strategic dynamic game solved via Bellman's recursive approach.
+      Results reveal a Kantian cooperative equilibrium that Pareto-dominates the Nash
+      trade-war outcome by approximately 1.8% of world consumption.
+    </div>
+  </div>
+</div>
+
+<!-- ── SCREEN: BLOCS ────────────────────────────── -->
+<div id="screen-blocs" class="screen">
+  <div class="card">
+    <div class="card-title">🌐 Five Regional Blocs</div>
+    <div style="font-size:11px;color:var(--sub);margin-bottom:12px">Tap a bloc to expand details</div>
+    <div id="bloc-list"></div>
+  </div>
+</div>
+
+<!-- ── SCREEN: MODEL ────────────────────────────── -->
+<div id="screen-model" class="screen">
+  <div class="card">
+    <div class="card-title">📐 GCA Operator — De Sousa (2026)</div>
+    <div style="font-size:11px;color:#555;margin-bottom:8px">
+      Geopolitical risk σ overturns classical comparative advantage beyond threshold σ*.
+    </div>
+    <div class="chart-wrap">
+      <svg id="gca-svg" width="340" height="190"></svg>
+    </div>
+    <div style="margin-top:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#555">
+        <span>Current shock: <strong id="sigma-val" style="color:var(--blue)">σ = 2.5</strong></span>
+        <span id="gca-gap" style="color:var(--red)">GCA gap: —</span>
+      </div>
+      <input type="range" id="sigma-slider" min="0" max="6" step="0.1" value="2.5"/>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#aaa">
+        <span>Low risk</span><span>High risk</span>
+      </div>
+    </div>
+    <div id="gca-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔢 Core Equations</div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px">GCA Operator</div>
+      <div class="eq-block">𝒢ᵢgd = [ln(aℓd/agd) + γᵀ(σℓd−σgd) + δᵀ(τℓd−τgd)] / [ln(aℓi/agi) + γᵀ(σℓi−σgi) + δᵀ(τℓi−τgi)]</div>
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px">Bellman Value Function</div>
+      <div class="eq-block">(TV^j)(x) = max_{τ^j} { r^j(x,τ,τ^{-j}) + β∫V^j(x') F(dx'|x,τ) }</div>
+    </div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px">Welfare Ordering</div>
+      <div class="eq-block">W^{FB} &gt; W^{Kant} ≥ W^{Coop} &gt; W^{Nash}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Main Theorems</div>
+    <div id="theorem-list"></div>
+  </div>
+</div>
+
+<!-- ── SCREEN: RESULTS ──────────────────────────── -->
+<div id="screen-results" class="screen">
+  <div class="card">
+    <div class="card-title">📊 Impulse Response: 25% US Tariff Shock</div>
+    <div style="font-size:11px;color:#555;margin-bottom:8px">Welfare deviation (%) — Toggle series:</div>
+    <div id="irf-toggles"></div>
+    <div class="chart-wrap" style="margin-top:8px">
+      <svg id="irf-svg" width="340" height="190"></svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔧 Calibrated Parameters</div>
+    <div class="stat"><span class="stat-label">β (discount factor)</span><span class="stat-val">0.96</span></div>
+    <div class="stat"><span class="stat-label">σ (inverse EIS)</span><span class="stat-val">2.00</span></div>
+    <div class="stat"><span class="stat-label">η (Armington elasticity)</span><span class="stat-val">3.50</span></div>
+    <div class="stat"><span class="stat-label">φ (LBD intensity)</span><span class="stat-val">0.12</span></div>
+    <div class="stat"><span class="stat-label">γ (geopolitical sensitivity)</span><span class="stat-val">0.35</span></div>
+    <div class="stat"><span class="stat-label">δ (tariff sensitivity)</span><span class="stat-val">0.45</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎲 Monte Carlo (N = 10,000)</div>
+    <div class="stat"><span class="stat-label">P(Nash &lt; Kantian)</span><span class="stat-val" style="color:var(--green)">97.3%</span></div>
+    <div class="stat"><span class="stat-label">95% CI</span><span class="stat-val">[96.4%, 98.1%]</span></div>
+    <div class="stat"><span class="stat-label">LBD vs Bayes gap</span><span class="stat-val">−2.1 pp</span></div>
+    <div class="stat"><span class="stat-label">Recovery time (BL)</span><span class="stat-val">12–16 qtrs</span></div>
+    <div class="stat"><span class="stat-label">Permanent loss (LBD)</span><span class="stat-val" style="color:var(--red)">∞</span></div>
+  </div>
+</div>
+
+<!-- ── SCREEN: POLICY ───────────────────────────── -->
+<div id="screen-policy" class="screen">
+  <div class="card">
+    <div class="card-title">🏛️ Policy Implications</div>
+    <div class="policy-tabs">
+      <button class="policy-tab active" onclick="setPolicyTab('short',this)">⚡ Short</button>
+      <button class="policy-tab" onclick="setPolicyTab('medium',this)">⏳ Medium</button>
+      <button class="policy-tab" onclick="setPolicyTab('long',this)">🌱 Long</button>
+    </div>
+    <div id="policy-horizon-label" style="font-size:11px;color:#666;margin-bottom:12px"></div>
+    <div id="policy-items"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💡 The Case for Cooperation</div>
+    <div class="metric-box" style="background:#e8f5e9">
+      <div class="metric-val" style="color:var(--green)">+1.8%</div>
+      <div class="metric-desc">World consumption gain: Kantian vs Nash — ≈ $1.5 trillion/year</div>
+    </div>
+    <div class="metric-box" style="background:#fff3cd">
+      <div class="metric-val" style="color:#856404">12–16 qtrs</div>
+      <div class="metric-desc">Recovery time under Bayesian learning if cooperation resumes now</div>
+    </div>
+    <div class="metric-box" style="background:#fde8e8">
+      <div class="metric-val" style="color:var(--red)">∞</div>
+      <div class="metric-desc">Welfare loss under LBD if cooperation does not resume — permanent scar</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── NAV ──────────────────────────────────────── -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showTab('home',this)"><span class="ico">🏠</span>Home</button>
+  <button class="nav-btn" onclick="showTab('blocs',this)"><span class="ico">🌐</span>Blocs</button>
+  <button class="nav-btn" onclick="showTab('model',this)"><span class="ico">📐</span>Model</button>
+  <button class="nav-btn" onclick="showTab('results',this)"><span class="ico">📊</span>Results</button>
+  <button class="nav-btn" onclick="showTab('policy',this)"><span class="ico">🏛️</span>Policy</button>
+</nav>
+
+<script>
+// ── Data ──────────────────────────────────────────────
+const BLOCS = [
+  {id:'eu',name:'EU',flag:'🇪🇺',gdp:18.5,intra:64,color:'#003F7F',light:'#dceeff',
+   desc:'The EU represents the world\'s most advanced integration project, combining a customs union, single market, and monetary union. Intra-EU trade accounts for 64% of member trade.'},
+  {id:'nafta',name:'NAFTA/USMCA',flag:'🦅',gdp:27.0,intra:41,color:'#B22234',light:'#ffe8e8',
+   desc:'NAFTA/USMCA creates deep North American integration. The renegotiated USMCA introduced rules-of-origin in automotive sectors — marking a geopolitical turn in RTAs.'},
+  {id:'asean',name:'ASEAN/RCEP',flag:'🌏',gdp:12.2,intra:23,color:'#006400',light:'#e4ffe4',
+   desc:'ASEAN+RCEP creates the world\'s largest FTA by population. Supply-chain integration in electronics makes it especially exposed to US tech-trade restrictions.'},
+  {id:'mercosur',name:'Mercosur',flag:'🌎',gdp:3.8,intra:15,color:'#B8860B',light:'#fffbe0',
+   desc:'Mercosur has underperformed due to macro asymmetries, but the EU–Mercosur deal represents a potential step-change. Most exposed to US tariff re-routing in our model.'},
+  {id:'ibas',name:'IBAS',flag:'🌍',gdp:7.1,intra:4,color:'#7B3F00',light:'#fff0e0',
+   desc:'India–Brazil–South Africa: a South–South coordination forum. Low intra-bloc trade (4%) but large combined population and strategic commodity links.'},
+];
+
+const THEOREMS = [
+  {id:1,title:'GCA Trade Pattern',desc:'Unique competitive equilibrium consistent with GCA rankings (Kakutani fixed point).'},
+  {id:2,title:'Welfare Ordering',desc:'Free trade > Kantian ≥ Cooperative > Nash. Gap ≈ 1.8% world consumption.'},
+  {id:3,title:'Bellman Contraction',desc:'Unique value function V^{j*} under Blackwell\'s conditions, modulus β.'},
+];
+
+const POLICY_DATA = {
+  short:{
+    label:'⏱ Next 1–3 years: immediate stabilisation',
+    color:'#B22234',
+    items:['Emergency trade finance & IMF liquidity backstops','Fast-track EU–Mercosur and ASEAN–EU trade deals','Strategic buffer stocks in high-LBD sectors (chips, pharma)','Targeted FX interventions for Mercosur and IBAS']
+  },
+  medium:{
+    label:'📆 3–10 years: institutional redesign',
+    color:'#F59E0B',
+    items:['Reform WTO with binding dispute settlement','Coordinate industrial policy to avoid subsidy wars','Build geopolitical-risk hedging instruments (GCA ETFs)','Deepen South–South corridors (IBAS+ initiative)']
+  },
+  long:{
+    label:'🔭 Beyond 10 years: structural transformation',
+    color:'#006400',
+    items:['Consolidate multipolar architecture: 5+ equal blocs','AI-enabled real-time geopolitical risk monitoring','Constitutional trade-commitment mechanisms','Green-trade standards alignment across blocs']
+  }
+};
+
+// IRF series
+const IRF_SERIES = [
+  {key:'nash',  label:'Nash',    color:'#B22234',dash:'',    active:true,  fn:q => -0.5*q*Math.exp(-0.15*q)},
+  {key:'kant',  label:'Kantian', color:'#003F7F',dash:'6,3', active:true,  fn:q => -0.15*q*Math.exp(-0.20*q)},
+  {key:'lbd',   label:'LBD',     color:'#006400',dash:'2,2', active:true,  fn:q => -2.5*(1-Math.exp(-0.3*q))*Math.exp(-0.08*q)},
+  {key:'bayes', label:'Bayes',   color:'#B8860B',dash:'8,2,2,2',active:true,fn:q => -1.2*(1-Math.exp(-0.3*q))*Math.exp(-0.10*q)},
+];
+
+const GCA_CURVES = [
+  {name:'EU',     fn:s=>2.5-0.8*s+0.12*s*s, color:'#003F7F'},
+  {name:'NAFTA',  fn:s=>3.0-0.5*s+0.04*s*s, color:'#B22234'},
+  {name:'ASEAN',  fn:s=>2.0-0.3*s+0.06*s*s, color:'#006400'},
+  {name:'Mercosur',fn:s=>1.5-0.2*s+0.05*s*s,color:'#B8860B'},
+  {name:'IBAS',   fn:s=>1.8-0.4*s+0.08*s*s, color:'#7B3F00'},
+];
+
+// ── Tab navigation ─────────────────────────────────
+function showTab(id, btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Build Bloc list ────────────────────────────────
+const blocList = document.getElementById('bloc-list');
+let openBloc = null;
+BLOCS.forEach(b=>{
+  const div = document.createElement('div');
+  div.className = 'bloc-card';
+  div.style.cssText = `background:${b.light};border-color:${b.color}`;
+  div.innerHTML = `
+    <div class="bloc-inner">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:28px">${b.flag}</span>
+        <div>
+          <div style="font-weight:700;font-size:15px;color:${b.color}">${b.name}</div>
+          <div style="font-size:11px;color:#666">GDP: $${b.gdp}tn</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:20px;font-weight:800;color:${b.color}">${b.intra}%</div>
+        <div style="font-size:10px;color:#666">intra-bloc trade</div>
+      </div>
+    </div>
+    <div class="bloc-bar-wrap">
+      <div class="bloc-bar" style="width:${b.intra}%;background:${b.color}"></div>
+    </div>
+    <div class="bloc-detail" style="display:none;color:#333">${b.desc}</div>`;
+  div.addEventListener('click',()=>{
+    const det = div.querySelector('.bloc-detail');
+    const isOpen = det.style.display !== 'none';
+    blocList.querySelectorAll('.bloc-detail').forEach(d=>d.style.display='none');
+    blocList.querySelectorAll('.bloc-card').forEach((c,i)=>{
+      c.style.background = BLOCS[i].light;
+      c.style.color = '#222';
+    });
+    if(!isOpen){
+      det.style.display='block';
+      div.style.background = b.color;
+      div.style.color = '#fff';
+      div.querySelectorAll('[style]').forEach(el=>{});
+    }
+  });
+  blocList.appendChild(div);
+});
+
+// ── Build Theorem list ─────────────────────────────
+const thmList = document.getElementById('theorem-list');
+THEOREMS.forEach(t=>{
+  thmList.innerHTML += `
+    <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f0f4f8">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--blue);
+                  color:#fff;display:flex;align-items:center;justify-content:center;
+                  font-size:12px;font-weight:700;flex-shrink:0">${t.id}</div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#222">Theorem ${t.id}: ${t.title}</div>
+        <div style="font-size:11px;color:#555;margin-top:3px">${t.desc}</div>
+      </div>
+    </div>`;
+});
+
+// ── IRF Toggles ────────────────────────────────────
+const irfToggles = document.getElementById('irf-toggles');
+IRF_SERIES.forEach(s=>{
+  const btn = document.createElement('button');
+  btn.className = 'toggle-btn';
+  btn.style.cssText = `border-color:${s.color};background:${s.color};color:#fff`;
+  btn.textContent = '● ' + s.label;
+  btn.addEventListener('click',()=>{
+    s.active = !s.active;
+    btn.style.background = s.active ? s.color : 'transparent';
+    btn.style.color = s.active ? '#fff' : s.color;
+    btn.textContent = (s.active ? '● ' : '○ ') + s.label;
+    drawIRF();
+  });
+  irfToggles.appendChild(btn);
+});
+
+// ── SVG helpers ────────────────────────────────────
+function makeSVGPath(svg,d,color,dash,w=2.2){
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d',d);p.setAttribute('fill','none');
+  p.setAttribute('stroke',color);p.setAttribute('stroke-width',w);
+  if(dash)p.setAttribute('stroke-dasharray',dash);
+  svg.appendChild(p);return p;
+}
+function makeSVGText(svg,x,y,txt,size=9,fill='#888',anchor='middle'){
+  const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('font-size',size);
+  t.setAttribute('fill',fill);t.setAttribute('text-anchor',anchor);
+  t.textContent=txt;svg.appendChild(t);return t;
+}
+function makeSVGLine(svg,x1,y1,x2,y2,color='#e0e8f0',w=1,dash=''){
+  const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+  l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+  l.setAttribute('stroke',color);l.setAttribute('stroke-width',w);
+  if(dash)l.setAttribute('stroke-dasharray',dash);
+  svg.appendChild(l);return l;
+}
+function makeSVGRect(svg,x,y,w,h,fill,opacity=1){
+  const r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  r.setAttribute('x',x);r.setAttribute('y',y);r.setAttribute('width',w);r.setAttribute('height',h);
+  r.setAttribute('fill',fill);r.setAttribute('opacity',opacity);
+  svg.appendChild(r);return r;
+}
+
+// ── Draw IRF ───────────────────────────────────────
+function drawIRF(){
+  const svg = document.getElementById('irf-svg');
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  const W=340,H=190,pad={t:12,r:12,b:36,l:44};
+  const iW=W-pad.l-pad.r,iH=H-pad.t-pad.b;
+  const qs=Array.from({length:21},(_,i)=>i);
+  const allSeries=IRF_SERIES.filter(s=>s.active);
+  const allY=allSeries.flatMap(s=>qs.map(s.fn));
+  if(!allY.length)return;
+  const minY=Math.min(...allY,-0.5),maxY=Math.max(...allY,0.1);
+  const rangeY=maxY-minY||1;
+  const cx=q=>pad.l+(q/20)*iW;
+  const cy=y=>pad.t+iH-((y-minY)/rangeY)*iH;
+  // Grid
+  [minY,(minY+maxY)/2,maxY].forEach(y=>{
+    makeSVGLine(svg,pad.l,cy(y),pad.l+iW,cy(y),'#e0e8f0',1);
+    makeSVGText(svg,pad.l-4,cy(y)+4,y.toFixed(1),8,'#888','end');
+  });
+  // X labels
+  [0,5,10,15,20].forEach(q=>{
+    makeSVGText(svg,cx(q),pad.t+iH+18,q+'',8,'#888');
+  });
+  makeSVGText(svg,pad.l+iW/2,H-1,'Quarters',8,'#666');
+  // Zero line
+  makeSVGLine(svg,pad.l,cy(0),pad.l+iW,cy(0),'#999',1,'4 2');
+  // Series
+  allSeries.forEach(s=>{
+    const d=qs.map((q,i)=>`${i===0?'M':'L'}${cx(q).toFixed(1)},${cy(s.fn(q)).toFixed(1)}`).join(' ');
+    makeSVGPath(svg,d,s.color,s.dash);
+  });
+}
+
+// ── Draw GCA ───────────────────────────────────────
+function drawGCA(sigma){
+  const svg = document.getElementById('gca-svg');
+  while(svg.firstChild)svg.removeChild(svg.firstChild);
+  const W=340,H=190,pad={t:12,r:12,b:36,l:44};
+  const iW=W-pad.l-pad.r,iH=H-pad.t-pad.b;
+  const maxS=7,minY=-1.5,maxY=4;
+  const cx=s=>pad.l+(s/maxS)*iW;
+  const cy=y=>pad.t+iH-((y-minY)/(maxY-minY))*iH;
+  const threshX=cx(3.5);
+  // Disruption zone
+  makeSVGRect(svg,threshX,pad.t,pad.l+iW-threshX,iH,'#ffe0e0',0.5);
+  // Classical CA
+  makeSVGLine(svg,pad.l,cy(2.5),pad.l+iW,cy(2.5),'#999',1,'4 2');
+  makeSVGText(svg,pad.l+iW-2,cy(2.5)-3,'Classical CA',8,'#888','end');
+  // Threshold
+  makeSVGLine(svg,threshX,pad.t,threshX,pad.t+iH,'#cc0000',1.5,'3 2');
+  makeSVGText(svg,threshX+2,pad.t+iH+14,'σ*',8,'#cc0000','start');
+  // Current sigma
+  makeSVGLine(svg,cx(sigma),pad.t,cx(sigma),pad.t+iH,'#F59E0B',1.5);
+  // Curves
+  const sArr=Array.from({length:70},(_,i)=>i*maxS/69);
+  GCA_CURVES.forEach(c=>{
+    const d=sArr.map((s,i)=>`${i===0?'M':'L'}${cx(s).toFixed(1)},${cy(c.fn(s)).toFixed(1)}`).join(' ');
+    makeSVGPath(svg,d,c.color,'',2);
+  });
+  // Y labels
+  [0,1,2,3].forEach(y=>makeSVGText(svg,pad.l-4,cy(y)+4,y+'',8,'#888','end'));
+  // X labels
+  [0,2,4,6].forEach(x=>makeSVGText(svg,cx(x),pad.t+iH+14,x+'',8,'#888'));
+  makeSVGText(svg,pad.l+iW/2,H-1,'Geopolitical Risk σ',8,'#666');
+}
+
+// GCA Legend
+const gcaLegend = document.getElementById('gca-legend');
+GCA_CURVES.forEach(c=>{
+  gcaLegend.innerHTML+=`<div style="display:flex;align-items:center;gap:4px;font-size:11px">
+    <div style="width:16px;height:3px;background:${c.color};border-radius:2px"></div>
+    <span style="color:#444">${c.name}</span></div>`;
+});
+
+// GCA Slider
+const slider = document.getElementById('sigma-slider');
+slider.addEventListener('input',()=>{
+  const v=+slider.value;
+  document.getElementById('sigma-val').textContent = 'σ = '+v.toFixed(1);
+  const gap = ((3.0-1.5)*v*0.35).toFixed(2);
+  document.getElementById('gca-gap').textContent = 'GCA gap: '+gap;
+  drawGCA(v);
+});
+
+// ── Policy tab ─────────────────────────────────────
+let currentPolicy='short';
+function setPolicyTab(h,btn){
+  currentPolicy=h;
+  document.querySelectorAll('.policy-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPolicy();
+}
+function renderPolicy(){
+  const d=POLICY_DATA[currentPolicy];
+  document.getElementById('policy-horizon-label').textContent=d.label;
+  const el=document.getElementById('policy-items');
+  el.innerHTML=d.items.map(item=>`
+    <div class="policy-item">
+      <div class="policy-dot" style="background:${d.color}"></div>
+      <div style="font-size:12px;color:#333;line-height:1.5">${item}</div>
+    </div>`).join('');
+}
+
+// ── Init ───────────────────────────────────────────
+drawIRF();
+drawGCA(2.5);
+renderPolicy();
+</script>
+</body>
+</html>

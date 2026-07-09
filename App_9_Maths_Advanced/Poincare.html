@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Poincaré Disk Simulator</title>
+    <style>
+        :root {
+            /* Light Theme (Default) */
+            --bg-color: #f3f4f6;
+            --panel-bg: #ffffff;
+            --accent-color: #4f46e5;
+            --accent-hover: #6366f1;
+            --text-color: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #d1d5db;
+            --canvas-bg: radial-gradient(circle, #ffffff 0%, #e5e7eb 100%);
+            --disk-bg: rgba(220, 220, 230, 0.4);
+            --disk-border: #9ca3af;
+            --btn-bg: #f9fafb;
+            --btn-hover: #f3f4f6;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme */
+            --bg-color: #121214;
+            --panel-bg: #1e1e24;
+            --accent-color: #4f46e5;
+            --accent-hover: #6366f1;
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #374151;
+            --canvas-bg: radial-gradient(circle, #1a1a24 0%, #0d0d11 100%);
+            --disk-bg: rgba(30, 30, 36, 0.4);
+            --disk-border: #4b5563;
+            --btn-bg: #2d2d36;
+            --btn-hover: #3b3b47;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #sidebar {
+            width: 100%;
+            max-height: 45vh;
+            overflow-y: auto;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-sizing: border-box;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .toggle-btn {
+            background: var(--btn-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 1rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:active {
+            transform: scale(0.95);
+        }
+
+        #canvas-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: var(--canvas-bg);
+            touch-action: none;
+            transition: background 0.3s;
+        }
+
+        canvas {
+            background-color: transparent;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            margin: 0 0 2px 0;
+            font-weight: 700;
+            background: linear-gradient(45deg, #818cf8, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 2px;
+            transition: color 0.3s;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        button.tool-btn, button.action-btn {
+            background-color: var(--btn-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button.tool-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        button.danger {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        [data-theme="dark"] button.danger { background-color: #7f1d1d; }
+
+        .instructions {
+            background-color: rgba(128, 128, 128, 0.05);
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .instructions ul {
+            margin: 5px 0 0 0;
+            padding-left: 20px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        #statusbar {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #fff;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 4px 8px;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        @media (min-width: 768px) {
+            body { flex-direction: row; }
+            #sidebar { width: 320px; max-height: 100vh; border-right: 1px solid var(--border-color); border-bottom: none; }
+            .btn-group { grid-template-columns: 1fr; }
+            button.tool-btn { flex-direction: row; justify-content: flex-start; padding: 12px 10px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div id="sidebar">
+        <div class="top-controls">
+            <button class="toggle-btn" onclick="changeLang()">
+                <span id="flagIcon">🇬🇧</span> <span id="langText">EN</span>
+            </button>
+            <button class="toggle-btn" id="themeToggle" onclick="toggleTheme()">
+                🌞
+            </button>
+        </div>
+
+        <div>
+            <h1 id="ui-title">Poincaré Disk</h1>
+            <p id="ui-sub">Hyperbolic Geometry Simulator.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title" id="ui-tools">Tools</div>
+            <div class="btn-group">
+                <button id="btn-add-point" class="tool-btn active" onclick="setMode('add-point')">
+                    <span style="font-size: 1.2rem;">📍</span> <span id="ui-add">Add</span>
+                </button>
+                <button id="btn-draw-line" class="tool-btn" onclick="setMode('draw-line')">
+                    <span style="font-size: 1.2rem;">🛣️</span> <span id="ui-line">Line</span>
+                </button>
+                <button id="btn-drag" class="tool-btn" onclick="setMode('drag')">
+                    <span style="font-size: 1.2rem;">🖐️</span> <span id="ui-drag">Drag</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="section">
+            <button class="action-btn danger" onclick="clearCanvas()">
+                <span id="ui-clear">🗑️ Clear Canvas</span>
+            </button>
+        </div>
+
+        <div class="section instructions">
+            <div class="section-title" id="ui-how" style="color: #d97706;">How to use</div>
+            <ul id="dynamic-instructions">
+                </ul>
+        </div>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="poincareCanvas"></canvas>
+        <div id="statusbar">X: 0.00 | Y: 0.00</div>
+    </div>
+
+    <script>
+        // --- Localization & Theming ---
+        const langs = ['EN', 'PT', 'ES', 'FR', 'IT', 'JA'];
+        const flags = ['🇬🇧', '🇵🇹', '🇪🇸', '🇫🇷', '🇮🇹', '🇯🇵'];
+        let currentLangIndex = 0;
+
+        const dict = {
+            'EN': { title: "Poincaré Disk", sub: "Hyperbolic Geometry Simulator", tools: "Tools", add: "Add", line: "Line", drag: "Drag", clear: "🗑️ Clear Canvas", how: "How to use", instAdd: "Tap inside the disk to create a point.", instLine: "Tap two points to connect them.", instDrag: "Tap and drag a point." },
+            'PT': { title: "Disco de Poincaré", sub: "Simulador de Geometria Hiperbólica", tools: "Ferramentas", add: "Adic.", line: "Linha", drag: "Mover", clear: "🗑️ Limpar", how: "Como usar", instAdd: "Toque no disco para criar um ponto.", instLine: "Toque em dois pontos para conectá-los.", instDrag: "Toque e arraste um ponto." },
+            'ES': { title: "Disco de Poincaré", sub: "Simulador de Geometría Hiperbólica", tools: "Herramientas", add: "Añadir", line: "Línea", drag: "Mover", clear: "🗑️ Borrar", how: "Cómo usar", instAdd: "Toca el disco para crear un punto.", instLine: "Toca dos puntos para conectarlos.", instDrag: "Toca y arrastra un punto." },
+            'FR': { title: "Disque de Poincaré", sub: "Simulateur Hyperbolique", tools: "Outils", add: "Ajout", line: "Ligne", drag: "Glisser", clear: "🗑️ Effacer", how: "Comment utiliser", instAdd: "Appuyez pour créer un point.", instLine: "Appuyez sur deux points pour lier.", instDrag: "Appuyez et glissez un point." },
+            'IT': { title: "Disco di Poincaré", sub: "Simulatore di Geometria Iperbolica", tools: "Strumenti", add: "Punto", line: "Linea", drag: "Muovi", clear: "🗑️ Pulisci", how: "Come usare", instAdd: "Tocca il disco per creare un punto.", instLine: "Tocca due punti per collegarli.", instDrag: "Tocca e trascina un punto." },
+            'JA': { title: "ポアンカレの円板", sub: "双曲幾何学シミュレーター", tools: "ツール", add: "追加", line: "線", drag: "移動", clear: "🗑️ 消去", how: "使い方", instAdd: "円板をタップして点を作成します。", instLine: "2つの点をタップして接続します。", instDrag: "点をタップしてドラッグします。" }
+        };
+
+        function changeLang() {
+            currentLangIndex = (currentLangIndex + 1) % langs.length;
+            const l = langs[currentLangIndex];
+            document.getElementById('flagIcon').innerHTML = flags[currentLangIndex];
+            document.getElementById('langText').innerHTML = l;
+            
+            document.getElementById('ui-title').innerHTML = dict[l].title;
+            document.getElementById('ui-sub').innerHTML = dict[l].sub;
+            document.getElementById('ui-tools').innerHTML = dict[l].tools;
+            document.getElementById('ui-add').innerHTML = dict[l].add;
+            document.getElementById('ui-line').innerHTML = dict[l].line;
+            document.getElementById('ui-drag').innerHTML = dict[l].drag;
+            document.getElementById('ui-clear').innerHTML = dict[l].clear;
+            document.getElementById('ui-how').innerHTML = dict[l].how;
+            setMode(mode); // Refresh instructions text
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.innerHTML = '🌙'; 
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '🌞'; 
+            }
+            draw(); // Redraw canvas colors
+        }
+
+        // --- Canvas Logic ---
+        const canvas = document.getElementById('poincareCanvas');
+        const ctx = canvas.getContext('2d');
+        const statusbar = document.getElementById('statusbar');
+        
+        let width, height, centerX, centerY, diskRadius;
+        let points = [];
+        let lines = [];
+        let selectedPoints = [];
+        let mode = 'add-point';
+        let draggedPointIdx = null;
+
+        function initCanvas() {
+            const container = canvas.parentElement;
+            const size = Math.min(container.clientWidth, container.clientHeight) * 0.95;
+            canvas.width = size;
+            canvas.height = size;
+            width = size;
+            height = size;
+            centerX = width / 2;
+            centerY = height / 2;
+            diskRadius = (size / 2) * 0.95;
+            draw();
+        }
+
+        window.addEventListener('resize', initCanvas);
+
+        function screenToDisk(x, y) {
+            return { x: (x - centerX) / diskRadius, y: -(y - centerY) / diskRadius };
+        }
+
+        function diskToScreen(x, y) {
+            return { x: centerX + x * diskRadius, y: centerY - y * diskRadius };
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            document.querySelectorAll('.btn-group button').forEach(b => b.classList.remove('active'));
+            if (newMode === 'add-point') document.getElementById('btn-add-point').classList.add('active');
+            if (newMode === 'draw-line') document.getElementById('btn-draw-line').classList.add('active');
+            if (newMode === 'drag') document.getElementById('btn-drag').classList.add('active');
+            
+            selectedPoints = [];
+            const l = langs[currentLangIndex];
+            const instr = document.getElementById('dynamic-instructions');
+            
+            if (mode === 'add-point') instr.innerHTML = `<li>${dict[l].instAdd}</li>`;
+            else if (mode === 'draw-line') instr.innerHTML = `<li>${dict[l].instLine}</li>`;
+            else if (mode === 'drag') instr.innerHTML = `<li>${dict[l].instDrag}</li>`;
+            
+            draw();
+        }
+
+        function clearCanvas() { points = []; lines = []; selectedPoints = []; draw(); }
+
+        function getCircumcenter(p1, p2, p3) {
+            const d = 2 * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
+            if (Math.abs(d) < 1e-7) return null;
+            const ux = ((p1.x*p1.x + p1.y*p1.y) * (p2.y - p3.y) + (p2.x*p2.x + p2.y*p2.y) * (p3.y - p1.y) + (p3.x*p3.x + p3.y*p3.y) * (p1.y - p2.y)) / d;
+            const uy = ((p1.x*p1.x + p1.y*p1.y) * (p3.x - p2.x) + (p2.x*p2.x + p2.y*p2.y) * (p1.x - p3.x) + (p3.x*p3.x + p3.y*p3.y) * (p2.x - p1.x)) / d;
+            return { x: ux, y: uy };
+        }
+
+        function drawHyperbolicLine(p1, p2) {
+            const crossProduct = p1.x * p2.y - p1.y * p2.x;
+            if (Math.abs(crossProduct) < 1e-4) {
+                const dx = p2.x - p1.x; const dy = p2.y - p1.y;
+                const len = Math.hypot(dx, dy);
+                if (len < 1e-6) return;
+                const ux = dx / len; const uy = dy / len;
+                const s1 = diskToScreen(-ux, -uy); const s2 = diskToScreen(ux, uy);
+                ctx.beginPath(); ctx.moveTo(s1.x, s1.y); ctx.lineTo(s2.x, s2.y); ctx.stroke();
+                return;
+            }
+            const p1SqDist = p1.x * p1.x + p1.y * p1.y;
+            const p1Inv = { x: p1.x / p1SqDist, y: p1.y / p1SqDist };
+            const center = getCircumcenter(p1, p2, p1Inv);
+            if (!center) return;
+            const radius = Math.hypot(p1.x - center.x, p1.y - center.y);
+            const centerDist = Math.hypot(center.x, center.y);
+            const baseAngle = Math.atan2(center.y, center.x);
+            const alpha = Math.acos(1 / centerDist); 
+            const angle1 = baseAngle + Math.PI - alpha;
+            const angle2 = baseAngle + Math.PI + alpha;
+            const sCenter = diskToScreen(center.x, center.y);
+            const sRadius = radius * diskRadius;
+            ctx.beginPath();
+            ctx.arc(sCenter.x, sCenter.y, sRadius, -angle1, -angle2, true);
+            ctx.stroke();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw Disk Background based on theme
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, diskRadius, 0, 2 * Math.PI);
+            ctx.strokeStyle = isDark ? '#4b5563' : '#9ca3af'; 
+            ctx.lineWidth = 2;
+            ctx.fillStyle = isDark ? 'rgba(30, 30, 36, 0.4)' : 'rgba(255, 255, 255, 0.6)';
+            ctx.fill(); ctx.stroke();
+
+            // Draw Lines
+            ctx.lineWidth = 2;
+            lines.forEach(line => {
+                ctx.strokeStyle = isDark ? 'rgba(99, 102, 241, 0.8)' : 'rgba(79, 70, 229, 0.8)';
+                drawHyperbolicLine(points[line.a], points[line.b]);
+            });
+
+            // Draw Points
+            points.forEach((p, idx) => {
+                const s = diskToScreen(p.x, p.y);
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, 8, 0, 2 * Math.PI); 
+                if (selectedPoints.includes(idx)) {
+                    ctx.fillStyle = '#f59e0b'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                    ctx.fill(); ctx.stroke();
+                } else {
+                    ctx.fillStyle = isDark ? '#38bdf8' : '#0ea5e9'; ctx.fill();
+                }
+            });
+        }
+
+        function getEventPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        function findClickedPoint(diskPos) {
+            const threshold = 25 / diskRadius; 
+            for (let i = 0; i < points.length; i++) {
+                if (Math.hypot(points[i].x - diskPos.x, points[i].y - diskPos.y) < threshold) return i;
+            }
+            return null;
+        }
+
+        function handlePointerMove(e) {
+            if(e.touches && e.touches.length > 1) return; 
+            e.preventDefault(); 
+            const pos = getEventPos(e);
+            const diskPos = screenToDisk(pos.x, pos.y);
+            const dist = Math.hypot(diskPos.x, diskPos.y);
+            
+            statusbar.innerText = `X: ${diskPos.x.toFixed(2)} | Y: ${diskPos.y.toFixed(2)}`;
+
+            if (mode === 'drag' && draggedPointIdx !== null && dist < 0.99) {
+                points[draggedPointIdx] = diskPos;
+                draw();
+            }
+        }
+
+        function handlePointerDown(e) {
+            const pos = getEventPos(e);
+            const diskPos = screenToDisk(pos.x, pos.y);
+            const dist = Math.hypot(diskPos.x, diskPos.y);
+
+            if (dist >= 1.0) return;
+
+            const clickedIdx = findClickedPoint(diskPos);
+
+            if (mode === 'add-point') {
+                if (clickedIdx !== null) {
+                    const selIdx = selectedPoints.indexOf(clickedIdx);
+                    if (selIdx > -1) selectedPoints.splice(selIdx, 1);
+                    else selectedPoints.push(clickedIdx);
+                } else { points.push(diskPos); }
+            } else if (mode === 'draw-line') {
+                if (clickedIdx !== null) {
+                    if (selectedPoints.length === 0) selectedPoints.push(clickedIdx);
+                    else if (selectedPoints[0] !== clickedIdx) {
+                        lines.push({ a: selectedPoints[0], b: clickedIdx });
+                        selectedPoints = [];
+                    }
+                }
+            } else if (mode === 'drag') {
+                if (clickedIdx !== null) draggedPointIdx = clickedIdx;
+            }
+            draw();
+        }
+
+        function handlePointerUp() { draggedPointIdx = null; }
+
+        canvas.addEventListener('mousemove', handlePointerMove);
+        canvas.addEventListener('mousedown', handlePointerDown);
+        window.addEventListener('mouseup', handlePointerUp);
+
+        canvas.addEventListener('touchmove', handlePointerMove, {passive: false});
+        canvas.addEventListener('touchstart', handlePointerDown, {passive: false});
+        window.addEventListener('touchend', handlePointerUp);
+
+        // Initialize defaults
+        setMode('add-point');
+        initCanvas();
+    </script>
+</body>
+</html>

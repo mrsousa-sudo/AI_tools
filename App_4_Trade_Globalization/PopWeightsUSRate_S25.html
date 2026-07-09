@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#020617"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Population Weights &amp; US Interest Rate</title>
+<style>
+  /* ── Reset & Base ──────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --navy: #1a2e4a;
+    --dark: #020617;
+    --card: #0f172a;
+    --card2: #1e293b;
+    --gold: #c8922a;
+    --teal: #2a7d8e;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --dim: #64748b;
+    --border: #1e293b;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+  }
+  html, body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    max-width: 430px;
+    margin: 0 auto;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+  input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: var(--card2); outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--gold); cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+
+  /* ── Animations ─────────────────────────────────── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .fade-up { animation: fadeUp 0.3s ease forwards; }
+
+  /* ── Layout ─────────────────────────────────────── */
+  #header {
+    background: linear-gradient(135deg, var(--navy) 0%, #0d1f36 100%);
+    padding: 22px 18px 16px;
+    border-bottom: 2px solid var(--gold);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-eyebrow { color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: 3px; margin-bottom: 5px; }
+  .header-title   { color: var(--text); font-size: 18px; font-weight: 800; line-height: 1.3; }
+  .header-sub     { color: var(--dim); font-size: 11px; margin-top: 4px; }
+
+  /* ── Tab Bar ─────────────────────────────────────── */
+  #tabs {
+    display: flex; background: var(--card);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 84px; z-index: 99;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px 4px; font-size: 11px; font-weight: 700;
+    color: var(--dim); border-bottom: 2px solid transparent;
+    transition: all 0.2s; text-align: center; line-height: 1.4;
+  }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-icon { font-size: 17px; display: block; margin-bottom: 2px; }
+
+  /* ── Sections ────────────────────────────────────── */
+  .section { padding: 16px 16px 28px; display: none; }
+  .section.active { display: block; }
+
+  /* ── Cards ───────────────────────────────────────── */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+  .card.gold-border { border-color: var(--gold); }
+  .card.teal-border { border-color: var(--teal); }
+
+  /* ── Accordion ───────────────────────────────────── */
+  .accordion-header {
+    display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 14px 16px;
+  }
+  .accordion-icon { font-size: 24px; }
+  .accordion-title { flex: 1; font-size: 15px; font-weight: 700; color: var(--text); }
+  .accordion-arrow { color: var(--gold); font-size: 20px; transition: transform 0.2s; }
+  .accordion-body { padding: 0 16px 16px; color: var(--muted); font-size: 13px; line-height: 1.7; display: none; }
+  .accordion-item { border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; background: var(--card); }
+  .accordion-item.open { border-color: var(--gold); background: var(--card2); }
+  .accordion-item.open .accordion-arrow { transform: rotate(90deg); }
+  .accordion-item.open .accordion-body { display: block; }
+
+  /* ── Country Grid ────────────────────────────────── */
+  .country-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .country-pill {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 10px; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; transition: all 0.2s;
+  }
+  .country-pill.selected { border-color: var(--gold); background: var(--card2); }
+  .country-pill-flag { font-size: 22px; }
+  .country-pill-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .country-pill-omega { font-size: 11px; }
+
+  /* ── Stat Row ────────────────────────────────────── */
+  .stat-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid var(--border);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { color: var(--muted); font-size: 13px; }
+  .stat-value { font-weight: 700; font-size: 14px; }
+
+  /* ── Bar Chart ───────────────────────────────────── */
+  .mini-bar { background: var(--card2); border-radius: 4px; height: 8px; overflow: hidden; }
+  .mini-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+
+  /* ── Simulator ───────────────────────────────────── */
+  .sim-row { background: var(--card); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); }
+  .sim-row-header { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .sim-row-name { flex: 1; font-size: 13px; font-weight: 700; }
+  .sim-row-bps { font-weight: 800; font-size: 14px; }
+
+  /* ── Equilibria ──────────────────────────────────── */
+  .eq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .eq-card { background: var(--card); border-radius: 14px; padding: 14px; text-align: left; border: 2px solid var(--border); }
+  .eq-emoji { font-size: 30px; margin-bottom: 6px; }
+  .eq-rate  { font-size: 22px; font-weight: 800; }
+  .eq-name  { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; }
+  .eq-sub   { font-size: 10px; color: var(--dim); }
+  .eq-desc  { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+  /* ── Footer ──────────────────────────────────────── */
+  footer { text-align: center; padding: 14px 16px 32px; color: var(--border); font-size: 10px; border-top: 1px solid #0f172a; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="header-eyebrow">ATLANTIC JOURNAL · 2026</div>
+  <div class="header-title">Population Weights &amp;<br/>US Interest Rates</div>
+  <div class="header-sub">Miguel Rocha de Sousa · Univ. Évora · mrsousa@uevora.pt</div>
+</div>
+
+<div id="tabs">
+  <button class="tab-btn active" data-tab="explain" onclick="switchTab('explain',this)">
+    <span class="tab-icon">💡</span>Explain
+  </button>
+  <button class="tab-btn" data-tab="countries" onclick="switchTab('countries',this)">
+    <span class="tab-icon">🌍</span>Countries
+  </button>
+  <button class="tab-btn" data-tab="simulate" onclick="switchTab('simulate',this)">
+    <span class="tab-icon">📊</span>Simulate
+  </button>
+  <button class="tab-btn" data-tab="equilibria" onclick="switchTab('equilibria',this)">
+    <span class="tab-icon">⚖️</span>Equilibria
+  </button>
+</div>
+
+<!-- ════════════════════════════════════ TAB: EXPLAIN -->
+<div id="explain" class="section active">
+  <p style="color:var(--muted);font-size:13px;margin-bottom:16px;line-height:1.6;">
+    Tap any card to learn more about this research.
+  </p>
+
+  <div class="accordion-item" onclick="toggleAccordion(this)">
+    <div class="accordion-header">
+      <span class="accordion-icon">🌍</span>
+      <span class="accordion-title">The Puzzle</span>
+      <span class="accordion-arrow">›</span>
+    </div>
+    <div class="accordion-body">
+      When the US Fed raises interest rates, every country feels it — but not equally.
+      India feels 41 bps of shock from a 100 bps hike; Singapore feels 558 bps.
+      Same hike. 13× difference. <strong style="color:var(--gold)">Why?</strong>
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAccordion(this)">
+    <div class="accordion-header">
+      <span class="accordion-icon">👥</span>
+      <span class="accordion-title">Population Weight</span>
+      <span class="accordion-arrow">›</span>
+    </div>
+    <div class="accordion-body">
+      A country's share of world population determines how much it absorbs vs
+      amplifies US monetary shocks. Large countries have deeper capital markets
+      and systemic protection. Small countries ride the waves. There is a
+      <strong style="color:var(--gold)">tipping point at ~0.5% of world population</strong>
+      — below it, vulnerability becomes self-reinforcing.
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAccordion(this)">
+    <div class="accordion-header">
+      <span class="accordion-icon">🎮</span>
+      <span class="accordion-title">The Strategic Game</span>
+      <span class="accordion-arrow">›</span>
+    </div>
+    <div class="accordion-body">
+      Central banks react to the Fed <em>and</em> to each other. Modelling this
+      as a formal game reveals a prisoner's dilemma: non-cooperative play drives
+      global rates too high — <strong style="color:var(--red)">everyone loses</strong>.
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAccordion(this)">
+    <div class="accordion-header">
+      <span class="accordion-icon">⚖️</span>
+      <span class="accordion-title">Nash vs Kant</span>
+      <span class="accordion-arrow">›</span>
+    </div>
+    <div class="accordion-body">
+      <strong style="color:var(--red)">Nash equilibrium</strong> (selfish) → 5.11% global rate.<br/>
+      <strong style="color:var(--green)">Kant equilibrium</strong> (cooperative) → 3.91%.<br/><br/>
+      Welfare gain from cooperation: <strong style="color:var(--gold)">27–39% for all countries</strong>.
+      Kantian cooperation is mathematically superior, not just ethically appealing.
+    </div>
+  </div>
+
+  <div class="accordion-item" onclick="toggleAccordion(this)">
+    <div class="accordion-header">
+      <span class="accordion-icon">📋</span>
+      <span class="accordion-title">Policy Recommendations</span>
+      <span class="accordion-arrow">›</span>
+    </div>
+    <div class="accordion-body">
+      ✅ <strong>Fed:</strong> Add global inflation to Taylor rule<br/>
+      ✅ <strong>IMF:</strong> Population-Weighted Spillover Monitor<br/>
+      ✅ <strong>G20:</strong> Kantian Coordination Protocol<br/>
+      ✅ <strong>Small economies:</strong> Capital flow management tools<br/>
+      ✅ <strong>Africa/LatAm:</strong> Regional monetary blocs to pool weight
+    </div>
+  </div>
+
+  <!-- Key numbers banner -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+    <div class="card gold-border" style="text-align:center;padding:18px 10px;">
+      <div style="font-size:26px;font-weight:800;color:var(--red)">5.11%</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:4px">Nash Rate<br/>(non-cooperative)</div>
+    </div>
+    <div class="card" style="border-color:var(--green);text-align:center;padding:18px 10px;">
+      <div style="font-size:26px;font-weight:800;color:var(--green)">3.91%</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:4px">Kant Rate<br/>(cooperative)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ TAB: COUNTRIES -->
+<div id="countries" class="section">
+  <p style="color:var(--muted);font-size:13px;margin-bottom:12px;">Tap a country to explore its exposure.</p>
+  <div class="country-grid" id="country-grid"></div>
+  <div id="country-detail" style="display:none;" class="card gold-border fade-up"></div>
+</div>
+
+<!-- ════════════════════════════════════ TAB: SIMULATE -->
+<div id="simulate" class="section">
+  <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">
+    Adjust the Fed hike size and see each country's effective tightening.
+  </p>
+  <div class="card gold-border" style="margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+      <span style="color:var(--muted);font-size:13px;">Fed Hike Size</span>
+      <span id="hike-label" style="color:var(--gold);font-size:20px;font-weight:800;">100 bps</span>
+    </div>
+    <input type="range" min="25" max="300" step="25" value="100" id="hike-slider" oninput="updateSimulator()"/>
+    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+      <span style="color:var(--dim);font-size:10px;">25 bps</span>
+      <span style="color:var(--dim);font-size:10px;">300 bps</span>
+    </div>
+  </div>
+  <div id="sim-results"></div>
+  <div style="color:var(--dim);font-size:11px;text-align:center;margin-top:8px;">
+    Effective tightening = Fed hike × country spread factor (δ)
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ TAB: EQUILIBRIA -->
+<div id="equilibria" class="section">
+  <div class="eq-grid">
+    <div class="eq-card" style="border-color:var(--red);">
+      <div class="eq-emoji">⚔️</div>
+      <div class="eq-rate" style="color:var(--red)">5.11%</div>
+      <div class="eq-name">Nash</div>
+      <div class="eq-sub">Non-cooperative</div>
+      <div class="eq-desc">Each country acts selfishly. Prisoner's dilemma. Rates globally too high.</div>
+    </div>
+    <div class="eq-card" style="border-color:var(--green);">
+      <div class="eq-emoji">🤝</div>
+      <div class="eq-rate" style="color:var(--green)">3.91%</div>
+      <div class="eq-name">Kant</div>
+      <div class="eq-sub">Cooperative</div>
+      <div class="eq-desc">"What if all did what I do?" Pareto-superior. 27–39% welfare gain.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:12px;">
+    <div style="color:var(--gold);font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:14px;">
+      WELFARE GAIN FROM KANT COOPERATION
+    </div>
+    <div id="welfare-bars"></div>
+  </div>
+
+  <div class="card teal-border">
+    <div style="color:var(--teal);font-size:12px;font-weight:800;letter-spacing:1px;margin-bottom:8px;">MIXED-STRATEGY NASH</div>
+    <p style="color:var(--muted);font-size:12px;line-height:1.7;">
+      When central banks face uncertainty about each other's priorities, they
+      play a mixed strategy. The paper proves this converges to a normal distribution
+      around the pure Nash rate — uncertainty adds noise but preserves the
+      fundamental inefficiency of non-cooperation.
+    </p>
+  </div>
+
+  <div class="card" style="margin-top:12px;border-color:var(--dim);">
+    <div style="color:var(--dim);font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:8px;">KEY THEOREMS (PLAIN LANGUAGE)</div>
+    <div style="color:var(--muted);font-size:12px;line-height:1.7;">
+      <strong style="color:var(--text)">Theorem 1 (Nash):</strong> A unique pure-strategy Nash equilibrium exists.
+      Larger countries set higher rates. All rates exceed the Kant optimum.<br/><br/>
+      <strong style="color:var(--text)">Theorem 2 (Kant):</strong> A Kant equilibrium exists at 3.91%, strictly
+      below the Nash rates. It is the solution to the universal adoption question.<br/><br/>
+      <strong style="color:var(--text)">Theorem 3 (Pareto):</strong> Kant strictly Pareto-dominates Nash —
+      every single country does better under cooperation.
+    </div>
+  </div>
+</div>
+
+<footer>mrsousa@uevora.pt &bull; Rocha de Sousa (2026) &bull; Atlantic Journal</footer>
+
+<script>
+/* ── Data ─────────────────────────────────────────── */
+const COUNTRIES = [
+  { name:"India",     flag:"🇮🇳", omega:17.8, delta:41,  rNash:4.87, rKant:3.91, gain:28 },
+  { name:"China",     flag:"🇨🇳", omega:17.5, delta:42,  rNash:4.82, rKant:3.91, gain:27 },
+  { name:"USA",       flag:"🇺🇸", omega:4.2,  delta:198, rNash:5.25, rKant:3.91, gain:34 },
+  { name:"Indonesia", flag:"🇮🇩", omega:3.5,  delta:231, rNash:5.31, rKant:3.91, gain:35 },
+  { name:"Pakistan",  flag:"🇵🇰", omega:2.8,  delta:275, rNash:5.38, rKant:3.91, gain:35 },
+  { name:"Brazil",    flag:"🇧🇷", omega:2.7,  delta:280, rNash:5.39, rKant:3.91, gain:36 },
+  { name:"Nigeria",   flag:"🇳🇬", omega:2.6,  delta:285, rNash:5.40, rKant:3.91, gain:36 },
+  { name:"Germany",   flag:"🇩🇪", omega:1.1,  delta:389, rNash:5.52, rKant:3.91, gain:37 },
+  { name:"Portugal",  flag:"🇵🇹", omega:0.13, delta:512, rNash:5.64, rKant:3.91, gain:38 },
+  { name:"Singapore", flag:"🇸🇬", omega:0.07, delta:558, rNash:5.70, rKant:3.91, gain:39 },
+];
+
+function vulnColor(d) {
+  if (d < 100) return "var(--green)";
+  if (d < 250) return "var(--amber)";
+  if (d < 400) return "var(--red)";
+  return "#dc2626";
+}
+function vulnText(d) {
+  if (d < 100) return "Low";
+  if (d < 250) return "Medium";
+  if (d < 400) return "High";
+  return "Very High";
+}
+function spread(omega) {
+  const a = [1.2, 1.5, 0.4];
+  const lnw = Math.log(omega / 100);
+  return a[0] - a[1]*lnw + a[2]*lnw*lnw;
+}
+
+/* ── Tab Switching ──────────────────────────────────── */
+function switchTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── Accordion ──────────────────────────────────────── */
+function toggleAccordion(el) {
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.accordion-item').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) el.classList.add('open');
+}
+
+/* ── Countries Tab ──────────────────────────────────── */
+let selectedCountry = null;
+function buildCountryGrid() {
+  const grid = document.getElementById('country-grid');
+  grid.innerHTML = COUNTRIES.map((c, i) => `
+    <div class="country-pill" id="cp-${i}" onclick="selectCountry(${i})">
+      <span class="country-pill-flag">${c.flag}</span>
+      <div>
+        <div class="country-pill-name">${c.name}</div>
+        <div class="country-pill-omega" style="color:${vulnColor(c.delta)}">${c.omega}% pop.</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectCountry(i) {
+  const prev = selectedCountry;
+  selectedCountry = (prev === i) ? null : i;
+  document.querySelectorAll('.country-pill').forEach(p => p.classList.remove('selected'));
+  const detail = document.getElementById('country-detail');
+  if (selectedCountry === null) { detail.style.display = 'none'; return; }
+  document.getElementById('cp-' + selectedCountry).classList.add('selected');
+  const c = COUNTRIES[selectedCountry];
+  detail.style.display = 'block';
+  detail.className = 'card gold-border fade-up';
+  void detail.offsetWidth; // reflow for animation
+
+  const stats = [
+    { label:"World Pop. Share", val:`${c.omega}%`,           color:"var(--blue)" },
+    { label:"Spread (δ)",       val:`${c.delta} bps`,        color:"var(--amber)" },
+    { label:"Nash Rate",        val:`${c.rNash.toFixed(2)}%`,color:"var(--red)" },
+    { label:"Kant Rate",        val:`${c.rKant.toFixed(2)}%`,color:"var(--green)" },
+    { label:"US Fed Rate",      val:"5.25%",                  color:"var(--muted)" },
+    { label:"Welfare Gain",     val:`+${c.gain}%`,           color:"var(--purple)" },
+  ];
+
+  const bars = [
+    { label:"US Fed Rate", val:5.25, color:"var(--muted)" },
+    { label:"Nash Rate",   val:c.rNash, color:"var(--red)" },
+    { label:"Kant Rate",   val:3.91, color:"var(--green)" },
+  ].map(b => `
+    <div style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="color:var(--muted);font-size:11px;">${b.label}</span>
+        <span style="color:${b.color};font-size:11px;font-weight:700;">${b.val.toFixed(2)}%</span>
+      </div>
+      <div class="mini-bar">
+        <div class="mini-bar-fill" style="width:${(b.val/7)*100}%;background:${b.color};"></div>
+      </div>
+    </div>
+  `).join('');
+
+  detail.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <span style="font-size:38px;">${c.flag}</span>
+      <div>
+        <div style="font-size:20px;font-weight:800;color:var(--text)">${c.name}</div>
+        <div style="font-size:13px;font-weight:700;color:${vulnColor(c.delta)}">
+          Vulnerability: ${vulnText(c.delta)}
+        </div>
+      </div>
+    </div>
+    ${stats.map(s => `
+      <div class="stat-row">
+        <span class="stat-label">${s.label}</span>
+        <span class="stat-value" style="color:${s.color}">${s.val}</span>
+      </div>
+    `).join('')}
+    <div style="margin-top:14px;">
+      <div style="color:var(--dim);font-size:11px;letter-spacing:2px;margin-bottom:10px;">RATE COMPARISON</div>
+      ${bars}
+    </div>
+  `;
+}
+
+/* ── Simulator ──────────────────────────────────────── */
+function updateSimulator() {
+  const hike = +document.getElementById('hike-slider').value;
+  document.getElementById('hike-label').textContent = hike + ' bps';
+  const el = document.getElementById('sim-results');
+  el.innerHTML = COUNTRIES.map(c => {
+    const eff = Math.round(spread(c.omega) * hike / 100);
+    const pct = Math.min(100, eff / 6);
+    return `
+      <div class="sim-row">
+        <div class="sim-row-header">
+          <span style="font-size:18px;">${c.flag}</span>
+          <span class="sim-row-name" style="color:var(--text)">${c.name}</span>
+          <span class="sim-row-bps" style="color:${vulnColor(c.delta)}">${eff} bps</span>
+        </div>
+        <div class="mini-bar">
+          <div class="mini-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--green),${vulnColor(c.delta)});"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ── Welfare Bars ───────────────────────────────────── */
+function buildWelfareBars() {
+  document.getElementById('welfare-bars').innerHTML = COUNTRIES.map(c => `
+    <div style="margin-bottom:9px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="color:var(--muted);font-size:12px;">${c.flag} ${c.name}</span>
+        <span style="color:var(--green);font-weight:700;font-size:12px;">+${c.gain}%</span>
+      </div>
+      <div class="mini-bar">
+        <div class="mini-bar-fill" style="width:${(c.gain/45)*100}%;background:linear-gradient(90deg,#1d4ed8,var(--green));"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── Init ───────────────────────────────────────────── */
+buildCountryGrid();
+updateSimulator();
+buildWelfareBars();
+</script>
+</body>
+</html>

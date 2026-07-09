@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#1B3A6B"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Kantian Equilibria — Rocha de Sousa & Caleiro</title>
+<style>
+/* ── Reset & base ──────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1B3A6B; --gold:#C9973A; --light:#EEF2F8; --cream:#FFFBF0;
+  --green:#1B7A3A; --red:#CC3333; --grey:#888888; --lgrey:#F7F7F7;
+  --white:#FFFFFF; --text:#1A1A2E;
+  --r:12px; --sh:0 4px 20px rgba(27,58,107,.15);
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:#F4F6FB;color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+header{
+  background:linear-gradient(135deg,var(--navy) 0%,#2a5298 100%);
+  color:var(--white);padding:0;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 16px rgba(0,0,0,.3);
+}
+.header-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px 10px;border-bottom:2px solid var(--gold);
+}
+.header-logo{font-size:.75rem;font-weight:700;letter-spacing:.08em;opacity:.8;text-transform:uppercase;}
+.header-title{font-size:1.05rem;font-weight:700;text-align:center;flex:1;padding:0 12px;}
+.header-right{font-size:.7rem;opacity:.7;text-align:right;min-width:60px;}
+nav{display:flex;overflow-x:auto;scrollbar-width:none;gap:0;background:rgba(0,0,0,.2);}
+nav::-webkit-scrollbar{display:none;}
+nav a{
+  color:rgba(255,255,255,.8);text-decoration:none;padding:10px 16px;
+  font-size:.78rem;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent;
+  transition:all .2s;flex-shrink:0;
+}
+nav a:hover,nav a.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* ── Sections ────────────────────────────────────────────────────────────── */
+.section{display:none;padding:20px 16px;max-width:720px;margin:0 auto;animation:fadeIn .3s ease;}
+.section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.card{
+  background:var(--white);border-radius:var(--r);box-shadow:var(--sh);
+  padding:20px;margin-bottom:16px;border-left:4px solid var(--navy);
+}
+.card.gold{border-left-color:var(--gold);}
+.card.green{border-left-color:var(--green);}
+.card.red{border-left-color:var(--red);}
+.card-title{font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.card-body{font-size:.9rem;line-height:1.65;color:#333;}
+.callout{
+  background:var(--light);border:1px solid var(--navy);border-radius:var(--r);
+  padding:14px 16px;margin:12px 0;
+}
+.callout-title{font-weight:700;color:var(--navy);font-size:.9rem;margin-bottom:6px;}
+.callout-body{font-size:.85rem;line-height:1.6;color:#444;}
+
+/* ── Cover / Hero ───────────────────────────────────────────────────────── */
+.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,#2a5298 60%,var(--navy) 100%);
+  color:var(--white);border-radius:var(--r);padding:28px 20px;margin-bottom:16px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;
+  border-radius:50%;background:rgba(201,151,58,.15);
+}
+.hero-tag{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:8px;font-weight:600;}
+.hero-title{font-size:1.5rem;font-weight:800;line-height:1.25;margin-bottom:6px;}
+.hero-subtitle{font-size:1rem;color:var(--gold);font-weight:600;margin-bottom:14px;line-height:1.35;}
+.hero-authors{font-size:.78rem;opacity:.85;line-height:1.7;}
+.hero-authors strong{color:var(--gold);}
+.badge{
+  display:inline-block;background:var(--gold);color:var(--navy);
+  padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;
+  letter-spacing:.05em;margin-top:10px;
+}
+
+/* ── Stat grid ───────────────────────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+.stat-card{
+  background:var(--white);border-radius:var(--r);box-shadow:var(--sh);
+  padding:16px 12px;text-align:center;border-top:3px solid var(--gold);
+}
+.stat-num{font-size:2rem;font-weight:800;color:var(--gold);line-height:1;}
+.stat-label{font-size:.75rem;color:var(--navy);margin-top:4px;font-weight:600;line-height:1.3;}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;margin:12px 0;border-radius:var(--r);box-shadow:var(--sh);}
+table{width:100%;border-collapse:collapse;font-size:.83rem;}
+th{background:var(--navy);color:var(--white);padding:10px 8px;font-weight:700;text-align:center;}
+td{padding:8px 8px;text-align:center;border-bottom:1px solid #e8e8e8;}
+tr:nth-child(even) td{background:var(--lgrey);}
+td.lft{text-align:left;font-weight:600;color:var(--navy);}
+td.grn{color:var(--green);font-weight:700;}
+td.rd{color:var(--red);}
+
+/* ── Mechanism display ───────────────────────────────────────────────────── */
+.mech-box{
+  background:linear-gradient(135deg,var(--navy),#2a5298);
+  color:var(--white);border-radius:var(--r);padding:20px;margin:12px 0;
+  text-align:center;
+}
+.mech-formula{font-size:1.1rem;font-family:'Courier New',monospace;margin:10px 0;color:var(--gold);}
+.mech-parts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.mech-part{
+  flex:1;min-width:120px;background:rgba(255,255,255,.1);
+  border-radius:8px;padding:12px;border:1px solid rgba(201,151,58,.5);
+}
+.mech-part-sym{font-size:1.8rem;font-weight:800;color:var(--gold);display:block;line-height:1;}
+.mech-part-name{font-size:.75rem;margin:4px 0;font-weight:600;}
+.mech-part-desc{font-size:.72rem;opacity:.8;line-height:1.4;}
+
+/* ── Learning tabs ───────────────────────────────────────────────────────── */
+.tabs{display:flex;gap:0;border-radius:var(--r);overflow:hidden;margin-bottom:14px;box-shadow:var(--sh);}
+.tab-btn{
+  flex:1;padding:10px 8px;background:var(--lgrey);border:none;cursor:pointer;
+  font-size:.8rem;font-weight:600;color:var(--navy);transition:all .2s;text-align:center;
+}
+.tab-btn.active{background:var(--navy);color:var(--white);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+
+/* ── SVG charts ──────────────────────────────────────────────────────────── */
+.chart-wrap{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin:12px 0;}
+.chart-title{font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:10px;text-align:center;}
+svg.chart{width:100%;height:auto;display:block;}
+
+/* ── Slider interactive ───────────────────────────────────────────────────── */
+.sim-card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);padding:20px;margin:12px 0;}
+.sim-title{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:14px;}
+.param-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.param-label{font-size:.82rem;font-weight:600;color:var(--navy);min-width:40px;}
+.param-range{flex:1;min-width:120px;accent-color:var(--gold);}
+.param-val{
+  font-size:.85rem;font-weight:700;color:var(--gold);
+  background:var(--light);border-radius:6px;padding:3px 10px;min-width:44px;text-align:center;
+}
+.result-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;}
+.result-box{
+  background:var(--light);border-radius:8px;padding:10px 8px;text-align:center;
+}
+.result-num{font-size:1.3rem;font-weight:800;color:var(--navy);}
+.result-label{font-size:.68rem;color:var(--grey);margin-top:2px;}
+canvas.sim-canvas{width:100%;height:180px;border-radius:8px;background:#f9f9fb;margin-top:10px;}
+
+/* ── Applications ─────────────────────────────────────────────────────────── */
+.country-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;}
+.country-card{
+  background:var(--white);border-radius:8px;box-shadow:var(--sh);
+  padding:12px 10px;border-top:3px solid var(--gold);
+}
+.country-name{font-size:.8rem;font-weight:700;color:var(--navy);}
+.country-share{font-size:1.1rem;font-weight:800;color:var(--gold);}
+.country-label{font-size:.7rem;color:var(--grey);}
+.progress-bar{background:#e8e8e8;border-radius:4px;height:6px;margin:4px 0;overflow:hidden;}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--navy),var(--gold));}
+
+/* ── Abstract ─────────────────────────────────────────────────────────────── */
+.abstract-box{
+  background:var(--light);border:1px solid var(--navy);
+  border-radius:var(--r);padding:16px;margin-bottom:14px;
+  font-size:.86rem;line-height:1.7;color:#333;
+  font-style:italic;
+}
+.abstract-label{font-style:normal;font-weight:700;color:var(--navy);display:block;margin-bottom:6px;}
+
+/* ── Keyword pills ────────────────────────────────────────────────────────── */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
+.pill{
+  background:var(--light);border:1px solid var(--navy);
+  border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:600;color:var(--navy);
+}
+
+/* ── Proofs section ───────────────────────────────────────────────────────── */
+.proof-box{
+  background:var(--lgrey);border-left:4px solid var(--gold);
+  border-radius:0 var(--r) var(--r) 0;padding:14px 16px;margin:10px 0;
+}
+.proof-title{font-weight:700;font-size:.88rem;color:var(--navy);margin-bottom:8px;}
+.proof-body{font-size:.84rem;line-height:1.65;color:#333;}
+.proof-qed{text-align:right;color:var(--gold);font-size:1.2rem;margin-top:6px;}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+footer{
+  background:var(--navy);color:rgba(255,255,255,.7);
+  text-align:center;padding:16px;font-size:.75rem;line-height:1.7;margin-top:24px;
+}
+footer strong{color:var(--gold);}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media(min-width:600px){
+  .stats-grid{grid-template-columns:repeat(4,1fr);}
+  .country-grid{grid-template-columns:repeat(3,1fr);}
+  .result-grid{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-bar">
+    <div class="header-logo">UÉvora</div>
+    <div class="header-title">Kantian Equilibria</div>
+    <div class="header-right">May<br/>2026</div>
+  </div>
+  <nav id="mainNav">
+    <a href="#" class="active" data-sec="cover">Home</a>
+    <a href="#" data-sec="motivation">Motivation</a>
+    <a href="#" data-sec="mechanism">Mechanism</a>
+    <a href="#" data-sec="learning">Learning</a>
+    <a href="#" data-sec="applications">Applications</a>
+    <a href="#" data-sec="results">Results</a>
+    <a href="#" data-sec="proofs">Proofs</a>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: COVER -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="section active" id="sec-cover">
+
+  <div class="hero">
+    <div class="hero-tag">Working Paper · Universidade de Évora · 2026</div>
+    <div class="hero-title">Enforcing Kantian Equilibria</div>
+    <div class="hero-subtitle">From Nash's Prisoner's Dilemma<br/>to Learning Cooperation</div>
+    <div class="hero-authors">
+      <strong>Miguel Rocha de Sousa</strong><br/>
+      mrsousa@uevora.pt<br/><br/>
+      <strong>António Caleiro</strong><br/>
+      caleiro@uevora.pt<br/><br/>
+      Departamento de Economia · CEFAGE-UE & VALORIZA
+    </div>
+    <div class="badge">JEL: C70 · C72 · C73 · D83 · F53 · Q54</div>
+  </div>
+
+  <div class="abstract-box">
+    <span class="abstract-label">Abstract</span>
+    We develop a formal framework for <em>enforcing</em> Kantian equilibria as a cooperative
+    alternative to Nash non-cooperative outcomes. A two-parameter mechanism — a scaling factor
+    λ&nbsp;&gt;&nbsp;1 and a deviation penalty δ&nbsp;&gt;&nbsp;0 — induces players to exert
+    equiproportional effort, sustaining the Pareto-superior Kantian allocation. We embed this
+    mechanism in Bayesian learning, evolutionary dynamics (Weibull), and agency theory to show
+    cooperation emerges as a long-run attractor. Applications to the 195-country UNFCCC climate
+    game and the UN Security Council demonstrate feasibility and substantial welfare gains.
+  </div>
+
+  <div class="pills">
+    <span class="pill">Kantian Equilibrium</span>
+    <span class="pill">Nash Equilibrium</span>
+    <span class="pill">Prisoner's Dilemma</span>
+    <span class="pill">λ–δ Mechanism</span>
+    <span class="pill">Bayesian Learning</span>
+    <span class="pill">Evolutionary Dynamics</span>
+    <span class="pill">Climate Change</span>
+    <span class="pill">UN Security Council</span>
+    <span class="pill">International Cooperation</span>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">33%</div><div class="stat-label">Welfare gain<br/>Kantian vs Nash</div></div>
+    <div class="stat-card"><div class="stat-num">1.71</div><div class="stat-label">Optimal λ*<br/>scaling factor</div></div>
+    <div class="stat-card"><div class="stat-num">0.42</div><div class="stat-label">Optimal δ*<br/>penalty param.</div></div>
+    <div class="stat-card"><div class="stat-num">+25pp</div><div class="stat-label">UNSC passage<br/>rate increase</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📖 How to navigate this app</div>
+    <div class="card-body">Use the navigation bar above to explore each section of the paper.
+    The <strong>Mechanism</strong> tab includes an interactive simulator where you can tune λ and δ
+    and see real-time welfare calculations. The <strong>Learning</strong> tab shows animated
+    replicator dynamics. All results are drawn from the working paper.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: MOTIVATION -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-motivation">
+
+  <div class="card">
+    <div class="card-title">🎯 The Fundamental Puzzle</div>
+    <div class="card-body">Why do people fail to cooperate even when cooperation would make everyone
+    better off? From Hobbes's war of all against all to the tragedy of the commons, the theoretical
+    baseline has been mutual defection. This paper asks: what mechanism can reliably reverse this?</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">1.1 · Nash Roots of Non-Cooperation</div>
+    <div class="card-body">
+      The Prisoner's Dilemma captures the logic of strategic non-cooperation. Each player chooses
+      Cooperate (C) or Defect (D) with payoffs satisfying T &gt; R &gt; P &gt; S.
+    </div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Player 1 ↓ / Player 2 →</th><th>Cooperate (C)</th><th>Defect (D)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lft">Cooperate (C)</td><td class="grn">(R, R) = (3, 3)</td><td class="rd">(S, T) = (0, 5)</td></tr>
+        <tr><td class="lft">Defect (D)</td><td class="rd">(T, S) = (5, 0)</td><td>(P, P) = (1, 1)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="callout-title">⚠️ The Nash Equilibrium: (Defect, Defect)</div>
+    <div class="callout-body">Because T &gt; R, defecting is always the dominant strategy regardless
+    of what the opponent does. The unique Nash Equilibrium is (D, D) with payoff (1,1) — strictly
+    worse than mutual cooperation (3,3). This is the tragedy: individually rational choices produce
+    a collectively irrational outcome.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">1.2 · The Kantian Solution</div>
+    <div class="card-body">
+      Roemer (2010, 2019) formalised the Kantian Equilibrium: each player asks <em>"If everyone
+      scaled their effort by factor λ simultaneously, would I want to propose λ ≠ 1?"</em> At a
+      Kantian Equilibrium, the answer is no. Because each player imagines everyone moving together,
+      they automatically internalise externalities — the benefits their effort brings to others.
+    </div>
+  </div>
+
+  <div class="callout" style="background:var(--cream);border-color:var(--gold);">
+    <div class="callout-title" style="color:var(--gold);">💡 Nash vs. Kant — The Key Difference</div>
+    <div class="callout-body">
+      <strong>Nash asks:</strong> "What is my best response, taking others' actions as fixed?" → leads to free-riding.<br/><br/>
+      <strong>Kant asks:</strong> "What should everyone do together if we act as one?" → leads to cooperation.<br/><br/>
+      <strong>Result:</strong> The Kantian Equilibrium Pareto-dominates the Nash Equilibrium. Everyone is strictly better off.
+    </div>
+  </div>
+
+  <!-- SVG diagram: Nash vs Kantian on Pareto frontier -->
+  <div class="chart-wrap">
+    <div class="chart-title">Nash vs. Kantian on the Pareto Frontier</div>
+    <svg class="chart" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Axes -->
+      <line x1="40" y1="170" x2="280" y2="170" stroke="#ccc" stroke-width="1.5"/>
+      <line x1="40" y1="170" x2="40" y2="20" stroke="#ccc" stroke-width="1.5"/>
+      <text x="160" y="188" text-anchor="middle" font-size="9" fill="#888">Player 1 utility</text>
+      <text x="12" y="95" text-anchor="middle" font-size="9" fill="#888" transform="rotate(-90,12,95)">Player 2 utility</text>
+      <!-- Pareto frontier -->
+      <path d="M 260,30 Q 200,80 40,160" fill="none" stroke="#1B3A6B" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="230" y="22" font-size="8" fill="#1B3A6B" font-weight="bold">Pareto frontier</text>
+      <!-- Nash point -->
+      <circle cx="90" cy="135" r="7" fill="#CC3333"/>
+      <text x="100" y="130" font-size="8" fill="#CC3333" font-weight="bold">Nash (D,D)</text>
+      <!-- Kantian point -->
+      <circle cx="165" cy="75" r="7" fill="#C9973A"/>
+      <text x="175" y="70" font-size="8" fill="#C9973A" font-weight="bold">Kantian (K,K)</text>
+      <!-- Social optimum -->
+      <circle cx="155" cy="82" r="4" fill="none" stroke="#1B7A3A" stroke-width="1.5" stroke-dasharray="2,2"/>
+      <!-- Arrow -->
+      <path d="M 97 128 Q 130 100 158 82" fill="none" stroke="#888" stroke-width="1" marker-end="url(#arr)"/>
+      <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#888"/></marker></defs>
+      <text x="120" y="102" font-size="7.5" fill="#555" transform="rotate(-30,120,102)">Kantian improvement</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: MECHANISM -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-mechanism">
+
+  <div class="card">
+    <div class="card-title">⚙️ The λ–δ Enforcement Mechanism</div>
+    <div class="card-body">Our core contribution: a two-parameter mechanism that moves players from
+    Nash non-cooperation to Kantian cooperation without requiring altruism or centralised authority.</div>
+  </div>
+
+  <div class="mech-box">
+    <div style="font-size:.8rem;opacity:.7;margin-bottom:8px;">Modified Payoff Function</div>
+    <div class="mech-formula">ũᵢ(eᵢ, eⱼ) = f(λ·eᵢ + λ·eⱼ) − c·eᵢ − δ·|eᵢ − eⱼ|</div>
+    <div class="mech-parts">
+      <div class="mech-part">
+        <span class="mech-part-sym">λ</span>
+        <div class="mech-part-name">Scaling Factor</div>
+        <div class="mech-part-desc">λ &gt; 1 amplifies collective production, raising rewards above Nash</div>
+      </div>
+      <div class="mech-part">
+        <span class="mech-part-sym">δ</span>
+        <div class="mech-part-name">Symmetry Penalty</div>
+        <div class="mech-part-desc">δ &gt; 0 penalises asymmetric effort: δ·|eᵢ − eⱼ| per unit gap</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Simulator -->
+  <div class="sim-card">
+    <div class="sim-title">🎛️ Interactive Simulator — Tune λ and δ</div>
+
+    <div class="param-row">
+      <span class="param-label">λ</span>
+      <input type="range" class="param-range" id="slLambda" min="1.0" max="3.0" step="0.05" value="1.71"/>
+      <span class="param-val" id="vlLambda">1.71</span>
+    </div>
+    <div class="param-row">
+      <span class="param-label">δ</span>
+      <input type="range" class="param-range" id="slDelta" min="0.0" max="2.0" step="0.02" value="0.42"/>
+      <span class="param-val" id="vlDelta">0.42</span>
+    </div>
+    <div class="param-row">
+      <span class="param-label">eN</span>
+      <input type="range" class="param-range" id="slEN" min="0.5" max="5.0" step="0.1" value="2.0"/>
+      <span class="param-val" id="vlEN">2.00</span>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-box">
+        <div class="result-num" id="resNash">—</div>
+        <div class="result-label">Nash Welfare</div>
+      </div>
+      <div class="result-box">
+        <div class="result-num" id="resKant">—</div>
+        <div class="result-label">Kantian Welfare</div>
+      </div>
+      <div class="result-box">
+        <div class="result-num" id="resGain">—</div>
+        <div class="result-label">Welfare Gain %</div>
+      </div>
+    </div>
+    <div class="result-grid" style="margin-top:8px;">
+      <div class="result-box">
+        <div class="result-num" id="resEK">—</div>
+        <div class="result-label">Kantian Effort</div>
+      </div>
+      <div class="result-box">
+        <div class="result-num" id="resDeter">—</div>
+        <div class="result-label">Deviation deterred?</div>
+      </div>
+      <div class="result-box">
+        <div class="result-num" id="resPareto">—</div>
+        <div class="result-label">Pareto improving?</div>
+      </div>
+    </div>
+
+    <canvas class="sim-canvas" id="simCanvas" width="340" height="180"></canvas>
+    <div style="font-size:.72rem;color:var(--grey);margin-top:6px;text-align:center;">
+      Blue = Nash welfare | Gold = Kantian welfare | Dashed = Social Optimum
+    </div>
+  </div>
+
+  <div class="card gold">
+    <div class="card-title">📐 Theorem 1: Existence</div>
+    <div class="card-body">For any target effort e* in (e<sup>N</sup>, e<sup>opt</sup>], there exists
+    a pair (λ*, δ*) with λ* &gt; 1 and δ* &gt; 0 such that the unique symmetric Nash equilibrium
+    of the modified game ũᵢ is eᵢ = eⱼ = e*. The welfare at this equilibrium strictly exceeds
+    Nash welfare.</div>
+  </div>
+
+  <div class="card green">
+    <div class="card-title">✅ Corollary 1: Welfare Dominance</div>
+    <div class="card-body">W<sup>K</sup> = Σᵢ uᵢ(e*, e*) &gt; W<sup>N</sup> = Σᵢ uᵢ(e<sup>N</sup>, e<sup>N</sup>).
+    The Kantian enforcement equilibrium is strictly Pareto-superior to the Nash equilibrium.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: LEARNING -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-learning">
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="bayesian">Bayesian</button>
+    <button class="tab-btn" data-tab="evolutionary">Evolutionary</button>
+    <button class="tab-btn" data-tab="agency">Agency</button>
+  </div>
+
+  <!-- Bayesian -->
+  <div class="tab-pane active" id="tab-bayesian">
+    <div class="card">
+      <div class="card-title">4.1 · Bayesian Learning (Honkapohja)</div>
+      <div class="card-body">Players start with uncertain beliefs about payoff parameters and update
+      via Bayes' Rule after each interaction. Under the λ–δ mechanism, the posterior concentrates
+      on the true parameters, and best responses converge to the enforcement equilibrium.</div>
+    </div>
+    <div class="callout">
+      <div class="callout-title">Theorem 2: Convergence</div>
+      <div class="callout-body">Under the λ–δ mechanism, if priors have full support over a compact
+      parameter space, then with probability one the Bayesian best-response sequence converges to
+      (e*, e*). The mechanism eliminates off-equilibrium attractors.</div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">Bayesian Belief Convergence (Simulated)</div>
+      <canvas id="bayesCanvas" width="340" height="180"></canvas>
+    </div>
+  </div>
+
+  <!-- Evolutionary -->
+  <div class="tab-pane" id="tab-evolutionary">
+    <div class="card">
+      <div class="card-title">4.2 · Evolutionary Dynamics (Weibull)</div>
+      <div class="card-body">
+        The replicator dynamic models a population where the share of cooperators x(t) grows when
+        cooperation outperforms defection:<br/><br/>
+        <strong>ẋ = x(1−x)[π(C,x) − π(D,x)]</strong><br/><br/>
+        Without enforcement: x → 0 (all-defect is the unique stable attractor).<br/>
+        With enforcement δ &gt; λ(T−R): x → 1 (full cooperation is the unique stable attractor).
+      </div>
+    </div>
+    <div class="sim-card">
+      <div class="sim-title">🔬 Replicator Dynamics — Interactive</div>
+      <div class="param-row">
+        <span class="param-label">δ</span>
+        <input type="range" class="param-range" id="evoSlDelta" min="0" max="5" step="0.1" value="3.5"/>
+        <span class="param-val" id="evoVlDelta">3.5</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">λ</span>
+        <input type="range" class="param-range" id="evoSlLambda" min="1" max="2.5" step="0.05" value="1.5"/>
+        <span class="param-val" id="evoVlLambda">1.5</span>
+      </div>
+      <div class="param-row">
+        <span class="param-label">x₀</span>
+        <input type="range" class="param-range" id="evoSlX0" min="0.01" max="0.99" step="0.01" value="0.3"/>
+        <span class="param-val" id="evoVlX0">0.30</span>
+      </div>
+      <canvas id="evoCanvas" width="340" height="200"></canvas>
+      <div id="evoStatus" style="text-align:center;font-size:.8rem;margin-top:6px;font-weight:700;color:var(--navy);"></div>
+    </div>
+  </div>
+
+  <!-- Agency -->
+  <div class="tab-pane" id="tab-agency">
+    <div class="card">
+      <div class="card-title">4.3 · Agency and Learning: From Lizards to Humans</div>
+      <div class="card-body">Commitment to symmetric effort is one of nature's oldest cooperation
+      strategies. The δ-penalty mechanism has biological precedents across the animal kingdom.</div>
+    </div>
+    <div class="card gold">
+      <div class="card-title">🦎 Lizards (Uta stansburiana)</div>
+      <div class="card-body">Male side-blotched lizards use colour-coded throat patches as honest
+      commitment devices enforcing cooperative territorial boundaries — a biological δ-penalty for
+      asymmetric aggression. Clutton-Brock & Parker (1995): punishment mechanisms sustain cooperation
+      in animal societies.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏹 Hunter-Gatherer Societies</div>
+      <div class="card-body">Bowles (2006): between-group conflict sustained within-group altruism
+      in early human societies. Groups with stronger punishment norms — higher effective δ —
+      outcompeted groups without them, spreading cooperative institutions evolutionarily.</div>
+    </div>
+    <div class="card green">
+      <div class="card-title">🧠 Human Neuroeconomics</div>
+      <div class="card-body">Fehr & Fischbacher (2002): the insula and dorsal striatum encode norm
+      violations and their punishment. When someone violates a fairness norm (deviates from symmetric
+      effort), the brain activates punishment circuits — a neural substrate for the δ mechanism.
+      Cooperation enforcement is hardwired.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: APPLICATIONS -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-applications">
+
+  <div class="card">
+    <div class="card-title">🌍 5.1 · Global Climate Game</div>
+    <div class="card-body">Climate change is the most consequential global Prisoner's Dilemma.
+    Each country benefits from others' abatement but bears the full cost of its own. Without
+    enforcement, every country free-rides and global temperature rises beyond safe limits.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">5.1.1 · All 195 UNFCCC Countries</div>
+    <div class="card-body">
+      Payoff: uᵢ(e) = βᵢ · α·ln(1 + ΣeⱼĀ) − ½γᵢeᵢ²<br/><br/>
+      Nash: each country sets marginal private benefit = marginal cost → total abatement = 18.3 units.<br/>
+      Kantian enforcement (λ*=1.71, δ*=0.42): total abatement = 31.2 units (+70%).<br/>
+      Social optimum: 34.6 units. Enforcement closes 90% of the gap.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">5.1.2 · Big Six + Rest of World</div>
+    <div class="card-body">The six largest emitters account for 68% of global CO₂. Their game
+    is isomorphic to a 2-player Prisoner's Dilemma at the bloc level. Kantian enforcement generates
+    a Pareto improvement for both blocs when λ* exceeds the threshold of Proposition 3.</div>
+  </div>
+
+  <div class="country-grid">
+    <div class="country-card">
+      <div class="country-name">🇨🇳 China</div>
+      <div class="country-share">28.1%</div>
+      <div class="country-label">of global CO₂</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:90%"></div></div>
+    </div>
+    <div class="country-card">
+      <div class="country-name">🇺🇸 USA</div>
+      <div class="country-share">13.7%</div>
+      <div class="country-label">of global CO₂</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:44%"></div></div>
+    </div>
+    <div class="country-card">
+      <div class="country-name">🇮🇳 India</div>
+      <div class="country-share">10.1%</div>
+      <div class="country-label">of global CO₂</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:32%"></div></div>
+    </div>
+    <div class="country-card">
+      <div class="country-name">🇷🇺 Russia</div>
+      <div class="country-share">5.0%</div>
+      <div class="country-label">of global CO₂</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:16%"></div></div>
+    </div>
+    <div class="country-card">
+      <div class="country-name">🇯🇵 Japan</div>
+      <div class="country-share">3.0%</div>
+      <div class="country-label">of global CO₂</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:10%"></div></div>
+    </div>
+    <div class="country-card">
+      <div class="country-name">🇩🇪 Germany</div>
+      <div class="country-share">2.0%</div>
+      <div class="country-label">of global CO₂</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:6%"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏛️ 5.2 · UN Security Council</div>
+    <div class="card-body">The UNSC has 15 members: 5 permanent (P5) with veto power and 10
+    non-permanent (NP10) without. A resolution requires ≥9 yes-votes AND no P5 veto.
+    The structural asymmetry means P5 members are disproportionately pivotal.</div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Members</th><th>Veto?</th><th>Pivotality</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lft">P5 (USA, GBR, FRA, RUS, CHN)</td><td>✅ Yes</td><td class="grn">Very high</td></tr>
+        <tr><td class="lft">NP10 (elected, 2-year terms)</td><td>❌ No</td><td class="rd">Low</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout" style="background:var(--cream);border-color:var(--gold);">
+    <div class="callout-title" style="color:var(--gold);">Kantian Mapping in UNSC Context</div>
+    <div class="callout-body">
+      <strong>λ (coalition commitment multiplier):</strong> NATO-style burden-sharing pledges that amplify
+      the effective contribution of cooperative votes.<br/><br/>
+      <strong>δ (reputational sanction):</strong> General Assembly costs imposed for vetoing resolutions
+      that command overwhelming support — the δ-penalty in institutional form.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: RESULTS -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-results">
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">18.3</div><div class="stat-label">Nash abatement<br/>(units)</div></div>
+    <div class="stat-card"><div class="stat-num">31.2</div><div class="stat-label">Kantian abatement<br/>(units)</div></div>
+    <div class="stat-card"><div class="stat-num">34.6</div><div class="stat-label">Social optimum<br/>(units)</div></div>
+    <div class="stat-card"><div class="stat-num">90%</div><div class="stat-label">Gap closed by<br/>enforcement</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th style="background:#3a1b1b">Nash</th><th style="background:#1b3a2a">Kantian</th><th>Optimum</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lft">Total abatement</td><td class="rd">18.3</td><td class="grn">31.2</td><td>34.6</td></tr>
+        <tr><td class="lft">Global welfare</td><td class="rd">142.1</td><td class="grn">189.7</td><td>195.3</td></tr>
+        <tr><td class="lft">Scaling λ</td><td class="rd">1.00</td><td class="grn">1.71</td><td>—</td></tr>
+        <tr><td class="lft">Penalty δ</td><td class="rd">0</td><td class="grn">0.42</td><td>—</td></tr>
+        <tr><td class="lft">Welfare gain %</td><td class="rd">0%</td><td class="grn">+33.5%</td><td>+37.4%</td></tr>
+        <tr><td class="lft">UNSC passage</td><td class="rd">42%</td><td class="grn">67%</td><td>71%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Welfare Comparison: Nash · Kantian · Optimum</div>
+    <svg class="chart" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gNash" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#CC3333" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#CC3333" stop-opacity=".3"/>
+        </linearGradient>
+        <linearGradient id="gKant" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#C9973A" stop-opacity=".9"/>
+          <stop offset="100%" stop-color="#C9973A" stop-opacity=".3"/>
+        </linearGradient>
+        <linearGradient id="gOpt" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1B7A3A" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#1B7A3A" stop-opacity=".3"/>
+        </linearGradient>
+      </defs>
+      <!-- bars -->
+      <rect x="30" y="47" width="55" height="113" fill="url(#gNash)" rx="4"/>
+      <rect x="120" y="17" width="55" height="143" fill="url(#gKant)" rx="4"/>
+      <rect x="210" y="12" width="55" height="148" fill="url(#gOpt)" rx="4"/>
+      <!-- labels on bars -->
+      <text x="57" y="42" text-anchor="middle" font-size="9" font-weight="bold" fill="#CC3333">142.1</text>
+      <text x="147" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#C9973A">189.7</text>
+      <text x="237" y="7" text-anchor="middle" font-size="9" font-weight="bold" fill="#1B7A3A">195.3</text>
+      <!-- x labels -->
+      <text x="57" y="175" text-anchor="middle" font-size="8.5" fill="#555">Nash</text>
+      <text x="147" y="175" text-anchor="middle" font-size="8.5" fill="#555">Kantian</text>
+      <text x="237" y="175" text-anchor="middle" font-size="8.5" fill="#555">Optimum</text>
+      <!-- baseline -->
+      <line x1="20" y1="160" x2="285" y2="160" stroke="#ccc" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <div class="card gold">
+    <div class="card-title">📋 Theoretical Results Summary</div>
+    <div class="card-body">
+      <strong>R1 – Existence</strong> (Theorem 1): For any e* ∈ (eᴺ, eᵒᵖᵗ], (λ*, δ*) exists.<br/>
+      <strong>R2 – Welfare dominance</strong> (Corollary 1): Wᴷ &gt; Wᴺ always.<br/>
+      <strong>R3 – Bayesian convergence</strong> (Theorem 2): Bayesian agents converge to e* a.s.<br/>
+      <strong>R4 – Evolutionary stability</strong> (Proposition 4): Full cooperation is the unique attractor for δ &gt; λ(T−R).
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- SECTION: PROOFS -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="sec-proofs">
+
+  <div class="card">
+    <div class="card-title">📐 Mathematical Demonstrations (Annex)</div>
+    <div class="card-body">Key proof sketches from the technical paper. Full proofs with complete
+    regularity conditions appear in Annex A of the LaTeX document.</div>
+  </div>
+
+  <div class="proof-box">
+    <div class="proof-title">Proof A1 — Proposition 1: Kantian Pareto-Dominance</div>
+    <div class="proof-body">
+      Under public-good technology uᵢ = f(ΣeⱼĀ) − cᵢ(eᵢ) with f concave and cᵢ strictly convex:
+      <br/><br/>
+      • Nash FOC: f′(Eᴺ) = cᵢ′(eᵢᴺ) for all i<br/>
+      • Kantian FOC: f′(Eᴷ)·Eᴷ = cᵢ′(eᵢᴷ)·eᵢᴷ for all i<br/><br/>
+      Since f′′ &lt; 0, Kantian FOC implies f′(Eᴷ) &lt; f′(Eᴺ), hence Eᴷ &gt; Eᴺ (strict concavity).
+      Because f is increasing, f(Eᴷ) &gt; f(Eᴺ). The surplus gain can be distributed
+      so all players are weakly better off. ∎
+    </div>
+    <div class="proof-qed">□</div>
+  </div>
+
+  <div class="proof-box">
+    <div class="proof-title">Proof A2 — Theorem 1: Existence of (λ*, δ*)</div>
+    <div class="proof-body">
+      <em>Step 1 (Existence of λ*).</em> Define Φ(λ) = λf′(2λe*) − c.
+      At λ=1: Φ(1) = f′(2e*) − c &lt; 0 (since e* &gt; eᴺ and f′(2eᴺ)=c, strict concavity gives f′(2e*) &lt; c).
+      As λ→∞: Φ(λ)→+∞. By IVT, ∃λ* &gt; 1 with Φ(λ*)=0.<br/><br/>
+      <em>Step 2 (Uniqueness of symmetric equilibrium).</em> SOC: λ²f′′(2λe*) &lt; 0 ✓ (f′′ &lt; 0).<br/><br/>
+      <em>Step 3 (Existence of δ*).</em> At the symmetric point, the gain from unilateral deviation ε
+      is O(ε²) by the envelope theorem, while the penalty δ|ε| is O(|ε|). Hence for any δ &gt; 0,
+      small deviations are deterred. The globally binding δ* is finite and positive. ∎
+    </div>
+    <div class="proof-qed">□</div>
+  </div>
+
+  <div class="proof-box">
+    <div class="proof-title">Proof A3 — Theorem 2: Bayesian Convergence</div>
+    <div class="proof-body">
+      By Kalai & Lehrer (1993), Bayesian posteriors concentrate on parameters consistent with
+      observed play. The λ–δ mechanism makes the enforcement equilibrium (e*, e*) the unique
+      equilibrium regardless of payoff parameters (the mechanism eliminates parameter dependence
+      in the best-response correspondence). Hence the best-response sequence converges to e*
+      with probability one. ∎
+    </div>
+    <div class="proof-qed">□</div>
+  </div>
+
+  <div class="proof-box">
+    <div class="proof-title">Proof A4 — Proposition 4: Evolutionary Stability</div>
+    <div class="proof-body">
+      With enforcement, π̃(C,x) − π̃(D,x) = λ[x(R−T)+(1−x)(S−P)] + xδ.<br/><br/>
+      At x=1: λ(R−T) + δ. For δ &gt; λ(T−R) this is positive, so cooperators invade any mixed
+      population near x=1. At x=0: λ(S−P) &lt; 0 (since S &lt; P), so a small fraction of
+      cooperators is invaded by defectors near x=0. There exists a unique unstable interior fixed
+      point x**. All trajectories starting above x** converge to x=1. Under any initial
+      distribution with E[x₀] &gt; x**, the population converges to full cooperation. ∎
+    </div>
+    <div class="proof-qed">□</div>
+  </div>
+
+  <div class="card gold" style="margin-top:16px;">
+    <div class="card-title">📚 References</div>
+    <div class="card-body" style="font-size:.8rem;line-height:1.8;">
+      Axelrod (1984) · Barrett (2003) · Bowles (2006) · Clutton-Brock & Parker (1995) ·
+      Fehr & Gächter (2000) · Fehr & Fischbacher (2002) · Fehr & Schmidt (1999) ·
+      Fudenberg & Levine (1998) · Honkapohja (1993) · Hurwicz & Reiter (2006) ·
+      IEA (2024) · Kalai & Lehrer (1993) · Kolstad (2014) · Laffont (1975) ·
+      Maynard Smith & Price (1973) · Nash (1950, 1951) · Nordhaus (2015) ·
+      Olson (1965) · O'Riordan (2009) · Roemer (2010, 2019) · Rocha de Sousa (2026a,b) ·
+      Sutton & Barto (1998) · Tavoni et al. (2011) · Trivers (1971) · Tucker (1950) ·
+      Voeten (2005) · von Neumann & Morgenstern (1944) · Weibull (1995)
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <strong>Enforcing Kantian Equilibria: From Nash's Prisoner's Dilemma to Learning Cooperation</strong><br/>
+  Miguel Rocha de Sousa &amp; António Caleiro<br/>
+  Universidade de Évora · Departamento de Economia · CEFAGE-UE &amp; VALORIZA<br/>
+  mrsousa@uevora.pt · caleiro@uevora.pt · Working Paper May 2026
+</footer>
+
+<!-- ── JAVASCRIPT ──────────────────────────────────────────────────────────── -->
+<script>
+// ── Navigation ──────────────────────────────────────────────────────────────
+const navLinks = document.querySelectorAll('nav a');
+const sections = document.querySelectorAll('.section');
+
+navLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const sec = link.dataset.sec;
+    navLinks.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    sections.forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-' + sec).classList.add('active');
+    window.scrollTo(0,0);
+  });
+});
+
+// ── Tab system ───────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.closest('.section');
+    group.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    group.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab === 'evolutionary') drawEvo();
+    if(btn.dataset.tab === 'bayesian') drawBayes();
+  });
+});
+
+// ── Mechanism Simulator ──────────────────────────────────────────────────────
+function welfare(e, alpha=10) {
+  return alpha * Math.log(1 + 2*e) - 0.8 * e * e;
+}
+
+function updateSim() {
+  const lam = parseFloat(document.getElementById('slLambda').value);
+  const del = parseFloat(document.getElementById('slDelta').value);
+  const eN  = parseFloat(document.getElementById('slEN').value);
+  document.getElementById('vlLambda').textContent = lam.toFixed(2);
+  document.getElementById('vlDelta').textContent  = del.toFixed(2);
+  document.getElementById('vlEN').textContent     = eN.toFixed(2);
+
+  const eK = lam * eN;
+  const eOpt = eN * 2.1;  // approximation
+  const wN = welfare(eN);
+  const wK = welfare(eK) - del * 0;  // symmetric: no penalty at equilibrium
+  const wO = welfare(eOpt);
+  const gain = ((wK - wN) / Math.abs(wN) * 100);
+  const deterred = del > lam * (5 - 3) ? '✅ Yes' : '❌ No';
+  const pareto   = wK > wN ? '✅ Yes' : '❌ No';
+
+  document.getElementById('resNash').textContent  = wN.toFixed(1);
+  document.getElementById('resKant').textContent  = wK.toFixed(1);
+  document.getElementById('resGain').textContent  = gain.toFixed(1) + '%';
+  document.getElementById('resEK').textContent    = eK.toFixed(2);
+  document.getElementById('resDeter').textContent = deterred;
+  document.getElementById('resPareto').textContent= pareto;
+
+  // Draw welfare bar chart on canvas
+  const canvas = document.getElementById('simCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const maxW = Math.max(wN, wK, wO) * 1.1;
+  const barH = 36, gap = 14, x0 = 80, y0 = 20;
+
+  const bars = [
+    { label:'Nash',    val:wN, color:'#CC3333' },
+    { label:'Kantian', val:wK, color:'#C9973A' },
+    { label:'Optimum', val:wO, color:'#1B7A3A' },
+  ];
+
+  bars.forEach((b, i) => {
+    const y = y0 + i*(barH+gap);
+    const bw = Math.max(4, (b.val/maxW)*(W-x0-20));
+    ctx.fillStyle = b.color + '33';
+    ctx.beginPath(); ctx.roundRect(x0, y, W-x0-10, barH, 6); ctx.fill();
+    ctx.fillStyle = b.color;
+    ctx.beginPath(); ctx.roundRect(x0, y, bw, barH, 6); ctx.fill();
+    ctx.fillStyle = '#333';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(b.label, x0-6, y+barH/2+4);
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 11px sans-serif';
+    if(bw > 40) ctx.fillText(b.val.toFixed(1), x0+6, y+barH/2+4);
+    else { ctx.fillStyle='#333'; ctx.fillText(b.val.toFixed(1), x0+bw+4, y+barH/2+4); }
+  });
+}
+
+['slLambda','slDelta','slEN'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateSim);
+});
+updateSim();
+
+// ── Replicator Dynamics ──────────────────────────────────────────────────────
+function drawEvo() {
+  const del = parseFloat(document.getElementById('evoSlDelta').value);
+  const lam = parseFloat(document.getElementById('evoSlLambda').value);
+  const x0  = parseFloat(document.getElementById('evoSlX0').value);
+  document.getElementById('evoVlDelta').textContent  = del.toFixed(1);
+  document.getElementById('evoVlLambda').textContent = lam.toFixed(2);
+  document.getElementById('evoVlX0').textContent     = x0.toFixed(2);
+
+  const R=3,T=5,S=0,P=1;
+  const dt=0.05, steps=300;
+  const xs = [x0];
+  for(let k=0;k<steps;k++){
+    const x = xs[xs.length-1];
+    const piC = x*lam*R + (1-x)*lam*S;
+    const piD = x*(lam*T-del) + (1-x)*lam*P;
+    const dx  = x*(1-x)*(piC-piD);
+    xs.push(Math.min(1,Math.max(0,x+dt*dx)));
+  }
+
+  // also draw without enforcement
+  const xsNo = [x0];
+  for(let k=0;k<steps;k++){
+    const x = xsNo[xsNo.length-1];
+    const piC = x*R+(1-x)*S;
+    const piD = x*T+(1-x)*P;
+    const dx  = x*(1-x)*(piC-piD);
+    xsNo.push(Math.min(1,Math.max(0,x+dt*dx)));
+  }
+
+  const canvas = document.getElementById('evoCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle='#e8e8e8'; ctx.lineWidth=1;
+  [0.25,0.5,0.75,1.0].forEach(v=>{
+    const y=H-20-(v*(H-40));
+    ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(W-10,y); ctx.stroke();
+    ctx.fillStyle='#aaa'; ctx.font='9px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(v.toFixed(2),38,y+3);
+  });
+
+  function drawLine(arr, color, dash=[]) {
+    ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=2.5; ctx.setLineDash(dash);
+    arr.forEach((v,i)=>{
+      const x=40+i/steps*(W-50), y=H-20-v*(H-40);
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  drawLine(xsNo,'#CC3333',[4,3]);
+  drawLine(xs,  '#C9973A',[]);
+
+  // axes
+  ctx.strokeStyle='#ccc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(40,H-20); ctx.lineTo(W-10,H-20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(40,10); ctx.lineTo(40,H-20); ctx.stroke();
+  ctx.fillStyle='#666'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Time →',W/2,H-4);
+  ctx.save(); ctx.translate(12,H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Cooperation share x(t)',0,0); ctx.restore();
+
+  // legend
+  ctx.font='9px sans-serif'; ctx.textAlign='left';
+  ctx.fillStyle='#C9973A'; ctx.fillText('With enforcement',50,22);
+  ctx.fillStyle='#CC3333'; ctx.fillText('Without enforcement',50,34);
+
+  const finalX = xs[xs.length-1];
+  const threshold = del > lam*(T-R);
+  const status = threshold
+    ? `✅ Converging to full cooperation (x→1). δ=${del.toFixed(1)} > λ(T−R)=${(lam*(T-R)).toFixed(2)}`
+    : `⚠️ Insufficient enforcement. Need δ > ${(lam*(T-R)).toFixed(2)}. Currently x→${finalX.toFixed(2)}`;
+  document.getElementById('evoStatus').textContent = status;
+  document.getElementById('evoStatus').style.color = threshold ? '#1B7A3A' : '#CC3333';
+}
+
+['evoSlDelta','evoSlLambda','evoSlX0'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', drawEvo);
+});
+
+// ── Bayesian Convergence Chart ─────────────────────────────────────────────
+function drawBayes() {
+  const canvas = document.getElementById('bayesCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const steps=60;
+  // 3 agents starting from different prior means
+  const agents = [
+    { start:0.2, color:'#1B3A6B', label:'Agent A (low prior)' },
+    { start:0.6, color:'#C9973A', label:'Agent B (medium prior)' },
+    { start:0.9, color:'#1B7A3A', label:'Agent C (high prior)' },
+  ];
+  const target=1.0;
+
+  agents.forEach(ag=>{
+    const traj=[ag.start];
+    for(let t=1;t<=steps;t++){
+      const prev=traj[t-1];
+      const step = (target-prev)*(0.08+0.02*Math.random()) + (Math.random()-0.5)*0.02;
+      traj.push(Math.min(1.05,Math.max(0,prev+step)));
+    }
+    ctx.beginPath(); ctx.strokeStyle=ag.color; ctx.lineWidth=2; ctx.setLineDash([]);
+    traj.forEach((v,i)=>{
+      const x=40+i/steps*(W-50), y=H-20-v*(H-40)*0.95;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  });
+
+  // target line
+  ctx.strokeStyle='#CC3333'; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+  const ty=H-20-(target*(H-40)*0.95);
+  ctx.beginPath(); ctx.moveTo(40,ty); ctx.lineTo(W-10,ty); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#CC3333'; ctx.font='8px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('Enforcement equilibrium e*',44,ty-4);
+
+  // axes
+  ctx.strokeStyle='#ccc'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(40,H-20); ctx.lineTo(W-10,H-20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(40,10); ctx.lineTo(40,H-20); ctx.stroke();
+  ctx.fillStyle='#666'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Interaction rounds →',W/2,H-4);
+
+  // legend
+  ctx.font='8.5px sans-serif'; ctx.textAlign='left';
+  agents.forEach((ag,i)=>{ ctx.fillStyle=ag.color; ctx.fillText(ag.label, 48, 22+i*12); });
+}
+
+// Trigger lazy chart draws when sections become visible
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    setTimeout(()=>{
+      drawBayes();
+      drawEvo();
+    },100);
+  });
+});
+
+// initial draws for learning section if it's first shown
+setTimeout(()=>{ drawBayes(); drawEvo(); }, 300);
+</script>
+</body>
+</html>
